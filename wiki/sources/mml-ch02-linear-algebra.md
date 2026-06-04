@@ -8,9 +8,26 @@ updated: 2026-06-04
 
 # MML Ch.2 — Linear Algebra
 
-- **Raw file:** `raw/mml-book.pdf` §2, pp. 17–73 (PDF pages 22–74)
+- **Raw file:** `raw/mml-book.pdf` §2, **printed pp. 17–69** (PDF pages 22–74)
 - **Type:** book chapter — *Mathematics for Machine Learning*, Deisenroth, Faisal & Ong (2020)
-- **Ingested:** 2026-06-04
+- **Ingested:** 2026-06-04 · **Validated against source:** 2026-06-04
+- *Page rule:* printed page = PDF page index − 5.
+
+## Section coverage (all of §2.1–2.9 accounted for)
+| § | Section title | Printed pp. | Wiki coverage |
+|---|---|---|---|
+| 2.1 | Systems of Linear Equations | 19–21 | ✅ [[system-of-linear-equations]] |
+| 2.2 | Matrices | 22–32 | 🌱 [[matrix]] (stub) |
+| 2.3 | Solving Systems of Linear Equations | 27–35 | 🌱 [[gaussian-elimination]] (stub) |
+| 2.4 | Vector Spaces | 35–40 | ✅ [[vector-space]] |
+| 2.5 | Linear Independence | 40–44 | 🌱 [[linear-independence]] (stub) |
+| 2.6 | Basis and Rank | 44–48 | 🌱 [[basis-and-rank]] (stub) |
+| 2.7 | Linear Mappings | 48–60 | 🌱 [[linear-mapping]] (stub) |
+| 2.8 | Affine Spaces | 61–62 | 🌱 [[affine-space]] (stub) |
+| 2.9 | Further Reading | 63–64 | — (pointers only) |
+| — | Exercises | 64–69 | — |
+
+> Every section is represented; ✅ = full three-tier page, 🌱 = stub queued for a later ingest pass.
 
 ## TL;DR (5 bullets)
 - **Linear algebra is the study of vectors** and the rules for adding them and scaling them. A "vector" is *any* object closed under addition and scalar multiplication — geometric arrows, polynomials, audio signals, and tuples in $\mathbb{R}^n$ all qualify.

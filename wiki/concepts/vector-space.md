@@ -59,4 +59,5 @@ makes this lineage explicit: *Group → Vector space → ...*.
 - People: —
 
 ## Sources
-- `raw/mml-book.pdf` §2 intro & §2.4, pp. 17–18, 35+ (PDF pp. 22–23, 40+)
+- `raw/mml-book.pdf` §2 intro & §2.4 (**Definition 2.9**), printed pp. 17–18, 35–37 (PDF pp. 22–23, 40–42).
+- ✅ Axioms validated verbatim against Definition 2.9 on 2026-06-04.
