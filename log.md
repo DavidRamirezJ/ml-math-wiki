@@ -29,3 +29,10 @@ Recent activity: `grep "^## \[" log.md | tail -5`.
 - ❌ FIXED: source page claimed Ch.2 = "pp. 17–73"; actual = **printed pp. 17–69** (Ch.3 starts p.70). Established page rule: printed = PDF index − 5.
 - ➕ Added a **section-coverage table** to [[mml-ch02-linear-algebra]] proving all of §2.1–2.9 are represented (3 full pages ✅, 6 stubs 🌱).
 - Open gap: 6 stub concepts (§2.2, 2.3, 2.5, 2.6, 2.7, 2.8) still need full three-tier pages.
+
+## [2026-06-04] ingest | Fill 6 Ch.2 concept stubs (§2.2, 2.3, 2.5, 2.6, 2.7, 2.8)
+- Read all six sections directly from `raw/mml-book.pdf` (PDF pp. 27–67) before writing — every formula/definition sourced.
+- Promoted to full three-tier pages: [[matrix]] (Defs 2.1–2.5), [[gaussian-elimination]] (Def 2.6, REF/RREF, minus-1 trick), [[linear-independence]] (Defs 2.11–2.12), [[basis-and-rank]] (Defs 2.13–2.14, rank §2.6.2), [[linear-mapping]] (Defs 2.15–2.19, Thm 2.17), [[affine-space]] (Defs 2.25–2.26).
+- Updated [[mml-ch02-linear-algebra]] coverage table → all §2.1–2.8 now ✅; corrected internal section page ranges.
+- Updated [[index]] (counts: 1 source, 9 concepts, 1 person). Removed stub markers.
+- Chapter 2 is now fully fulfilled (only §2.9 further-reading left as pointers). No contradictions.
