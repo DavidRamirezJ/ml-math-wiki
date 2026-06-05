@@ -1,0 +1,5 @@
+# Python deps for the wiki's tooling (PDF ingest + animations).
+# Install on a new machine with:  pip3 install -r requirements.txt
+pypdf>=4.0        # read raw/mml-book.pdf during ingest
+pillow>=10.0      # generate GIF animations (assets/*.py)
+numpy>=1.24       # animation math
