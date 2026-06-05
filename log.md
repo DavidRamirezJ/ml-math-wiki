@@ -36,3 +36,19 @@ Recent activity: `grep "^## \[" log.md | tail -5`.
 - Updated [[mml-ch02-linear-algebra]] coverage table → all §2.1–2.8 now ✅; corrected internal section page ranges.
 - Updated [[index]] (counts: 1 source, 9 concepts, 1 person). Removed stub markers.
 - Chapter 2 is now fully fulfilled (only §2.9 further-reading left as pointers). No contradictions.
+
+## [2026-06-04] ingest | Chapters 3–12 (full book, batch via 10-agent workflow)
+- Ingested all remaining chapters in parallel (one agent per chapter, each reading its own PDF page range, writing source + concept + person pages per the schema).
+- **Ch.3 Analytic Geometry:** norm, inner-product, metric, angle, orthogonality, orthogonal-matrix, orthonormal-basis, orthogonal-complement, orthogonal-projection, gram-schmidt, rotation, SPD-matrix (+ Cauchy, Schwarz, Gram, Schmidt).
+- **Ch.4 Matrix Decompositions:** determinant, trace, characteristic-polynomial, eigenvalues-and-eigenvectors, spectral-theorem, cholesky, eigendecomposition, SVD, low-rank-approximation (+ Cholesky, Laplace, Eckart, Young).
+- **Ch.5 Vector Calculus:** derivative, partial-derivative, gradient, jacobian, chain-rule, hessian, taylor-series, backpropagation, automatic-differentiation (+ Taylor, Jacobi, Hesse).
+- **Ch.6 Probability:** random-variable, probability-distribution, expected-value-and-mean, covariance-and-variance, statistical-independence, bayes-theorem, gaussian-distribution, conjugate-prior, exponential-family, sufficient-statistics, change-of-variables (+ Bayes, Fisher, Jensen).
+- **Ch.7 Optimization:** gradient-descent, stochastic-gradient-descent, convex-optimization, convex-conjugate, lagrange-multipliers, linear-programming, quadratic-programming (+ Lagrange, Fenchel, Abel).
+- **Ch.8 When Models Meet Data:** empirical-risk-minimization, loss-function, MLE, MAP, overfitting-and-underfitting, regularization, cross-validation, directed-graphical-models, bayesian-model-selection, marginal-likelihood (+ Occam).
+- **Ch.9 Linear Regression:** linear-regression, regularized-least-squares, bayesian-linear-regression, generalized-linear-model, overfitting (+ Legendre, Bayes).
+- **Ch.10 PCA:** principal-component-analysis, pca-maximum-variance, pca-reconstruction-error, data-covariance-matrix, power-iteration, probabilistic-pca, dimensionality-reduction (+ Pearson, Hotelling).
+- **Ch.11 GMM:** gaussian-mixture-model, mixture-model, latent-variable-model, expectation-maximization, responsibility, kernel-density-estimation, histogram (+ Dempster, Parzen).
+- **Ch.12 SVM:** support-vector-machine, separating-hyperplane, margin, hard-margin-svm, soft-margin-svm, hinge-loss, dual-support-vector-machine, kernel-trick, support-vector (+ Vapnik).
+- Rebuilt [[index]] programmatically from frontmatter: **11 sources, 96 concepts, 25 people.**
+- Lint: fixed 1 alias collision (overfitting vs overfitting-and-underfitting — kept both, cross-linked; Ch.8=general, Ch.9=regression case study). Fixed dangling aliases (gram-schmidt→gram-schmidt-orthogonalization, positive-definite-matrix→symmetric-positive-definite-matrix, expected-value→expected-value-and-mean) and 2 trailing-backslash link artifacts. Link check: 0 real danglers (only sanctioned future pages: overview, learning-path, auto-encoder, gaussian-process).
+- Whole book (Part I + Part II) now ingested. Ch.1 left as motivation only.
