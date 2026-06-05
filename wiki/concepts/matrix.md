@@ -30,6 +30,14 @@ Row $i$ of $A$ "dot" column $j$ of $B$. **Neighboring dimensions must match** ($
 dimension collapses, outer dimensions survive. ⚠️ Not commutative: $AB \neq BA$ in general
 (Example 2.3: same $A,B$ give a $2\times2$ *and* a $3\times3$ result).
 
+**Animation — each entry is a row · column dot product** (Example 2.3, $C = AB$):
+
+![Matrix multiplication animation: each entry c_ij is the dot product of row i of A and column j of B](../../assets/matrix-multiply.gif)
+
+The amber **row of $A$** times the blue **column of $B$** accumulates, term by term, into the
+green **target cell of $C$** — repeated for all four entries. Regenerate with
+`python3 assets/matrix-multiply-anim.py`.
+
 **Identity** $I_n$: 1's on the diagonal, 0's elsewhere; $I_mA = AI_n = A$.
 
 **Inverse** $A^{-1}$ (square only): the $B$ with $AB = I = BA$. Exists ⇔ $A$ is *regular /

@@ -52,3 +52,9 @@ Recent activity: `grep "^## \[" log.md | tail -5`.
 - Rebuilt [[index]] programmatically from frontmatter: **11 sources, 96 concepts, 25 people.**
 - Lint: fixed 1 alias collision (overfitting vs overfitting-and-underfitting — kept both, cross-linked; Ch.8=general, Ch.9=regression case study). Fixed dangling aliases (gram-schmidt→gram-schmidt-orthogonalization, positive-definite-matrix→symmetric-positive-definite-matrix, expected-value→expected-value-and-mean) and 2 trailing-backslash link artifacts. Link check: 0 real danglers (only sanctioned future pages: overview, learning-path, auto-encoder, gaussian-process).
 - Whole book (Part I + Part II) now ingested. Ch.1 left as motivation only.
+
+## [2026-06-04] query | Animation — matrix multiplication (dot-product view)
+- Built an animated GIF showing C = A·B as the row-of-A · column-of-B dot product, accumulating term by term into each target cell (uses Example 2.3 from the book).
+- Tooling: pure Pillow (no ffmpeg/matplotlib available); 268 frames @ 90ms, 1040×560.
+- Files: generator `assets/matrix-multiply-anim.py` (reproducible) → `assets/matrix-multiply.gif`.
+- Filed back into the wiki: embedded in [[matrix]] under the 🟡 Mechanics tier.
