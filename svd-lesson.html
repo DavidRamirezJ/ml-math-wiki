@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SVD — Rotate, Stretch, Rotate</title>
+<script>
+  MathJax = { tex: { inlineMath: [['$', '$']], displayMath: [['$$','$$']] } };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async></script>
+<style>
+  :root { --bg:#0d1117; --panel:#161b22; --ink:#e6edf3; --muted:#8b949e;
+          --green:#3fb950; --yellow:#d29922; --red:#f85149; --blue:#58a6ff; --line:#30363d; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink);
+         font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+         line-height:1.6; padding:0 0 80px; }
+  header { padding:32px 24px 20px; border-bottom:1px solid var(--line);
+           background:linear-gradient(180deg,#161b22,#0d1117); }
+  h1 { margin:0 0 6px; font-size:26px; }
+  header p { margin:0; color:var(--muted); }
+  main { max-width:860px; margin:0 auto; padding:0 24px; }
+  section { background:var(--panel); border:1px solid var(--line); border-radius:12px;
+            padding:22px 24px; margin:24px 0; }
+  h2 { margin-top:0; font-size:19px; }
+  .tier { display:inline-block; font-size:12px; font-weight:700; padding:2px 9px;
+          border-radius:20px; margin-bottom:10px; }
+  .g{background:rgba(63,185,80,.15);color:var(--green)} .y{background:rgba(210,153,34,.15);color:var(--yellow)} .r{background:rgba(248,81,73,.15);color:var(--red)}
+  .steps{display:flex;gap:12px;flex-wrap:wrap;margin:18px 0}
+  .step{flex:1;min-width:200px;background:#0d1117;border:1px solid var(--line);border-radius:10px;padding:16px}
+  .step .big{font-size:30px;display:block;margin-bottom:6px}
+  .step h3{margin:0 0 6px;font-size:15px}
+  .step p{margin:0;color:var(--muted);font-size:14px}
+  table{border-collapse:collapse;width:100%;margin-top:8px;font-size:14px}
+  td,th{border:1px solid var(--line);padding:8px 10px;text-align:left}
+  th{color:var(--muted);font-weight:600}
+  code{background:#0d1117;padding:1px 6px;border-radius:5px;color:var(--yellow);font-size:13px}
+  .note{color:var(--muted);font-size:14px}
+  .callout{border-left:3px solid var(--blue);padding:10px 16px;margin:16px 0;background:rgba(88,166,255,.08);border-radius:0 8px 8px 0}
+  .takeaway{border-left:3px solid var(--green);background:rgba(63,185,80,.08)}
+  ul{margin:8px 0}
+</style>
+</head>
+<body>
+<header>
+  <h1>Singular Value Decomposition</h1>
+  <p>Every matrix is secretly just: rotate → stretch → rotate. The formulas below actually render.</p>
+</header>
+<main>
+
+<section>
+  <span class="tier g">🟢 INTUITION</span>
+  <h2>Every matrix has no exceptions</h2>
+  <p>Take <em>any</em> matrix $A$ — square, rectangular, ugly, it doesn't matter. Whatever
+  transformation it performs can always be broken into three clean moves, in order:</p>
+  <div class="steps">
+    <div class="step"><span class="big">🔄</span><h3>1. Spin the input</h3><p>$V^\top$ rotates your input to line up with a good set of perpendicular axes.</p></div>
+    <div class="step"><span class="big">↔️</span><h3>2. Stretch each axis</h3><p>$\Sigma$ stretches along each axis by a fixed positive amount (and may drop dimensions).</p></div>
+    <div class="step"><span class="big">🔄</span><h3>3. Spin the output</h3><p>$U$ rotates the stretched result into the output space.</p></div>
+  </div>
+  <p>That is the whole decomposition:</p>
+  $$A = U\,\Sigma\,V^\top$$
+  <p class="note">$U$ and $V$ are pure rotations (no distortion). $\Sigma$ in the middle is just a list of
+  positive stretch amounts. Because this works for <em>every</em> matrix and always exists, it has been
+  called the fundamental theorem of linear algebra.</p>
+</section>
+
+<section>
+  <span class="tier y">🟡 MECHANICS</span>
+  <h2>The pieces, named</h2>
+  <p>Theorem 4.22: every matrix $A\in\mathbb{R}^{m\times n}$ of rank $r$ factorizes as</p>
+  $$A = U\,\Sigma\,V^\top$$
+  <table>
+    <tr><th>Piece</th><th>Shape</th><th>What it is</th></tr>
+    <tr><td>$U$</td><td>$m\times m$ orthogonal</td><td>columns $\mathbf{u}_i$ = <strong>left-singular vectors</strong> (output rotation)</td></tr>
+    <tr><td>$V$</td><td>$n\times n$ orthogonal</td><td>columns $\mathbf{v}_j$ = <strong>right-singular vectors</strong> (input rotation)</td></tr>
+    <tr><td>$\Sigma$</td><td>$m\times n$ "diagonal"</td><td>$\Sigma_{ii}=\sigma_i\ge 0$ = <strong>singular values</strong> (the stretches)</td></tr>
+  </table>
+  <p>The singular values come out <strong>sorted biggest to smallest</strong>:</p>
+  $$\sigma_1 \ge \sigma_2 \ge \dots \ge \sigma_r > 0$$
+  <div class="callout">
+    <strong>The key equation, in words:</strong> applying the matrix to the $i$-th input direction
+    gives the $i$-th singular value times the $i$-th output direction —
+    $$A\mathbf{v}_i = \sigma_i\,\mathbf{u}_i$$
+    Like the eigenvalue equation, but the input vector $\mathbf{v}_i$ and the output vector $\mathbf{u}_i$ are allowed to differ.
+  </div>
+  <h3 style="font-size:15px">How you compute it</h3>
+  <ul>
+    <li>Diagonalize the symmetric matrix $A^\top A = P D P^\top$. Then $V = P$.</li>
+    <li>The stretches are the square roots of those eigenvalues: $\sigma_i = \sqrt{\lambda_i}$.</li>
+    <li>Recover the output directions by normalizing the images: $\mathbf{u}_i = \tfrac{1}{\sigma_i}A\mathbf{v}_i$.</li>
+  </ul>
+  <p class="note">(This $A^\top A$ route is great for understanding but numerically poor — real libraries use dedicated SVD algorithms.)</p>
+</section>
+
+<section>
+  <span class="tier y">🟡 WORKED EXAMPLE</span>
+  <h2>A concrete 2×3 matrix (Example 4.13)</h2>
+  $$A = \begin{pmatrix} 1 & 0 & 1 \\ -2 & 1 & 0 \end{pmatrix}$$
+  <p>Form $A^\top A$ and find its eigenvalues: $6,\ 1,\ 0$. So:</p>
+  $$\sigma_1 = \sqrt{6}, \qquad \sigma_2 = 1, \qquad (\text{rank } 2)$$
+  $$\Sigma = \begin{pmatrix} \sqrt{6} & 0 & 0 \\ 0 & 1 & 0 \end{pmatrix}, \qquad
+    U = \frac{1}{\sqrt{5}}\begin{pmatrix} 1 & 2 \\ -2 & 1 \end{pmatrix}$$
+  <p class="note">The third direction has a zero singular value — that's the null space, the direction $A$ collapses to nothing.</p>
+</section>
+
+<section>
+  <span class="tier r">🔴 WHY ML CARES</span>
+  <h2>"Keep the big stretches, drop the small ones"</h2>
+  <p>Because the singular values are <strong>ranked by importance</strong> (biggest stretch = direction
+  carrying the most information), you can throw away the small ones and keep a faithful, compressed copy.
+  That single idea is:</p>
+  <ul>
+    <li><strong>PCA</strong> — the biggest-stretch directions are exactly the directions your data spreads out in most.</li>
+    <li><strong>Recommender systems</strong> — factor a ratings matrix; the $\mathbf{u}_i$ become "stereotypical movies," the $\mathbf{v}_j$ become "stereotypical viewers."</li>
+    <li><strong>Image compression, topic modeling, least squares</strong> (the pseudo-inverse) — all the same truncation trick.</li>
+  </ul>
+  <div class="callout">
+    <strong>SVD vs. eigendecomposition.</strong> Eigendecomposition only works on nice square matrices,
+    and its axes need not be perpendicular. SVD works on <em>anything</em>, and $U,V$ are <em>always</em>
+    true rotations. The price: input and output directions differ, so you need two sets of rotation
+    vectors instead of one. For a symmetric positive-definite matrix the two coincide and the SVD
+    <em>equals</em> the eigendecomposition.
+  </div>
+</section>
+
+<section class="callout takeaway">
+  <strong>⏱️ 10-second takeaway:</strong> Every matrix = rotate, stretch, rotate
+  ($A = U\Sigma V^\top$). The stretches come ranked by importance, so keeping the big ones and dropping
+  the small ones is the universal compression / feature-extraction move — and that's literally what PCA,
+  recommenders, and least-squares all are underneath.
+</section>
+
+<p class="note" style="text-align:center">Source: <code>wiki/concepts/singular-value-decomposition.md</code> · MML Ch.4 §4.5, Thm 4.22, Examples 4.12–4.14</p>
+
+</main>
+</body>
+</html>

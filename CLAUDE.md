@@ -17,6 +17,9 @@ question answered gets filed back as a page. Never re-derive knowledge that alre
 Primary source of truth: `raw/mml-book.pdf` — *Mathematics for Machine Learning*, Deisenroth,
 Faisal & Ong (2020), Cambridge University Press. Additional sources welcome.
 
+Second source: `raw/Build_a_Large_Language_Model_(From_Scrat.pdf` — *Build a Large Language Model
+(From Scratch)*, Raschka (2025), Manning. Book page N = PDF page N+22. Source pages are prefixed `llm-`.
+
 ---
 
 ## 1. The three layers
@@ -38,6 +41,7 @@ ai-ml/
 ├── log.md              # chronological append-only record
 ├── raw/                # immutable sources (the book lives here)
 ├── assets/             # downloaded figures/images, named <source>-figN.png
+├── study-log/          # personal study journal — one file per study session (NOT in graph)
 └── wiki/
     ├── maps/           # big-picture pages: overview, learning-path, synthesis, MOCs
     ├── concepts/       # ONE page per math concept (eigenvalue, gradient, Bayes-theorem…)
@@ -175,6 +179,20 @@ Scan the wiki and report:
 - Data gaps a web search or new source could fill
 Then suggest next sources to ingest and next questions to investigate.
 Append a `lint` entry to `log.md`.
+
+### 5.4 STUDY — when a study skill runs in this folder
+Whenever a teaching/study skill (e.g. `/teach`) is invoked here, you MUST keep a traceability
+record of what the human studied. This is for the **learner**, not the wiki.
+1. **At session start**, create a session file `study-log/YYYY-MM-DD-<topic>.md` using the
+   template in `study-log/README.md`. Record date, skill used, source material, and the goal.
+2. **During/after the session**, fill in what was covered, the takeaways that stuck, a mastery
+   checklist, and open questions to revisit. Append — never rewrite a prior session.
+3. **Add a row** to the index table in `study-log/README.md`.
+4. **Keep it off the graph:** session files use **plain backtick references** to wiki pages
+   (e.g. `singular-value-decomposition`), NEVER `[[wikilinks]]`. The folder is also excluded by
+   the graph filter in `.obsidian/graph.json` (`-path:study-log/`).
+5. The study log is independent of `log.md` — do not duplicate study sessions there (a `log.md`
+   `query` entry is still fine if you also created a wiki page).
 
 ---
 

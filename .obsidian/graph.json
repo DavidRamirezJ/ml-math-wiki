@@ -1,6 +1,6 @@
 {
   "collapse-filter": false,
-  "search": "matrix",
+  "search": "-path:index.md -path:log.md -path:study-log/",
   "showTags": false,
   "showAttachments": false,
   "hideUnresolved": false,
@@ -17,6 +17,6 @@
   "repelStrength": 10,
   "linkStrength": 1,
   "linkDistance": 250,
-  "scale": 0.9497592846828425,
+  "scale": 0.1128478158025679,
   "close": true
 }

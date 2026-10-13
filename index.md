@@ -1,154 +1,371 @@
 ---
 title: Index
 type: map
-updated: 2026-06-04
+updated: 2026-10-13
 ---
 
 # 📇 Wiki Index
 
 The catalog of everything in this wiki. Read this first when answering a query, then drill into the linked pages. Updated on every ingest. See [[CLAUDE]] for the schema.
 
-**Counts:** 11 sources · 96 concepts · 25 people · 1 map (+2 pending)
+**Counts:** 21 sources · 278 concepts · 48 people · 3 maps (+1 pending)
 
 ---
 
 ## 🗺️ Maps
 - [[index]] — this catalog
 - [[overview]] — what this wiki covers and how it's organized *(pending)*
-- [[learning-path]] — the dummy → expert route through ML math *(pending)*
+- [[llm-learning-path]] — the route through the LLM book: from math atoms to a fine-tuned GPT, in 8 steps
+- [[mlp-vs-cnn]] — dense vs convolutional layers: a CNN is an MLP with a local, shared (Toeplitz) weight matrix
+- [[learning-path]] — the atomic concepts: the ~20 irreducible foundations all ML math is built from
 
 ## 🟦 Concepts
-*One page per mathematical concept — all full three-tier (🟢🟡🔴) pages. 96 total, alphabetical.*
+*One page per concept — all full three-tier (🟢🟡🔴) pages. 278 total, alphabetical.*
 
+- [[absolute-positional-embedding]] — An absolute positional embedding gives each seat number in the sentence (0, 1, 2, …) its own fixed-for-that-seat vector, and adds… *(intermediate)*
+- [[activation-function]] — An activation function is a small "bend" applied to every number coming out of a layer, so a stack of layers can learn curvy patt… *(beginner)*
+- [[adamw-optimizer]] — AdamW is the rule that decides how much to nudge each weight after every batch — it gives every weight its own adaptive step size… *(advanced)*
 - [[affine-space]] — An affine space is a vector subspace that's been picked up and shifted off the origin — a flat that no longer passes through zero. *(advanced)*
 - [[angle-between-vectors]] — The angle between two vectors measures how aligned their directions are, computed from their inner product. *(beginner)*
+- [[argmax]] — Argmax doesn't tell you *how big* the biggest number is. It tells you *where* the biggest number sits. *(beginner)*
+- [[artificial-intelligence]] — Artificial intelligence (AI) is the big umbrella field of building computers that can do things we normally think need a human br… *(beginner)*
+- [[attention-mechanism]] — Attention lets a model look back at *every* part of its input and decide, word by word, which parts matter most right now. *(intermediate)*
+- [[attention-scores]] — An attention score is a raw number that says how well one token "matches" another token — big means "very relevant", small means… *(intermediate)*
+- [[attention-weights]] — Attention weights are percentages that tell a token how much to "listen" to every other token — they are all positive and add up… *(intermediate)*
 - [[automatic-differentiation]] — Automatic differentiation computes the exact gradient of any program by breaking it into elementary steps and chaining their kn… *(advanced)*
+- [[autoregressive-text-generation]] — A GPT-style model writes text one token at a time, and every new token it writes gets glued onto the input so it can be used to p… *(intermediate)*
 - [[backpropagation]] — Backpropagation computes a neural network's gradients cheaply by applying the chain rule backward through the network, reusing… *(advanced)*
+- [[bahdanau-attention]] — Bahdanau attention (2014) let a translating RNN look back at every input word at each output step, instead of relying on one squa… *(intermediate)*
+- [[baseline-evaluation]] — Before you train a model, test it once so you know what "before" looks like. Then you can tell whether training actually helped. *(beginner)*
 - [[basis-and-rank]] — A basis is the smallest set of vectors that can build the whole space; its size is the *dimension*, and a matrix's *rank* count… *(intermediate)*
+- [[batch-normalization]] — Batch normalization standardizes each feature using the average and spread of that feature across the examples in the current min… *(intermediate)*
+- [[batched-matrix-multiplication]] — Batched matrix multiplication does many separate matrix multiplications at once — one per "slot" in a stack of matrices — with a… *(intermediate)*
 - [[bayes-theorem]] — Bayes' theorem is the rule for updating what you believe after you see new evidence. *(intermediate)*
 - [[bayesian-inference]] — Instead of committing to one best setting of the model, keep *every* plausible setting weighted by how well it explains the dat… *(advanced)*
 - [[bayesian-linear-regression]] — Instead of choosing one best curve, keep *all* curves that are consistent with the data — weighted by how plausible each is — a… *(advanced)*
 - [[bayesian-model-selection]] — Choose between competing models by how well each one *predicted the data you actually got* — a rule that automatically prefers… *(advanced)*
+- [[beam-search]] — Instead of committing to the single best next word at each step, beam search keeps a few of the best partial sentences alive in p… *(intermediate)*
+- [[bert]] — BERT is a transformer made only of the *encoder* half. It learns by filling in hidden words, and that makes it very good at under… *(beginner)*
+- [[bessels-correction-biased-variance]] — When you measure spread from a sample, dividing by $n$ slightly underestimates the true spread; dividing by $n-1$ (Bessel's corre… *(intermediate)*
+- [[bias-vector]] — A bias vector is a list of learned "offset" numbers that a layer adds after its matrix multiplication, so the output doesn't have… *(beginner)*
+- [[binary-cross-entropy]] — Binary cross-entropy is a score for yes/no predictions that is tiny when the model confidently says the right answer and huge whe… *(beginner)*
+- [[broadcasting]] — A reduction squashes a tensor along one direction (like taking each row's average), and broadcasting lets a small tensor be reuse… *(beginner)*
+- [[byte-pair-encoding]] — BPE builds a vocabulary by repeatedly gluing together the pair of symbols that appears most often, so common words become one tok… *(intermediate)*
+- [[causal-attention-mask]] — The causal mask is a triangle-shaped "no peeking" rule that stops each word from looking at the words that come after it. *(intermediate)*
+- [[causal-attention]] — Causal attention is self-attention with a blindfold on the future — each token may look only at itself and the tokens before it. *(intermediate)*
 - [[chain-rule]] — The chain rule says: to differentiate a function inside a function, multiply the outer slope by the inner slope. *(intermediate)*
 - [[change-of-variables-for-distributions]] — When you transform a random variable, this is the rule that tells you the shape of the new distribution. *(advanced)*
 - [[characteristic-polynomial]] — It's a special polynomial built from a square matrix whose roots are exactly the matrix's eigenvalues. *(intermediate)*
 - [[cholesky-decomposition]] — It's the "square root" of a nice symmetric matrix — it splits the matrix into a triangular factor times its mirror image. *(intermediate)*
+- [[class-imbalance]] — When one label is far more common than another, a model can look smart just by always guessing the common one, so we even out the… *(beginner)*
+- [[classification-accuracy]] — Accuracy is just the share of examples your model labels correctly: right answers divided by total answers. *(beginner)*
+- [[classification-fine-tuning]] — Classification fine-tuning swaps a pretrained LLM's "next word" output for a tiny "which class?" output (e.g. spam / not spam) an… *(intermediate)*
+- [[classification-head]] — A classification head is a small new output layer bolted onto a pretrained model, with one output number per class, replacing the… *(intermediate)*
+- [[collate-function]] — A collate function takes a handful of separate examples and glues them into one neat batch tensor the model can chew on in one go. *(intermediate)*
+- [[computational-graph]] — A computational graph is a flowchart of every little calculation a model does, drawn as boxes and arrows, so the computer can lat… *(intermediate)*
 - [[conjugate-prior]] — A conjugate prior is a prior chosen so that the posterior comes out as the same kind of distribution — so updating beliefs is j… *(intermediate)*
+- [[context-length]] — The context length is the maximum number of tokens an LLM can look at in one go; anything older than that falls off the edge. *(beginner)*
+- [[context-vector]] — A context vector is a word's embedding after it has "listened" to the rest of the sentence — the same word gets a different vecto… *(intermediate)*
+- [[convex-combination]] — A convex combination is a weighted average where every weight is zero or positive and all the weights add up to 1. *(beginner)*
 - [[convex-conjugate]] — Describe a bowl-shaped curve not by its points but by all the slanted lines that just touch it from below — then "slope" become… *(advanced)*
 - [[convex-optimization]] — If your landscape is a single smooth bowl, then any valley you find is *the* lowest point — so optimization becomes safe and th… *(advanced)*
+- [[cosine-decay]] — After warmup, you lower the learning rate smoothly along the shape of half a cosine wave, so training ends with small, careful st… *(intermediate)*
 - [[covariance-and-variance]] — Variance measures how spread out a random quantity is; covariance measures whether two quantities move together. *(intermediate)*
+- [[cross-entropy-loss]] — Cross-entropy loss is one number that says how surprised the model was by the right answer. You take the probability it gave to t… *(intermediate)*
 - [[cross-validation]] — Cross-validation estimates how well a model will do on new data by repeatedly hiding part of your data, training on the rest, a… *(beginner)*
+- [[cumulative-distribution-function]] — The CDF answers one simple question: "what's the chance my random number comes out at or below this value?" *(beginner)*
+- [[custom-llm]] — A custom LLM is a language model built or tuned for one field or task (finance, medicine, your company), and it can beat big gene… *(beginner)*
 - [[data-covariance-matrix]] — A square table that records, for a dataset, how much each pair of features spreads and moves together — the object whose bigges… *(intermediate)*
+- [[decoder-only-transformer]] — A decoder-only transformer is the "write the next word" half of the original transformer, used on its own: it reads the text so f… *(intermediate)*
+- [[decoding-strategies]] — A decoding strategy is the rule for picking the next word from the model's list of probabilities: always take the top one, or rol… *(intermediate)*
+- [[deep-learning]] — Deep learning is machine learning with neural networks that have many layers, so the network can discover useful features by itse… *(beginner)*
 - [[derivative]] — The derivative tells you how fast a function is changing at a point — the steepness of its graph right there. *(beginner)*
 - [[determinant]] — The determinant is a single number that tells you how much a matrix stretches or shrinks volume — and if it's zero, the matrix… *(intermediate)*
 - [[dimensionality-reduction]] — Squeezing data with lots of numbers per item down to just a few numbers, keeping almost everything that matters and throwing aw… *(beginner)*
+- [[direct-preference-optimization]] — DPO teaches a model to prefer the "better" of two answers by nudging up the better answer's probability and nudging down the wors… *(advanced)*
 - [[directed-graphical-models]] — A picture of arrows-between-circles that tells you how a big probability distribution breaks into a product of small ones — and… *(advanced)*
+- [[distributed-data-parallel]] — DDP trains one model on several GPUs at once by giving every GPU its own copy of the model and a different slice of the data, the… *(intermediate)*
+- [[dropout]] — Dropout randomly switches off some of a network's numbers during training so it can't lean too hard on any one of them — and swit… *(beginner)*
 - [[dual-support-vector-machine]] — The dual SVM solves the same problem from the data's point of view — one weight per training example instead of one per feature… *(advanced)*
+- [[dynamic-padding]] — Dynamic padding stretches each batch only to the length of *its own* longest example, instead of padding everything to the longes… *(beginner)*
 - [[eigendecomposition]] — If you describe a matrix using its own special stretch-directions as the coordinate axes, the matrix becomes a simple diagonal… *(advanced)*
 - [[eigenvalues-and-eigenvectors]] — An eigenvector is a special direction that a matrix only stretches or shrinks (never rotates off course), and its eigenvalue is… *(intermediate)*
+- [[embedding-dimension]] — The embedding dimension is how many numbers each token's vector has — the length of the "coordinates" a model gives every word. *(beginner)*
+- [[embedding-layer]] — An embedding layer is a big table of numbers with one row per token; you hand it a token ID and it hands you back that row as the… *(beginner)*
+- [[emergent-behavior]] — Emergent behavior is when a model can do a job nobody trained it for — like a next-word guesser that suddenly can translate. *(beginner)*
 - [[empirical-risk-minimization]] — Pick a family of guess-functions, score how badly each one does on your examples, and keep the one with the smallest average mi… *(intermediate)*
+- [[encoder-decoder-architecture]] — One network reads the whole input sentence and turns it into numbers (the encoder), and a second network turns those numbers into… *(intermediate)*
+- [[end-of-text-token]] — `<|endoftext|>` (ID 50256 in GPT-2) is a special token that means "this text is over" — it separates unrelated documents, tells t… *(beginner)*
+- [[epoch]] — One epoch means the model has gone through every training example once. *(beginner)*
 - [[expectation-maximization]] — EM fits models with hidden groupings by guessing the hidden labels, updating the model to match, and repeating until it stops i… *(advanced)*
 - [[expected-value-and-mean]] — The expected value is the long-run average outcome you'd get if you repeated a random experiment forever. *(beginner)*
 - [[exponential-family]] — The exponential family is the single template that most "named" distributions fit into — and the reason they're so easy to comp… *(advanced)*
+- [[feature-extraction]] — Manual feature extraction means a human expert decides which measurable clues (features) a model gets to look at, instead of the… *(beginner)*
+- [[feed-forward-network]] — Inside every transformer block, a small two-layer network takes each token's vector on its own, blows it up to 4× the size, bends… *(intermediate)*
+- [[few-shot-learning]] — Few-shot learning means showing an LLM a couple of solved examples inside the prompt, and it picks up the task without any retrai… *(beginner)*
+- [[fine-tuning]] — Fine-tuning takes a model that already "knows language" from pretraining and trains it a bit more on a small, labeled dataset so… *(intermediate)*
+- [[flashattention]] — FlashAttention computes exactly the same attention as the normal formula, just much faster and with far less memory, by working i… *(advanced)*
+- [[floating-point-precision]] — A computer stores every number in a fixed number of bits, so it can only keep so many digits — and the "data type" (like `float32… *(beginner)*
+- [[forward-pass]] — The forward pass is the "make a prediction" step: you push the input through the network, layer by layer, until an answer (and a… *(beginner)*
+- [[foundation-model]] — A foundation model (also called a base model) is the LLM you get right after pretraining — good at continuing text, not yet speci… *(beginner)*
+- [[galore]] — GaLore saves GPU memory during LLM training by squeezing each weight matrix's gradient into a much smaller "low-rank" summary bef… *(advanced)*
 - [[gaussian-distribution]] — The Gaussian (bell curve) is the distribution that shows up whenever many small random effects add together. *(intermediate)*
 - [[gaussian-elimination]] — A bookkeeping recipe of row operations that grinds any linear system into a "staircase" form you can read the answer straight o… *(intermediate)*
 - [[gaussian-mixture-model]] — A Gaussian mixture model fits data by stacking several bell curves on top of each other, and learns where each bell goes by rep… *(intermediate)*
+- [[gelu]] — GELU is a smooth version of ReLU: instead of a hard "keep or zero" switch, it keeps each input in proportion to how likely a bell… *(intermediate)*
 - [[generalized-linear-model]] — Take a linear regression and squash its output through a fixed nonlinear function, so you can predict things like probabilities… *(intermediate)*
-- [[gradient]] — The gradient is the list of all a function's partial slopes, bundled into one vector that points in the direction the function… *(intermediate)*
+- [[generative-ai]] — Generative AI is AI that *makes new stuff* — text, images, or other media — instead of just sorting or labeling what already exis… *(beginner)*
+- [[gpt-2]] — GPT-2 is OpenAI's 2019 family of four decoder-only transformer language models (124M to 1.5B parameters) whose weights are public… *(intermediate)*
+- [[gpt-3]] — GPT-3 is OpenAI's giant 175-billion-parameter "predict the next word" model from 2020, and the original ChatGPT is that same mode… *(beginner)*
+- [[gpt-architecture]] — A GPT turns tokens into vectors, pushes them through a stack of identical transformer blocks, and turns the last vector into a sc… *(intermediate)*
+- [[gpt-model-configuration]] — A GPT model's whole shape is set by a short dictionary of seven numbers — vocabulary size, context length, embedding size, number… *(beginner)*
+- [[gpu-computing]] — A GPU is a chip that can do thousands of small multiplications at once, and in PyTorch you just tell each tensor (and the model)… *(beginner)*
+- [[gradient-accumulation]] — Gradient accumulation means adding up the gradients from several small batches before you take one update step, so a small GPU ca… *(intermediate)*
+- [[gradient-clipping]] — If the gradient gets too big, shrink it down to a fixed maximum size — keep the direction, cap the length. *(intermediate)*
 - [[gradient-descent]] — To find the bottom of a valley you can't see, keep taking small steps in whatever direction is most steeply downhill from where… *(beginner)*
+- [[gradient]] — The gradient is the list of all a function's partial slopes, bundled into one vector that points in the direction the function… *(intermediate)*
+- [[gram-matrix]] — A Gram matrix is a table that lists the similarity (dot product) between every pair of vectors in a collection. *(intermediate)*
 - [[gram-schmidt-orthogonalization]] — Gram–Schmidt is a step-by-step recipe that straightens any set of basis vectors into mutually perpendicular ones. *(intermediate)*
+- [[greedy-decoding]] — Greedy decoding writes text by always picking the single most likely next token, one step at a time, with no randomness. *(beginner)*
 - [[hard-margin-svm]] — The hard-margin SVM is the strictest version of the max-margin classifier: every single point must stay outside the buffer zone… *(advanced)*
 - [[hessian]] — The Hessian is the table of a function's second slopes — it measures how the surface curves, i.e. how bowl-shaped or saddle-sha… *(intermediate)*
+- [[hidden-state]] — A hidden state is the network's running "memory" — a vector of internal numbers that a recurrent network updates after every word… *(beginner)*
 - [[hinge-loss]] — The hinge loss charges nothing once a point is comfortably on the correct side of the line, and a growing fine the closer it ge… *(intermediate)*
 - [[histogram]] — A histogram chops your data's range into bins and draws a bar for each bin as tall as the number of points that fell inside it. *(beginner)*
+- [[hyperparameter]] — A hyperparameter is a setting *you* choose before training (like the learning rate or batch size), as opposed to a parameter, whi… *(beginner)*
+- [[ignore-index-loss-masking]] — Putting `-100` in a target slot tells PyTorch's cross-entropy "skip this position — don't grade it," so padding filler doesn't po… *(intermediate)*
 - [[inner-product]] — An inner product is a way to multiply two vectors into a single number that tells you how much they point in the same direction. *(intermediate)*
+- [[input-embeddings]] — The input embedding is what an LLM actually reads: the "what word is this" vector plus the "where is it" vector, added together. *(beginner)*
+- [[instruction-dataset]] — An instruction dataset is a big list of "here's a request → here's the ideal answer" examples that teaches a pretrained LLM to fo… *(beginner)*
+- [[instruction-fine-tuning]] — Instruction fine-tuning takes a model that can only finish sentences and keeps training it on "instruction → good answer" example… *(intermediate)*
+- [[instruction-masking]] — Instruction masking means the model is only graded on the *answer* part of a training example, not on the question part it was gi… *(intermediate)*
 - [[jacobian]] — The Jacobian is the full grid of partial slopes for a function that outputs many numbers — the matrix version of a derivative. *(intermediate)*
 - [[kernel-density-estimation]] — Kernel density estimation draws a small smooth bump on top of every data point and adds them all up to get a smooth picture of… *(intermediate)*
 - [[kernel-trick]] — The kernel trick lets a straight-line method draw curved boundaries by secretly measuring similarity in a richer space — withou… *(advanced)*
+- [[label-encoding]] — Label encoding swaps word labels like "ham" and "spam" for the numbers 0 and 1, starting from zero, so the model can use them as… *(beginner)*
 - [[lagrange-multipliers]] — When you must minimize something while obeying rules, attach a price tag to breaking each rule and fold those prices into the o… *(advanced)*
+- [[large-language-model]] — An LLM is a very big neural network that has read a huge amount of text and learned to guess the next word so well that it can wr… *(beginner)*
+- [[last-token-pooling]] — To get one label for a whole text out of a GPT model, you read the output at the last token, because it's the only spot that has… *(intermediate)*
 - [[latent-variable-model]] — A latent-variable model imagines an unseen "which-group" switch behind each data point, and recovers the data's distribution by… *(advanced)*
+- [[layer-freezing]] — Freezing means you lock most of a pretrained network so it can't change, and you only let a few layers learn the new task. *(intermediate)*
+- [[layer-normalization]] — Layer normalization takes each token's vector and re-centers it to average 0 and re-scales it to spread 1 — then lets the model l… *(intermediate)*
+- [[learning-rate-schedule]] — Instead of using one fixed learning rate, you let it change over the course of training according to a plan. *(intermediate)*
+- [[learning-rate-warmup]] — Instead of taking big training steps from the very first moment, you start with tiny steps and grow them gradually up to your cho… *(intermediate)*
+- [[learning-rate]] — The learning rate is the size of the step the model takes each time it adjusts its weights to reduce its mistakes. *(beginner)*
 - [[linear-independence]] — A set of vectors is linearly independent when none of them is redundant — you can't build any one out of the others. *(intermediate)*
+- [[linear-layer]] — A linear layer multiplies its input by a learnable weight matrix and adds a learnable bias vector — "mix the inputs with learned… *(beginner)*
 - [[linear-mapping]] — A linear mapping is a function between vector spaces that respects adding and scaling — and every such function is just a matri… *(advanced)*
 - [[linear-programming]] — Push a straight cost as low as possible while staying inside a region carved out by straight walls — the best answer always sit… *(intermediate)*
 - [[linear-regression]] — Linear regression draws the best line (or curve) through a cloud of noisy data points so you can predict the value at a new point. *(beginner)*
+- [[llm-applications]] — Because an LLM can read and write free-form text, you can point it at almost any job that is "text in, text out" — translating, s… *(beginner)*
+- [[llm-as-a-judge]] — Instead of a human grading every answer, you ask a bigger, smarter LLM to grade them, and average the grades. *(intermediate)*
+- [[llm-building-roadmap]] — You build an LLM in three stages — make the machine, teach it to read a mountain of text, then coach it for one specific job. *(beginner)*
+- [[llm-evaluation]] — Evaluating an LLM means checking how good its answers really are — with quizzes, with human votes, or by asking another (bigger)… *(intermediate)*
+- [[llm-training-loop]] — The training loop is the repeat-forever routine that teaches an LLM: show it a batch of text, measure how wrong its next-word gue… *(intermediate)*
+- [[local-llm-inference-ollama]] — Ollama lets you download a ready-made LLM and chat with it on your own computer, no cloud needed. *(beginner)*
+- [[log-probability]] — A log probability is just the logarithm of a probability. It turns tiny numbers like 0.00007 into friendly ones like −9.5, and tu… *(beginner)*
+- [[logistic-regression]] — Logistic regression adds up the inputs with some weights, then squashes the total into a number between 0 and 1 that you can read… *(beginner)*
+- [[logits]] — Logits are the raw scores a model spits out — one number per possible answer — before they are turned into probabilities; the big… *(beginner)*
+- [[long-range-dependencies]] — A long-range dependency is when a word needs information from a word far away in the sentence — and older recurrent models were b… *(intermediate)*
+- [[lora-rank-and-alpha]] — In LoRA, the rank $r$ decides how big (and how flexible) the add-on matrices are, and alpha decides how loudly that add-on speaks… *(intermediate)*
 - [[loss-function]] — A loss function is the rule that turns "how wrong was this one prediction?" into a single non-negative number you can try to ma… *(beginner)*
+- [[low-rank-adaptation]] — Instead of retraining a giant weight matrix, LoRA freezes it and learns a small "correction" built from two skinny matrices, so y… *(intermediate)*
 - [[low-rank-approximation]] — Keep only a matrix's few biggest "stretch" pieces and you get the best possible simplified version of it — a compressed copy th… *(advanced)*
+- [[machine-learning]] — Machine learning means letting a computer learn the rules from examples, instead of a programmer writing the rules by hand. *(beginner)*
+- [[machine-translation]] — Machine translation is getting a computer to turn a sentence in one language into the same meaning in another language. *(beginner)*
 - [[margin]] — The margin is the width of the empty buffer zone between the dividing line and the nearest data point on either side. *(intermediate)*
 - [[marginal-likelihood]] — The probability that a whole model — averaged over every parameter setting it could take — would have produced your data; it's… *(advanced)*
+- [[masked-language-modeling]] — Hide some words in a sentence and train the model to guess them back from the words around them. *(beginner)*
+- [[matrix-multiplication]] — To multiply two matrices, you take every row of the first one and "dot" it with every column of the second one, and write each an… *(beginner)*
+- [[matrix-transpose]] — Transposing a matrix flips it over its diagonal, so its rows become its columns and its columns become its rows. *(beginner)*
 - [[matrix]] — A matrix is a rectangular grid of numbers — and that grid can both *store a system of equations* and *act as a function that tr… *(beginner)*
 - [[maximum-a-posteriori-estimation]] — Like maximum likelihood, but you also bring in a prior belief about which parameter values are reasonable, then pick the parame… *(intermediate)*
 - [[maximum-likelihood-estimation]] — Pick the parameter values that make the data you actually observed as unsurprising as possible. *(intermediate)*
+- [[mean-squared-error]] — Mean squared error measures how wrong your predictions are by taking each miss, squaring it, and averaging the squares. *(beginner)*
 - [[metric]] — A metric is a rule for measuring how far apart two points are, obeying the common-sense laws of distance. *(beginner)*
+- [[mini-batch]] — A mini-batch is a small handful of training examples processed together for one learning step, and the batch size is how many exa… *(intermediate)*
 - [[mixture-model]] — A mixture model builds a complicated bumpy probability curve by blending several simple ones together, each weighted by how muc… *(beginner)*
+- [[model-capacity]] — A model's capacity is how much it is able to learn and remember. Bigger models usually have more of it. *(intermediate)*
+- [[model-checkpointing]] — After you spend hours (or dollars) training a model, you write its learned numbers to a file so you can load them back later inst… *(beginner)*
+- [[model-parameters]] — Parameters are the adjustable numbers inside a model that training tweaks, little by little, until the model makes good predictio… *(beginner)*
+- [[monotonic-function]] — A monotonic function never changes direction, so if one input is bigger than another, its output stays bigger too (or at least ne… *(beginner)*
+- [[monte-carlo-estimation]] — If you can't (or don't want to) calculate a probability or an average exactly, simulate the random thing many times and count — t… *(intermediate)*
+- [[multi-head-attention]] — Multi-head attention runs several small attention mechanisms side by side — each "head" looks at the sentence in its own way — an… *(intermediate)*
+- [[multilayer-perceptron]] — A multilayer perceptron (MLP) is a stack of fully connected layers with a simple nonlinearity in between, and it is the classic,… *(beginner)*
+- [[multinomial-sampling]] — Instead of always picking the most likely next word, roll a loaded die whose sides are weighted by the model's probabilities, so… *(intermediate)*
+- [[natural-language-processing]] — NLP is the field of getting computers to work with human language: reading it, sorting it, translating it, and writing it. *(beginner)*
+- [[neural-network]] — A neural network is a big stack of simple "multiply, add, squash" steps with adjustable knobs, and a *deep* one just has many of… *(beginner)*
+- [[next-token-prediction]] — Show the model the start of a text and ask "what comes next?" — over and over, on billions of words — and you have the training t… *(intermediate)*
 - [[norm]] — A norm is a rule that measures how "long" a vector is — a single non-negative number standing in for its size. *(beginner)*
+- [[numerical-stability]] — Computers store numbers with limited room, so a formula that is perfect on paper can blow up to "infinity" or collapse to "zero"… *(intermediate)*
+- [[one-hot-encoding]] — One-hot encoding turns a category number into a long list of zeros with a single 1 sitting in that category's slot. *(beginner)*
 - [[orthogonal-complement]] — The orthogonal complement of a subspace is everything that is perpendicular to all of it — together they fill the whole space w… *(intermediate)*
 - [[orthogonal-matrix]] — An orthogonal matrix is a square matrix whose columns are mutually perpendicular unit vectors — it rotates or reflects space wi… *(intermediate)*
 - [[orthogonal-projection]] — An orthogonal projection drops a vector straight down onto a subspace, finding the closest point in that subspace. *(advanced)*
 - [[orthogonality]] — Two vectors are orthogonal when their inner product is zero — the precise, general meaning of "at right angles." *(beginner)*
 - [[orthonormal-basis]] — An orthonormal basis is a set of coordinate directions that are all mutually perpendicular and exactly one unit long — the clea… *(intermediate)*
-- [[overfitting]] — A model overfits when it memorizes the noise in the training data instead of learning the real pattern, so it predicts badly on… *(beginner)*
+- [[out-of-vocabulary-words]] — An out-of-vocabulary (OOV) word is a word the tokenizer has never seen; old tokenizers replace it with a catch-all `<|unk|>` toke… *(beginner)*
+- [[output-projection]] — The output projection is one last linear layer that takes the glued-together results of all attention heads and mixes them into a… *(intermediate)*
 - [[overfitting-and-underfitting]] — Overfitting is memorizing the practice questions instead of learning the subject; underfitting is being too simple to learn it… *(beginner)*
+- [[overfitting]] — A model overfits when it memorizes the noise in the training data instead of learning the real pattern, so it predicts badly on… *(beginner)*
+- [[padding-and-truncation]] — To stack texts of different lengths into one neat table (a batch), we either cut long ones short (truncation) or fill short ones… *(beginner)*
+- [[parameter-count-and-memory]] — A model's "size" is just how many learnable numbers it has; multiply that count by the bytes each number takes and you get how mu… *(beginner)*
+- [[parameter-efficient-fine-tuning]] — PEFT means adapting a big pretrained model to a new task by training only a tiny slice of its numbers, leaving the rest frozen. *(intermediate)*
 - [[partial-derivative]] — A partial derivative measures how a multi-input function changes when you nudge just one input and freeze all the others. *(beginner)*
 - [[pca-maximum-variance]] — One way to derive PCA: pick the directions that make the compressed data spread out as much as possible, because spread = infor… *(advanced)*
 - [[pca-reconstruction-error]] — A second way to derive PCA: find the low-dimensional subspace whose shadows of the data points are, on average, as close to the… *(advanced)*
+- [[perplexity]] — Perplexity tells you how many words the model is "torn between" at each step. It is the cross-entropy loss turned back into a cou… *(intermediate)*
+- [[positional-embedding]] — A positional embedding is a vector that tells the model *where* a token sits in the sentence, so "dog bites man" and "man bites d… *(intermediate)*
 - [[power-iteration]] — A dead-simple loop — multiply by the matrix, normalize, repeat — that homes in on the single most dominant direction of a matrix. *(intermediate)*
+- [[pre-layernorm-vs-post-layernorm]] — It's the question of *where* to put the layer-normalization step in a transformer block — before each sub-layer (Pre-LN, used by… *(intermediate)*
+- [[preference-fine-tuning]] — Preference fine-tuning teaches a model that already follows instructions to give the *kind* of answers people like best, by showi… *(advanced)*
+- [[pretrained-weights]] — Instead of spending months and millions of dollars teaching a model English yourself, you download the numbers someone else's tra… *(intermediate)*
+- [[pretraining-datasets]] — An LLM is pretrained on a gigantic pile of ordinary, unlabeled text, and the recipe says how much of each source (web, books, Wik… *(beginner)*
+- [[pretraining]] — Pretraining is the first, huge training phase where an LLM reads mountains of ordinary text and learns to guess the next word — w… *(intermediate)*
 - [[principal-component-analysis]] — PCA finds the few directions in which your data spreads out the most and describes every data point using only its position alo… *(intermediate)*
 - [[probabilistic-pca]] — PCA rebuilt as a probability story — each data point is born from a few hidden random numbers, stretched by a matrix and sprink… *(advanced)*
 - [[probability-distribution]] — A probability distribution is the complete bookkeeping of how likely each possible value of a random variable is. *(beginner)*
+- [[prompt-template]] — A prompt template is a fixed "form" that every instruction example is poured into, so the model always sees requests and answers… *(beginner)*
+- [[pytorch-dataset-and-dataloader]] — A `Dataset` knows how to fetch one example; a `DataLoader` shuffles those examples, groups them into batches, and hands the batch… *(intermediate)*
+- [[pytorch-nn-module]] — `nn.Module` is PyTorch's "Lego brick" class for a piece of a neural network — it holds the learnable weights and says how input f… *(beginner)*
+- [[pytorch]] — PyTorch is the Python toolbox the book uses to build and train neural networks: it stores numbers in tensors, computes gradients… *(beginner)*
 - [[quadratic-programming]] — Minimize a bowl-shaped cost while staying inside straight walls — the same as a linear program, but now the cost itself curves… *(intermediate)*
+- [[query-key-value]] — Each token makes three versions of itself — a question (query), a label (key) and a content package (value) — so it can look up w… *(intermediate)*
+- [[random-seed-reproducibility]] — A random seed is the starting number for the computer's "fake dice", so if you use the same seed you get exactly the same "random… *(beginner)*
 - [[random-variable]] — A random variable is a rule that turns the messy outcome of a random experiment into a number you actually care about. *(beginner)*
+- [[recurrent-neural-network]] — An RNN reads a sequence one item at a time and carries a running "memory" vector forward, feeding each step's output back in as i… *(intermediate)*
 - [[regularization]] — Regularization adds a "keep it simple" penalty to training so the model fits the data without contorting itself into something… *(intermediate)*
 - [[regularized-least-squares]] — Plain least squares but with an extra penalty that keeps the parameters small, so the fit stays smooth and doesn't chase noise. *(intermediate)*
+- [[relative-positional-embedding]] — Relative positional embeddings tell the model how far apart two words are ("3 steps away"), instead of which exact seat each word… *(advanced)*
+- [[relu]] — ReLU keeps a number if it's positive and replaces it with zero if it's negative. *(beginner)*
+- [[response-extraction]] — The model hands back your question *and* its answer glued together, so you cut off the question to keep just the answer. *(beginner)*
 - [[responsibility]] — A responsibility is the share of "credit" each cluster gets for producing a given data point — like guessing how likely it is t… *(intermediate)*
+- [[retrieval-augmented-generation]] — RAG lets an LLM look things up first — it searches a knowledge base for relevant passages and then writes its answer using them. *(intermediate)*
+- [[rmsnorm]] — RMSNorm is a cheaper cousin of LayerNorm: it shrinks or stretches each token's vector to a standard size, but it doesn't bother s… *(intermediate)*
 - [[rotation]] — A rotation spins vectors around a fixed point by an angle, changing their direction but never their length. *(intermediate)*
+- [[scaled-dot-product-attention]] — Every token asks a question, every token offers a label and some content, and each token's new meaning is a blend of everyone's c… *(intermediate)*
+- [[self-attention]] — Self-attention lets every word in a sentence look at every other word in the *same* sentence and rebuild itself as a blend of the… *(intermediate)*
+- [[self-supervised-learning]] — Self-supervised learning is training where the data labels itself — for an LLM, the "right answer" for every position is just the… *(beginner)*
 - [[separating-hyperplane]] — A separating hyperplane is a flat dividing wall that puts one class on one side and the other class on the other. *(intermediate)*
+- [[shortcut-connections]] — A shortcut connection adds a layer's input straight onto its output, so information (and, during training, the learning signal) a… *(intermediate)*
+- [[sigmoid-function]] — The sigmoid is an S-shaped curve that takes any number — huge, tiny, negative — and gently squeezes it into a value between 0 and… *(beginner)*
 - [[singular-value-decomposition]] — Any matrix at all — square or not — is really just "rotate, then stretch each axis by a positive amount, then rotate again." *(advanced)*
+- [[sinusoidal-positional-encoding]] — The original transformer wrote each word's position as a pattern of sine and cosine waves, a fixed formula instead of something l… *(advanced)*
+- [[sliding-window-sampling]] — Slide a fixed-size "window" along a long list of tokens; what's inside the window is the input, and the same window nudged one to… *(beginner)*
 - [[soft-margin-svm]] — The soft-margin SVM is the practical SVM that still wants a wide buffer zone but lets a few points sneak inside or onto the wro… *(advanced)*
+- [[softmax]] — Softmax turns any list of numbers into a list of positive percentages that add up to 100%, giving the biggest numbers the biggest… *(intermediate)*
+- [[special-tokens]] — Special tokens are made-up "words" like `<|endoftext|>` or `<|unk|>` that we add to the vocabulary to tell the model something ab… *(beginner)*
 - [[spectral-theorem]] — Every symmetric matrix can be fully described by a set of perpendicular stretch-directions with plain real stretch-factors — no… *(advanced)*
+- [[standardization-z-score]] — Standardizing a list of numbers means shifting it so its average is 0 and squashing or stretching it so its spread is 1. *(beginner)*
 - [[statistical-independence]] — Two things are independent if learning one tells you nothing new about the other. *(intermediate)*
 - [[stochastic-gradient-descent]] — Instead of measuring the whole hillside before each step, you sample a few spots, guess the downhill direction, and step — much… *(intermediate)*
+- [[subword-tokenization]] — Subword tokenization splits text into pieces that are often whole words but can also be word fragments or single characters, so a… *(intermediate)*
 - [[sufficient-statistics]] — A sufficient statistic is a summary of your data that captures everything the data can tell you about an unknown parameter — so… *(advanced)*
-- [[support-vector]] — Support vectors are the handful of training points sitting right on the edge of the buffer zone — they alone determine the divi… *(intermediate)*
+- [[supervised-learning]] — Supervised learning means teaching a model with examples that come with the right answers, then using it to guess the answers for… *(beginner)*
 - [[support-vector-machine]] — A support vector machine draws the straightest dividing line between two groups of dots so that the line sits as far as possibl… *(intermediate)*
+- [[support-vector]] — Support vectors are the handful of training points sitting right on the edge of the buffer zone — they alone determine the divi… *(intermediate)*
+- [[surrogate-loss]] — A surrogate loss is a smooth stand-in you train on, because the score you actually care about (like accuracy) is too "blocky" for… *(intermediate)*
+- [[swiglu]] — SwiGLU splits a layer's output into two branches and lets one branch, softened by a sigmoid-based "Swish" curve, decide how much… *(intermediate)*
 - [[symmetric-positive-definite-matrix]] — A symmetric positive-definite matrix is a square matrix that always returns a positive number when you sandwich any nonzero vec… *(intermediate)*
 - [[system-of-linear-equations]] — Several straight-line equations that must all be true at once — and you hunt for the values that satisfy every one of them. *(beginner)*
 - [[taylor-series]] — A Taylor series rebuilds a smooth function as an infinite sum of polynomial pieces, using the function's slopes (derivatives) a… *(intermediate)*
+- [[temperature-scaling]] — Temperature is a single knob that makes a language model's next-word choices more cautious (low temperature) or more adventurous… *(intermediate)*
+- [[tensor-reshaping-and-transposing]] — Reshaping regroups the same numbers into a new shape without moving them; transposing swaps axes so the numbers really change pla… *(beginner)*
+- [[tensor]] — A tensor is a box of numbers with any number of axes: a single number, a list, a table, or a stack of tables, and so on. *(beginner)*
+- [[text-classification]] — Text classification means reading a piece of text and sticking exactly one label from a fixed list on it, like "spam" or "not spa… *(beginner)*
+- [[text-completion]] — Text completion is what a pretrained LLM naturally does: it keeps writing whatever text you started, which is not the same as ans… *(beginner)*
+- [[token-embedding]] — A token embedding is the list of numbers an LLM looks up for each token ID — one learned row of a big table — so words become vec… *(beginner)*
+- [[token-id]] — A token ID is the integer "seat number" a tokenizer gives each piece of text, so the computer can handle words as numbers. *(beginner)*
+- [[token]] — A token is one small piece of text — a word, a punctuation mark, or a word-chunk — and it is the unit an LLM reads and writes. *(beginner)*
+- [[tokenization]] — Tokenization chops text into small pieces called tokens and gives each piece a number, so a language model can read it. *(beginner)*
+- [[tokenizer-encode-decode]] — A tokenizer has two jobs: *encode* turns text into a list of numbers, and *decode* turns a list of numbers back into text. *(beginner)*
+- [[top-k-sampling]] — Before rolling the dice for the next word, throw away every word except the $k$ most likely ones, so the model can be creative wi… *(intermediate)*
+- [[top-p-sampling]] — When an LLM picks its next word, top-p sampling lets it choose only from the smallest group of most-likely words that together co… *(intermediate)*
 - [[trace]] — The trace is just the sum of the numbers running down a square matrix's main diagonal — a tiny summary that doesn't care which… *(beginner)*
-- [[vector]] — A vector is anything you can *add to another of its kind* and *stretch by a number* and still get the same kind of thing back. *(beginner)*
+- [[train-validation-test-split]] — Before training, you cut your data into three piles — one to learn from, one to tune your choices on, and one locked away for a s… *(beginner)*
+- [[train-vs-eval-mode]] — A model behaves a bit differently while it is learning than while it is being used, and two PyTorch switches, `model.train()`/`mo… *(beginner)*
+- [[training-and-validation-loss]] — Plot the model's error on the data it learns from and on data it never learns from, side by side — the shape of the two lines tel… *(beginner)*
+- [[training-loop]] — A training loop is the short routine you repeat thousands of times to teach a model: guess, measure the error, find out which way… *(beginner)*
+- [[transfer-learning]] — Transfer learning means reusing what a model already learned on one big job as the starting point for a new, smaller job, instead… *(intermediate)*
+- [[transformer-architecture]] — The transformer is a neural-network design where every word gets to "look at" every other word (attention) to decide what it mean… *(intermediate)*
+- [[transformer-block]] — A transformer block is the repeating "Lego brick" of a GPT model: it lets every token look at the earlier tokens (attention), the… *(intermediate)*
+- [[vanishing-and-exploding-gradients]] — In a deep network the learning signal gets multiplied layer after layer on its way back, so it can fade to almost nothing (vanish… *(intermediate)*
 - [[vector-space]] — A vector space is the complete collection of every vector you could ever reach by adding and scaling a starting set — nothing e… *(intermediate)*
+- [[vector]] — A vector is anything you can *add to another of its kind* and *stretch by a number* and still get the same kind of thing back. *(beginner)*
+- [[vocabulary]] — A vocabulary is the tokenizer's fixed list of every token it knows, each paired with its own integer ID — the dictionary that tur… *(beginner)*
+- [[weight-decay]] — Weight decay shrinks every weight a tiny bit at each training step, so weights only stay large if the data really needs them to. *(intermediate)*
+- [[weight-initialization]] — Before training starts, every weight needs a first value — and choosing small *random* values (of the right size) is what lets th… *(intermediate)*
+- [[weight-splitting-multi-head-attention]] — Instead of giving every attention head its own small weight matrix, you glue them side by side into one big matrix, do one multip… *(advanced)*
+- [[weight-tying]] — Weight tying means the model uses the *same* big table of numbers twice — once to turn tokens into vectors at the input, and agai… *(intermediate)*
+- [[word-embeddings]] — A word embedding turns each word (or token) into a list of numbers, so that a neural network can do math with it, and so that wor… *(beginner)*
+- [[word2vec]] — Word2Vec is an early, very popular way to learn word embeddings by training a small neural network to guess which words appear ne… *(intermediate)*
+- [[zero-shot-learning]] — Zero-shot learning is when a model does a task it was never shown an example of — you just ask, and it figures it out. *(beginner)*
 
 ## 👤 People
-*Mathematicians behind the math. 25 total, alphabetical by first name.*
+*Mathematicians and researchers behind the ideas. 48 total, alphabetical by first name.*
 
 - [[adrien-marie-legendre]] — The Legendre transform re-describes a convex function by its slopes — the basis of the convex conjugate and a key dua…
+- [[albert-gu]] — lead author of **Mamba** and the structured state-space model line (S4), the best-known attempt to build LLMs *without* attention.
+- [[alec-radford]] — first author of the original GPT paper and the GPT-2 paper — the decoder-only, next-word-prediction recipe that the whole book re…
+- [[alexey-dosovitskiy]] — first author of the **Vision Transformer (ViT)**, which showed that the same transformer used for text works on images too.
 - [[andre-louis-cholesky]] — his matrix factorization is the standard, numerically stable way to handle covariance matrices — used everywhere from…
+- [[andrej-karpathy]] — he writes tiny, readable, from-scratch versions of big ideas. His **nanoGPT** (a GPT-2 in a few hundred lines) shaped how this bo…
+- [[angela-fan]] — first author of the 2018 paper that introduced **top-k sampling**, the trick of letting an LLM pick its next word only from its $…
 - [[arthur-dempster]] — Co-author of the 1977 paper that named and unified the **EM algorithm**, the workhorse for fitting latent-variable an…
+- [[ashish-vaswani]] — lead author of "Attention Is All You Need" (2017), the paper that introduced the transformer and scaled dot-product self-attentio…
 - [[augustin-louis-cauchy]] — The Cauchy–Schwarz inequality is what makes "the angle between two vectors" — and thus cosine similarity — well-defined.
+- [[biao-zhang]] — he is the first author of **RMSNorm**, the stripped-down LayerNorm that most modern open LLMs use in place of GPT-2's LayerNorm.
 - [[brook-taylor]] — His series expansion is how we replace any smooth function by a polynomial — the basis of linearization, Newton's met…
 - [[carl-eckart]] — with Gale Young he proved that the truncated SVD is the optimal low-rank approximation of a matrix — the theorem behi…
 - [[carl-friedrich-gauss]] — his name is on two pillars of the field — **Gaussian elimination** (solving linear systems) and the **Gaussian distri…
 - [[carl-gustav-jacob-jacobi]] — The matrix of first-order partial derivatives — the Jacobian — is named for him, and it is the central object for dif…
+- [[dan-hendrycks]] — he co-invented **GELU**, the smooth activation function inside every GPT-2 feed-forward layer, and he led the **MMLU** benchmark…
+- [[dzmitry-bahdanau]] — first author of the 2014 paper that invented the attention mechanism for neural translation — the idea that, three years later, i…
+- [[edward-j-hu]] — first author of LoRA, the low-rank trick that made fine-tuning huge language models cheap enough for almost anyone.
 - [[emanuel-parzen]] — He formalized kernel density estimation — the "Parzen window" — a foundational nonparametric method for estimating a…
 - [[erhard-schmidt]] — Co-creator of Gram–Schmidt orthogonalization and a founder of Hilbert-space theory — the infinite-dimensional inner-p…
+- [[friedrich-wilhelm-bessel]] — his name is on **Bessel's correction**, the $n-1$ (instead of $n$) in the sample-variance formula. GPT-style [[layer-normalizatio…
 - [[gale-young]] — co-author of the theorem proving that the truncated SVD gives the best low-rank approximation — the optimality guaran…
+- [[geoffrey-hinton]] — he is one of the "godfathers of deep learning." He helped make [[backpropagation]] popular, and his group gave GPT-style LLMs two…
 - [[harold-hotelling]] — He gave principal component analysis its modern, variance-maximizing formulation (1933) — the derivation that makes P…
 - [[hermann-schwarz]] — His half of the Cauchy–Schwarz inequality extends the angle/similarity bound to function spaces — the setting kernels…
+- [[jacob-devlin]] — first author of **BERT**, the famous *encoder-only* transformer that learns by filling in hidden words, and the go-to model famil…
+- [[jiawei-zhao]] — first author of **GaLore**, a way to pretrain big LLMs with much less GPU memory by squeezing the gradients down to a low rank.
+- [[jimmy-lei-ba]] — he is the first author of **Layer Normalization**, the layer that keeps every GPT-2 transformer block numerically steady, and a c…
 - [[johan-jensen]] — Jensen's inequality is the defining property of convex functions and appears throughout ML — from convex losses to th…
 - [[jorgen-pedersen-gram]] — The Gram–Schmidt process and the Gram matrix bear his name — orthonormalization and the kernel/covariance matrices ce…
 - [[joseph-louis-lagrange]] — His multipliers are the standard tool for optimizing under constraints — the foundation of SVM duals and constrained…
 - [[karl-pearson]] — He invented principal component analysis (1901) and much of the basic vocabulary of statistics — correlation, the sta…
+- [[long-ouyang]] — first author of the **InstructGPT** paper, the recipe that turned GPT-3 into a helpful instruction follower and became the method…
 - [[ludwig-otto-hesse]] — The matrix of second-order partial derivatives — the Hessian — is named after him; it encodes curvature and powers se…
 - [[niels-henrik-abel]] — His impossibility theorem explains why we *must* optimize numerically — there's no algebraic formula for the roots of…
+- [[nitish-srivastava]] — he is the first author of the 2014 **Dropout** paper. Dropout is the "randomly switch off some units while training" trick. GPT-s…
 - [[pierre-simon-laplace]] — his cofactor expansion is the textbook recursive way to compute determinants, and his broader work on probability and…
+- [[rico-sennrich]] — he brought **byte pair encoding (BPE)** into neural language processing, which is the tokenizer behind GPT-2, GPT-3 and the origi…
 - [[ronald-fisher]] — he formalized **maximum likelihood estimation**, the principle behind how most probabilistic ML models are trained.
+- [[sebastian-raschka]] — he wrote *Build a Large Language Model (From Scratch)*, the book that walks you through coding a GPT-style [[large-language-model…
 - [[thomas-bayes]] — His theorem turns a prior belief plus observed data into a posterior belief — the engine of probabilistic inference,…
+- [[tom-brown]] — first author of "Language Models are Few-Shot Learners" (2020), the GPT-3 paper — the 175-billion-parameter decoder-only model th…
+- [[tri-dao]] — creator of **FlashAttention**, the fast, memory-saving way to compute exactly the same attention, and co-author of the **Mamba**…
 - [[vladimir-vapnik]] — co-founder of **statistical learning theory** and the **support vector machine**, and the person who popularized **em…
 - [[werner-fenchel]] — He turned the Legendre transform into the general convex conjugate that works even for non-smooth losses — the modern…
 - [[william-of-occam]] — his namesake principle — prefer the simplest explanation that fits — is the guiding intuition of **model selection**.
+- [[yoshua-bengio]] — a founding figure of deep learning — co-author of the attention paper that led to transformers, of the first neural language mode…
+- [[zhengyan-shi]] — first author of "Instruction Tuning With Loss Over Instructions" (2024), the paper that showed you often should **not** mask the…
 
 ## 📄 Sources
-*One summary page per ingested chapter. 11 of 12 chapters (Ch.1 is motivation only).*
+*One summary page per ingested chapter. MML book: 11 chapters. LLM book (Raschka): 7 chapters + appendices A, D, E (B and C folded into each chapter page).*
 
+- [[llm-appA-introduction-to-pytorch]] — LLM App. A — Introduction to PyTorch
+- [[llm-appD-training-loop-bells-and-whistles]] — LLM App. D — Adding Bells and Whistles to the Training Loop
+- [[llm-appE-parameter-efficient-fine-tuning-with-lora]] — LLM App. E — Parameter-efficient fine-tuning with LoRA
+- [[llm-ch01-understanding-large-language-models]] — LLM Ch.1 — Understanding Large Language Models
+- [[llm-ch02-working-with-text-data]] — LLM Ch.2 — Working with Text Data
+- [[llm-ch03-coding-attention-mechanisms]] — LLM Ch.3 — Coding Attention Mechanisms
+- [[llm-ch04-implementing-a-gpt-model]] — LLM Ch.4 — Implementing a GPT Model from Scratch to Generate Text
+- [[llm-ch05-pretraining-on-unlabeled-data]] — LLM Ch.5 — Pretraining on Unlabeled Data
+- [[llm-ch06-fine-tuning-for-classification]] — LLM Ch.6 — Fine-tuning for Classification
+- [[llm-ch07-fine-tuning-to-follow-instructions]] — LLM Ch.7 — Fine-tuning to Follow Instructions
 - [[mml-ch02-linear-algebra]] — MML Ch.2 — Linear Algebra
 - [[mml-ch03-analytic-geometry]] — MML Ch. 3 — Analytic Geometry
 - [[mml-ch04-matrix-decompositions]] — MML Ch.4 — Matrix Decompositions
@@ -161,6 +378,7 @@ The catalog of everything in this wiki. Read this first when answering a query, 
 - [[mml-ch11-density-estimation-gaussian-mixture-models]] — MML Ch. 11 — Density Estimation with Gaussian Mixture Models
 - [[mml-ch12-classification-with-support-vector-machines]] — MML Ch. 12 — Classification with Support Vector Machines
 
+
 ---
 
-> At ~130 pages this index + `grep` is still adequate. If it grows much further, add a search tool (e.g. `qmd`).
+> At ~350 pages this index + `grep` is getting long. If it grows much further, add a search tool (e.g. `qmd`).

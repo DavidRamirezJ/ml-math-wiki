@@ -3,9 +3,9 @@ title: Overfitting and Underfitting
 type: concept
 tags: [machine-learning, generalization, model-fitting]
 difficulty: beginner
-sources: [mml-ch08-when-models-meet-data]
+sources: [mml-ch08-when-models-meet-data, llm-ch06-fine-tuning-for-classification]
 created: 2026-06-04
-updated: 2026-06-04
+updated: 2026-10-13
 ---
 
 # Overfitting and Underfitting
@@ -20,6 +20,10 @@ cats and horses dogs too — too simple to capture reality. **Overfitting:** you
 twelve dog photos you were shown, down to the background and lighting, so a *new* dog photo throws
 you off — too obsessed with the specific examples. The sweet spot **fits well**: complex enough to
 catch the real pattern, simple enough to handle new photos.
+
+**In LLMs.** When Raschka fine-tunes GPT-2 to spot spam, he sets aside some messages the model
+never trains on. If the model only memorized its practice messages, it would ace those and stumble
+on the held-out ones. Checking the held-out set is how you catch it.
 
 ## 🟡 Mechanics (Practitioner)
 Training fits a model class $M_{\boldsymbol\theta}$ to data drawn from an unknown true model $M^*$
@@ -45,6 +49,47 @@ underfit. A modest-degree polynomial → fits well.
 [[regularization]] / priors, more data, and detecting it via [[cross-validation]] (low train risk
 but high validation risk).
 
+### In LLMs (Raschka, *Build a LLM from Scratch*, Ch. 6)
+To *see* overfitting you need data the model never trained on. Before fine-tuning GPT-2 as a
+spam classifier, the book shuffles the 1,494 balanced messages and splits them **70 % / 10 % /
+20 %**, ratios it calls "common in machine learning to train, adjust, and evaluate models"
+(book p. 175):
+
+```python
+def random_split(df, train_frac, validation_frac):
+    df = df.sample(frac=1, random_state=123).reset_index(drop=True)  # shuffle
+    train_end = int(len(df) * train_frac)
+    validation_end = train_end + int(len(df) * validation_frac)
+    return df[:train_end], df[train_end:validation_end], df[validation_end:]
+train_df, validation_df, test_df = random_split(balanced_df, 0.7, 0.1)
+```
+
+The split points are
+$$t=\lfloor N f_{\text{train}}\rfloor,\qquad v=t+\lfloor N f_{\text{val}}\rfloor$$
+- $N$ = number of rows (1,494); $f_{\text{train}}=0.7$, $f_{\text{val}}=0.1$ = the fractions.
+- $\lfloor\cdot\rfloor$ = "round down to a whole number" (what `int()` does here).
+- Train = rows $0$ to $t-1$, validation = rows $t$ to $v-1$, test = the rest.
+
+With $N=1494$: $t=\lfloor1045.8\rfloor=1045$, $v=1045+\lfloor149.4\rfloor=1194$, so
+**1,045 / 149 / 300** messages (derived).
+
+- **Training set** — fits the weights; its loss is $R_{\text{emp}}(f,X_{\text{train}},\mathbf y_{\text{train}})$.
+- **Validation set** — the "adjust" set: compare its loss with the training loss to spot the
+  overfitting gap, and pick settings such as the number of epochs.
+- **Test set** — touched once at the end, for an honest estimate of $R_{\text{true}}(f)$.
+
+Later in the chapter the book reads overfitting off the loss plot the same way as the table
+above: a **noticeable gap between the training and validation losses**. In its 5-epoch run
+(5.65 minutes on an M3 MacBook Air, book p. 197) there was "little to no indication of
+overfitting; that is, there is no noticeable gap between the training and validation set losses"
+(Fig. 6.16, book p. 199), and the close train/validation accuracy curves (Fig. 6.17) say the same.
+Its epoch advice (sidebar "Choosing the number of epochs", book p. 199): five epochs is usually a
+good starting point; if the model overfits after the first few epochs, reduce the number of
+epochs; if the validation loss could still improve, increase it. Final accuracies are 97.21 %
+train, 97.32 % validation, 95.67 % test; the small train–test gap "suggests minimal overfitting"
+(book p. 200).
+See [[train-validation-test-split]] and [[training-and-validation-loss]].
+
 ## 🔴 Theory (Expert)
 - Overfitting is the empirical face of the **generalization gap** $R_{\text{true}}-R_{\text{emp}}$ in
   statistical learning theory: capacity (VC dimension, Rademacher complexity) bounds the gap, and an
@@ -56,12 +101,31 @@ but high validation risk).
 - [[bayesian-model-selection|Bayesian model selection]] handles it differently: the **marginal
   likelihood** marginalizes parameters out, so it is not prone to overfitting and embodies an
   automatic Occam's razor.
+- **Why a pretrained LLM barely overfits 1,045 examples.** A 124M-parameter model has vastly
+  more capacity than 1,045 labeled messages could pin down, which classical theory says should
+  overfit badly. Two things rescue it: (1) [[transfer-learning]] starts from pretrained weights,
+  and a few small gradient steps stay close to them — an implicit regularizer; (2) most layers are
+  frozen, so only the last transformer block, final LayerNorm and the 2-class
+  [[classification-head]] actually move (book p. 186). Effective capacity is far below the raw
+  parameter count.
+- **Reusing the validation set leaks.** Each decision made by looking at validation loss (epochs,
+  learning rate) fits the model a little to the validation set, so its score becomes optimistic.
+  That's why a separate, untouched test set is kept (70/10/20 in the book).
 
 ## Connections
 - Builds on: [[empirical-risk-minimization]], [[loss-function]]
-- Leads to: [[regularization]], [[cross-validation]], [[bayesian-model-selection]]
-- Used by: [[linear-regression]], every supervised method
+- Leads to: [[regularization]], [[cross-validation]], [[bayesian-model-selection]], [[train-validation-test-split]], [[training-and-validation-loss]]
+- Used by: [[linear-regression]], [[classification-fine-tuning]], [[text-classification]], every supervised method
 - People: —
+
+> **From [[llm-ch05-pretraining-on-unlabeled-data]]:** Ch. 5 shows overfitting on purpose. GPT-2 124M (about 124 million parameters) is trained for 10 epochs on one short story of 5,145 tokens. The training loss drops from 9.781 to **0.391**, while the validation loss stops at about **6.45** (book p. 149). Fig. 5.12 shows the two curves split after about epoch 2 (book p. 150). The text samples confirm it: at epoch 10 the model writes sentences from *The Verdict* word for word. The book's remedy is scale. Real pretraining uses much more data and often only about one epoch (book p. 151). See [[training-and-validation-loss]].
 
 ## Sources
 - `raw/mml-book.pdf` §8.2.3 & §8.3.3 (Figs. 8.7–8.8), printed pp. 262, 270–272 (PDF pp. 268, 276–278).
+- `raw/Build_a_Large_Language_Model_(From_Scrat.pdf` §6.2, book p. 175 (70/10/20 train/validation/test split, Listing 6.3); §6.5, book p. 186 (frozen layers); §6.7, book pp. 197–199 (5.65-min training run, overfitting as a train/validation loss gap, Figs. 6.16–6.17, epoch sidebar); §6.8, book p. 200 (final accuracies, minimal overfitting).
+
+## From llm-ch07-fine-tuning-to-follow-instructions
+- In [[instruction-fine-tuning]] the book trains GPT-2 medium for only **2 epochs**. The final losses are 0.300 (train) and 0.657 (validation). The gap between them is the overfitting signal from [[training-and-validation-loss]]. The book says more epochs are "not essential and may even be counterproductive as it could lead to increased overfitting" (§7.6, book p. 232).
+- §7.3 gives masking the instruction tokens as one way that "can help reduce overfitting" (book p. 222). The book's own Exercise 7.2 found that masking made the score about 4 points worse (App. C, book pp. 308–309). See [[instruction-masking]], [[llm-ch07-fine-tuning-to-follow-instructions]].
+- Source: `raw/Build_a_Large_Language_Model_(From_Scrat.pdf` §7.3, book p. 222; §7.6, book pp. 231–233 (Fig. 7.17).
+- `raw/Build_a_Large_Language_Model_(From_Scrat.pdf` §5.2, book pp. 149–151 (loss log, Fig. 5.12, memorized samples, one-epoch practice).

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vectors & Closure — Interactive Lesson</title>
+<script>
+  MathJax = { tex: { inlineMath: [['$', '$']], displayMath: [['$$','$$']] } };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" id="MathJax-script" async></script>
+<style>
+  :root { --bg:#0d1117; --panel:#161b22; --ink:#e6edf3; --muted:#8b949e;
+          --green:#3fb950; --yellow:#d29922; --red:#f85149; --blue:#58a6ff; --line:#30363d; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink);
+         font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+         line-height:1.6; padding:0 0 80px; }
+  header { padding:32px 24px 20px; border-bottom:1px solid var(--line);
+           background:linear-gradient(180deg,#161b22,#0d1117); }
+  h1 { margin:0 0 6px; font-size:26px; }
+  header p { margin:0; color:var(--muted); }
+  main { max-width:860px; margin:0 auto; padding:0 24px; }
+  section { background:var(--panel); border:1px solid var(--line); border-radius:12px;
+            padding:22px 24px; margin:24px 0; }
+  h2 { margin-top:0; font-size:19px; }
+  .tier { display:inline-block; font-size:12px; font-weight:700; padding:2px 9px;
+          border-radius:20px; margin-bottom:10px; }
+  .g{background:rgba(63,185,80,.15);color:var(--green)} .y{background:rgba(210,153,34,.15);color:var(--yellow)} .r{background:rgba(248,81,73,.15);color:var(--red)}
+  canvas { background:#0d1117; border:1px solid var(--line); border-radius:8px; display:block; }
+  .row { display:flex; gap:24px; flex-wrap:wrap; align-items:center; }
+  .controls label { display:block; margin:14px 0 4px; font-size:14px; color:var(--muted); }
+  input[type=range]{width:100%}
+  .val { color:var(--blue); font-weight:700; }
+  button { background:var(--blue); color:#0d1117; border:0; padding:9px 16px; border-radius:7px;
+           font-weight:700; cursor:pointer; font-size:14px; margin-top:14px; }
+  button.alt{background:var(--panel);color:var(--ink);border:1px solid var(--line)}
+  .pass{color:var(--green);font-weight:700}.fail{color:var(--red);font-weight:700}
+  table{border-collapse:collapse;width:100%;margin-top:8px;font-size:14px}
+  td,th{border:1px solid var(--line);padding:8px 10px;text-align:left}
+  th{color:var(--muted);font-weight:600}
+  code{background:#0d1117;padding:1px 6px;border-radius:5px;color:var(--yellow);font-size:13px}
+  .note{color:var(--muted);font-size:14px}
+  #log{font-family:ui-monospace,monospace;font-size:13px;background:#0d1117;border:1px solid var(--line);
+       border-radius:8px;padding:12px;margin-top:12px;max-height:160px;overflow:auto;white-space:pre-wrap}
+</style>
+</head>
+<body>
+<header>
+  <h1>Vectors &amp; Closure — Interactive Lesson</h1>
+  <p>The math now renders. Play with each panel — that's the point.</p>
+</header>
+<main>
+
+<section>
+  <span class="tier g">🟢 WHAT IS A VECTOR</span>
+  <h2>The two-question entrance exam</h2>
+  <p>A vector is <em>anything</em> that passes both tests — no matter what it looks like:</p>
+  <table>
+    <tr><th>Candidate</th><th>Add two &amp; stay valid?</th><th>Scale by a number &amp; stay valid?</th><th>Vector?</th></tr>
+    <tr><td><code>[1, 2, 3]</code></td><td class="pass">yes → [4,2,6]…</td><td class="pass">yes</td><td class="pass">✓</td></tr>
+    <tr><td>Polynomial $3x^2+2x+1$</td><td class="pass">yes → $4x^2+2x+6$</td><td class="pass">yes → $6x^2+4x+2$</td><td class="pass">✓</td></tr>
+    <tr><td>Audio clip</td><td class="pass">yes (mix them)</td><td class="pass">yes (volume)</td><td class="pass">✓</td></tr>
+    <tr><td>Phone number <code>555-0142</code></td><td class="fail">no → nonsense</td><td class="fail">no</td><td class="fail">✗</td></tr>
+  </table>
+  <p class="note">The property "operations keep you <strong>inside the club</strong>" is called <strong>closure</strong>.
+     Looks (arrow? list? sound?) are irrelevant — only the two operations matter.</p>
+</section>
+
+<section>
+  <span class="tier y">🟡 SEE ADD + SCALE (closure, live)</span>
+  <h2>Vector arithmetic on a 2-D plane</h2>
+  <p>Drag the sliders. $\mathbf{a}+\mathbf{b}$ (tip-to-tail) and $\lambda\mathbf{a}$ (stretch) are
+     <em>always</em> still arrows on this same plane — that's closure you can watch.</p>
+  <div class="row">
+    <canvas id="cv" width="380" height="380"></canvas>
+    <div class="controls" style="flex:1;min-width:240px">
+      <label>$\mathbf{a}$ x = <span class="val" id="ax_v">2</span></label><input id="ax" type="range" min="-5" max="5" step="0.5" value="2">
+      <label>$\mathbf{a}$ y = <span class="val" id="ay_v">1</span></label><input id="ay" type="range" min="-5" max="5" step="0.5" value="1">
+      <label>$\mathbf{b}$ x = <span class="val" id="bx_v">-1</span></label><input id="bx" type="range" min="-5" max="5" step="0.5" value="-1">
+      <label>$\mathbf{b}$ y = <span class="val" id="by_v">3</span></label><input id="by" type="range" min="-5" max="5" step="0.5" value="3">
+      <label>scale $\lambda$ = <span class="val" id="l_v">1.5</span></label><input id="l" type="range" min="-2" max="2" step="0.25" value="1.5">
+      <p class="note"><span style="color:#58a6ff">■</span> a &nbsp; <span style="color:#3fb950">■</span> b &nbsp;
+         <span style="color:#d29922">■</span> a+b &nbsp; <span style="color:#f85149">■</span> λa</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <span class="tier r">🔴 WHY ML NEEDS IT — the gradient-descent loop</span>
+  <h2>The update rule that renders now:</h2>
+  <p>$$\mathbf{w}_{\text{new}} \;=\; \mathbf{w}_{\text{old}} \;-\; \eta \,\nabla L$$</p>
+  <p class="note">Read it: take the current parameter vector $\mathbf{w}_{\text{old}}$, <strong>scale</strong>
+     the gradient $\nabla L$ by a small step $\eta$ (the learning rate), and <strong>subtract</strong> it.
+     That is <em>scale + add</em> — the two vector operations — done in a loop. Closure is what guarantees
+     $\mathbf{w}_{\text{new}}$ is still a usable parameter vector for the next step.</p>
+  <p>Below: a tiny loss bowl $L(w)=w^2$. Watch $w$ walk downhill. Each step is one application of the formula.</p>
+  <div class="row">
+    <canvas id="gd" width="380" height="260"></canvas>
+    <div class="controls" style="flex:1;min-width:240px">
+      <label>learning rate $\eta$ = <span class="val" id="eta_v">0.30</span></label>
+      <input id="eta" type="range" min="0.02" max="1.05" step="0.02" value="0.30">
+      <label>start $w$ = <span class="val" id="w0_v">4.0</span></label>
+      <input id="w0" type="range" min="-5" max="5" step="0.5" value="4">
+      <button id="step">Take one step ▶</button>
+      <button id="reset" class="alt">Reset</button>
+      <div id="log"></div>
+      <p class="note">Try $\eta$ small (crawls), medium (smooth), and &gt; 1.0 (overshoots &amp; blows up — the
+         "step too far" failure from the lesson).</p>
+    </div>
+  </div>
+</section>
+
+</main>
+<script>
+// ---------- Panel 2: vector add/scale ----------
+const cv=document.getElementById('cv'),cx=cv.getContext('2d');
+const S=34, OX=190, OY=190;            // scale px/unit, origin
+function P(x,y){return [OX+x*S, OY-y*S];}
+function arrow(x,y,col,w=2){const[ex,ey]=P(x,y);cx.strokeStyle=col;cx.fillStyle=col;cx.lineWidth=w;
+  cx.beginPath();cx.moveTo(OX,OY);cx.lineTo(ex,ey);cx.stroke();
+  const a=Math.atan2(ey-OY,ex-OX);cx.beginPath();
+  cx.moveTo(ex,ey);cx.lineTo(ex-10*Math.cos(a-.4),ey-10*Math.sin(a-.4));
+  cx.lineTo(ex-10*Math.cos(a+.4),ey-10*Math.sin(a+.4));cx.closePath();cx.fill();}
+function grid(){cx.clearRect(0,0,380,380);cx.strokeStyle='#21262d';cx.lineWidth=1;
+  for(let i=-5;i<=5;i++){let[a,b]=P(i,-5),[c,d]=P(i,5);cx.beginPath();cx.moveTo(a,b);cx.lineTo(c,d);cx.stroke();
+    [a,b]=P(-5,i);[c,d]=P(5,i);cx.beginPath();cx.moveTo(a,b);cx.lineTo(c,d);cx.stroke();}
+  cx.strokeStyle='#484f58';let[a,b]=P(-5,0),[c,d]=P(5,0);cx.beginPath();cx.moveTo(a,b);cx.lineTo(c,d);cx.stroke();
+  [a,b]=P(0,-5);[c,d]=P(0,5);cx.beginPath();cx.moveTo(a,b);cx.lineTo(c,d);cx.stroke();}
+function drawVecs(){grid();
+  const ax=+g('ax'),ay=+g('ay'),bx=+g('bx'),by=+g('by'),l=+g('l');
+  // a+b tip-to-tail guide
+  cx.setLineDash([4,4]);cx.strokeStyle='#6e7681';
+  let[s1,s2]=P(ax,ay),[s3,s4]=P(ax+bx,ay+by);cx.beginPath();cx.moveTo(s1,s2);cx.lineTo(s3,s4);cx.stroke();
+  cx.setLineDash([]);
+  arrow(l*ax,l*ay,'#f85149',2);          // λa
+  arrow(ax+bx,ay+by,'#d29922',3);        // a+b
+  arrow(ax,ay,'#58a6ff',2);              // a
+  arrow(bx,by,'#3fb950',2);              // b
+}
+function g(id){const v=document.getElementById(id).value;const lab=document.getElementById(id+'_v');if(lab)lab.textContent=(+v).toFixed( id==='l'?2:0 ).replace(/\.00$/,'');return v;}
+['ax','ay','bx','by','l'].forEach(id=>document.getElementById(id).addEventListener('input',drawVecs));
+drawVecs();
+
+// ---------- Panel 3: gradient descent on L(w)=w^2 ----------
+const gd=document.getElementById('gd'),gc=gd.getContext('2d');
+let w=4, hist=[];
+function gx(x){return 40+(x+5)*(300/10);}      // w in [-5,5] -> px
+function gy(y){return 240-y*(220/26);}          // loss in [0,26] -> px
+function drawGD(){
+  gc.clearRect(0,0,380,260);
+  gc.strokeStyle='#30363d';gc.beginPath();gc.moveTo(40,240);gc.lineTo(360,240);gc.stroke();
+  gc.beginPath();gc.moveTo(gx(0),20);gc.lineTo(gx(0),240);gc.stroke();
+  // bowl
+  gc.strokeStyle='#58a6ff';gc.lineWidth=2;gc.beginPath();
+  for(let xx=-5;xx<=5;xx+=0.1){const px=gx(xx),py=gy(Math.min(26,xx*xx));xx===-5?gc.moveTo(px,py):gc.lineTo(px,py);}
+  gc.stroke();
+  // current point
+  const py=gy(Math.min(26,w*w));
+  gc.fillStyle='#f85149';gc.beginPath();gc.arc(gx(w),py,6,0,7);gc.fill();
+  gc.fillStyle='#e6edf3';gc.font='12px monospace';
+  gc.fillText('w='+w.toFixed(2)+'  L='+(w*w).toFixed(2), gx(w)+10, py-8);
+}
+function logline(t){const el=document.getElementById('log');el.textContent+=t+"\n";el.scrollTop=el.scrollHeight;}
+document.getElementById('step').onclick=()=>{
+  const eta=+document.getElementById('eta').value;
+  const grad=2*w;                 // dL/dw for w^2
+  const wn=w-eta*grad;            // THE UPDATE: scale grad by eta, subtract
+  logline(`w_new = ${w.toFixed(3)} - ${eta}·(${grad.toFixed(2)}) = ${wn.toFixed(3)}`);
+  w=wn; drawGD();
+  if(Math.abs(w)>5.5) logline('  ⚠ blew up — η too big, overshot the valley');
+};
+document.getElementById('reset').onclick=()=>{w=+document.getElementById('w0').value;document.getElementById('log').textContent='';drawGD();};
+document.getElementById('eta').addEventListener('input',e=>document.getElementById('eta_v').textContent=(+e.target.value).toFixed(2));
+document.getElementById('w0').addEventListener('input',e=>{document.getElementById('w0_v').textContent=(+e.target.value).toFixed(1);w=+e.target.value;drawGD();});
+drawGD();
+</script>
+</body>
+</html>

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>¿Qué es un gradiente?</title>
+<script>
+MathJax = { tex: { inlineMath: [['\\(','\\)']], displayMath: [['$$','$$']] } };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+<style>
+  :root{
+    --bg:#0f1117; --card:#171a23; --ink:#e7e9ee; --dim:#9aa3b2;
+    --green:#4ade80; --yellow:#fbbf24; --red:#f87171; --accent:#60a5fa; --line:#262a36;
+  }
+  *{box-sizing:border-box}
+  body{margin:0; background:var(--bg); color:var(--ink);
+    font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    padding:40px 18px 80px;}
+  .wrap{max-width:760px; margin:0 auto}
+  h1{font-size:30px; line-height:1.2; margin:0 0 6px}
+  .sub{color:var(--dim); margin:0 0 28px; font-size:15px}
+  .one{background:linear-gradient(90deg,#1c2230,#171a23);
+    border-left:4px solid var(--accent); border-radius:8px;
+    padding:14px 18px; margin:0 0 30px; font-size:17px;}
+  .tier{background:var(--card); border:1px solid var(--line); border-radius:12px;
+    padding:20px 22px; margin:0 0 20px;}
+  .tier h2{margin:0 0 12px; font-size:19px; display:flex; align-items:center; gap:10px}
+  .badge{font-size:12px; font-weight:600; padding:3px 10px; border-radius:999px}
+  .badge.g{background:rgba(74,222,128,.12); color:var(--green)}
+  .badge.y{background:rgba(251,191,36,.12); color:var(--yellow)}
+  .badge.r{background:rgba(248,113,113,.12); color:var(--red)}
+  p{margin:0 0 14px}
+  .dim{color:var(--dim)}
+  code{background:#0b0d13; padding:2px 6px; border-radius:5px; font-size:14px; color:#cbd5e1}
+  ul{margin:0 0 6px; padding-left:20px} li{margin:6px 0}
+  .demo{background:var(--card); border:1px solid var(--line); border-radius:12px;
+    padding:18px; margin:0 0 22px;}
+  canvas{width:100%; height:auto; background:#0b0d13; border-radius:8px; display:block; cursor:crosshair}
+  .readout{font-variant-numeric:tabular-nums; font-size:13px; color:var(--dim); margin-top:10px}
+  .takeaway{border:1px dashed #3a4252; border-radius:12px; padding:16px 20px; margin-top:8px}
+  .takeaway h3{margin:0 0 10px; font-size:16px}
+  .src{color:var(--dim); font-size:13px; margin-top:26px; border-top:1px solid var(--line); padding-top:14px}
+  .src a{color:var(--accent); text-decoration:none}
+  b.g{color:var(--green)} b.y{color:var(--yellow)} b.r{color:var(--red)} b.a{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>¿Qué es un gradiente?</h1>
+  <p class="sub">Mini-lección · de tu wiki de matemáticas de ML (<code>wiki/concepts/gradient.md</code>) · fuente: <em>Mathematics for Machine Learning</em> §5.2</p>
+
+  <div class="one">
+    <strong>En una frase:</strong> el gradiente es la lista de todas las pendientes parciales de una función, agrupadas en un solo vector que <em>apunta hacia donde la función sube más rápido</em>.
+  </div>
+
+  <div class="tier">
+    <h2><span class="badge g">🟢 Intuición</span> La flecha cuesta arriba</h2>
+    <p>Imagina que estás parado en un terreno con colinas. Desde donde estás hay <em>una</em> dirección que es la más empinada hacia arriba. El <b class="g">gradiente</b> es una flecha que apunta exactamente hacia ahí, y su <em>longitud</em> te dice qué tan empinada es la subida.</p>
+    <p>¿Y qué tiene que ver con aprender? Entrenar un modelo es <b class="r">bajar</b> por un paisaje de error. Así que caminas en <em>sentido contrario</em> al gradiente: \(-\nabla f\). Esa única idea — "da un paso en contra del gradiente" — mueve casi todo el aprendizaje automático.</p>
+    <p class="dim">Es la pieza que el descenso de gradiente "siente bajo los pies": el gradiente le dice hacia dónde se inclina el suelo.</p>
+  </div>
+
+  <div class="demo">
+    <p style="margin:0 0 12px"><strong>Míralo.</strong> Mueve el ratón sobre el mapa de colinas. La flecha <b class="y">amarilla</b> es el gradiente — apunta cuesta arriba; cuanto más larga, más empinado. La flecha <b class="a">azul</b> es \(-\nabla f\): la dirección en que bajaría un modelo al entrenar.</p>
+    <canvas id="cv" width="720" height="380"></canvas>
+    <div id="ro" class="readout">Pasa el ratón por el mapa…</div>
+  </div>
+
+  <div class="tier">
+    <h2><span class="badge y">🟡 Mecánica</span> Una lista de pendientes</h2>
+    <p>Para una función \(f:\mathbb R^n\to\mathbb R\), el gradiente junta todas las <b>derivadas parciales</b> en un vector. Cada componente responde: "si muevo <em>solo</em> esta variable, ¿cuánto cambia \(f\)?"</p>
+    $$ \nabla f = \Big[\ \tfrac{\partial f}{\partial x_1}\ \ \tfrac{\partial f}{\partial x_2}\ \cdots\ \tfrac{\partial f}{\partial x_n}\ \Big] $$
+    <p><strong>Ejemplo.</strong> Si \(f(x_1,x_2)=x_1^2 x_2 + x_1 x_2^3\), derivas respecto a cada variable por separado:</p>
+    $$ \nabla f = \big[\,2x_1 x_2 + x_2^3\ \ \ \ x_1^2 + 3x_1 x_2^2\,\big] $$
+    <p class="dim">En ML: \(f\) es la <em>pérdida</em> (qué tan mal predice el modelo) y las variables son los <em>pesos</em>. El gradiente dice cómo ajustar cada peso para reducir el error — eso es <code>backpropagation</code>.</p>
+  </div>
+
+  <div class="tier">
+    <h2><span class="badge r">🔴 Teoría</span> La mejor aproximación lineal</h2>
+    <p>Cerca de un punto \(\mathbf x_0\), el gradiente es la <b>mejor aproximación lineal</b> de la función — el primer término de la serie de Taylor:</p>
+    $$ f(\mathbf x)\approx f(\mathbf x_0)+\nabla f(\mathbf x_0)\,(\mathbf x-\mathbf x_0) $$
+    <ul>
+      <li><b>Máxima pendiente:</b> entre todas las direcciones unitarias, \(\nabla f/\lVert\nabla f\rVert\) maximiza la derivada direccional. Por eso \(-\nabla f\) es la dirección de descenso más rápido.</li>
+      <li><b>Es un caso especial:</b> el gradiente de \(f:\mathbb R^n\to\mathbb R\) es una matriz \(1\times n\) — el caso \(m=1\) del <code>jacobiano</code>. Si \(f\) devuelve varios números, el gradiente se vuelve una matriz completa.</li>
+      <li>A gran escala estas derivadas no se calculan a mano: las automatiza la <code>diferenciación automática</code>.</li>
+    </ul>
+  </div>
+
+  <div class="tier takeaway">
+    <h3>Recapitulación en 30 segundos</h3>
+    <ul>
+      <li><b>Qué es:</b> un vector con todas las pendientes parciales de \(f\).</li>
+      <li><b>Hacia dónde apunta:</b> la subida más empinada; su largo = qué tan empinada.</li>
+      <li><b>Por qué importa:</b> entrenar = dar pasos en contra del gradiente (\(-\nabla f\)).</li>
+      <li><b>Pariente:</b> es la versión "una salida" del jacobiano; la segunda derivada es la <code>hessiana</code>.</li>
+    </ul>
+    <p class="dim" style="margin:10px 0 0">Siguiente en tu wiki: <code>partial-derivative</code> · <code>gradient-descent</code> · <code>jacobian</code> · <code>hessian</code>.</p>
+  </div>
+
+  <div class="src">
+    De <code>wiki/concepts/gradient.md</code> → <code>raw/mml-book.pdf</code> §5.2 (5.40), Ejemplo 5.11, pp. 146–148, 153–158.
+  </div>
+
+</div>
+
+<script>
+const cv=document.getElementById('cv'), ctx=cv.getContext('2d');
+const W=cv.width, H=cv.height;
+
+// A scalar field f(x,y): sum of a couple of bumps -> hilly terrain.
+function f(x,y){
+  return 1.4*Math.exp(-((x-0.35)**2+(y-0.4)**2)/0.08)
+       + 1.0*Math.exp(-((x-0.7)**2+(y-0.75)**2)/0.05)
+       + 0.8*Math.exp(-((x-0.2)**2+(y-0.8)**2)/0.06);
+}
+// numeric gradient
+function grad(x,y){ const h=1e-3;
+  return [ (f(x+h,y)-f(x-h,y))/(2*h), (f(x,y+h)-f(x,y-h))/(2*h) ];
+}
+
+// render heatmap once into an offscreen buffer
+const img=ctx.createImageData(W,H);
+let fmin=1e9,fmax=-1e9;
+for(let j=0;j<H;j++)for(let i=0;i<W;i++){const v=f(i/W,j/H); if(v<fmin)fmin=v; if(v>fmax)fmax=v;}
+for(let j=0;j<H;j++)for(let i=0;i<W;i++){
+  const v=(f(i/W,j/H)-fmin)/(fmax-fmin);
+  const idx=(j*W+i)*4;
+  // blue(low) -> teal -> yellow(high)
+  img.data[idx]   = Math.floor(20 + 235*Math.pow(v,1.2));
+  img.data[idx+1] = Math.floor(30 + 170*v);
+  img.data[idx+2] = Math.floor(60 + 90*(1-v));
+  img.data[idx+3] = 255;
+}
+function base(){ ctx.putImageData(img,0,0);
+  // contour-ish dots grid for texture
+}
+
+function arrow(x0,y0,dx,dy,color,wd){
+  const x1=x0+dx,y1=y0+dy;
+  ctx.strokeStyle=color; ctx.fillStyle=color; ctx.lineWidth=wd;
+  ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x1,y1); ctx.stroke();
+  const a=Math.atan2(y1-y0,x1-x0), s=9;
+  ctx.beginPath(); ctx.moveTo(x1,y1);
+  ctx.lineTo(x1-s*Math.cos(a-0.4),y1-s*Math.sin(a-0.4));
+  ctx.lineTo(x1-s*Math.cos(a+0.4),y1-s*Math.sin(a+0.4));
+  ctx.closePath(); ctx.fill();
+}
+
+const ro=document.getElementById('ro');
+base();
+
+cv.addEventListener('mousemove', e=>{
+  const r=cv.getBoundingClientRect();
+  const px=(e.clientX-r.left)/r.width, py=(e.clientY-r.top)/r.height;
+  base();
+  const g=grad(px,py);
+  const len=Math.hypot(g[0],g[1]);
+  const scale=70; // px per unit gradient, capped
+  let gx=g[0]*scale, gy=g[1]*scale;
+  const cap=120, m=Math.hypot(gx,gy); if(m>cap){gx*=cap/m; gy*=cap/m;}
+  const cx=px*W, cy=py*H;
+  // -grad (descent) in blue, faint
+  arrow(cx,cy,-gx,-gy,'rgba(96,165,250,.85)',2.5);
+  // +grad (uphill) in yellow, bold
+  arrow(cx,cy,gx,gy,'#fbbf24',3.5);
+  // point
+  ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(cx,cy,4,0,7); ctx.fill();
+  ro.innerHTML='∇f ≈ ['+g[0].toFixed(2)+', '+g[1].toFixed(2)+']  ·  pendiente |∇f| = '+len.toFixed(2)
+    +'  ·  <span style="color:#fbbf24">amarillo = sube</span> / <span style="color:#60a5fa">azul = baja (−∇f)</span>';
+});
+cv.addEventListener('mouseleave', ()=>{ base(); ro.textContent='Pasa el ratón por el mapa…'; });
+</script>
+</body>
+</html>

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SVD Step-by-Step Simulation</title>
+<script>
+  MathJax = { tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']] } };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+<style>
+  :root { --bg:#0d1117; --panel:#161b22; --ink:#e6edf3; --muted:#8b949e;
+          --green:#3fb950; --yellow:#d29922; --red:#f85149; --blue:#58a6ff; --line:#30363d; }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+       line-height:1.55;padding:0 0 60px}
+  header{padding:26px 24px 16px;border-bottom:1px solid var(--line);
+         background:linear-gradient(180deg,#161b22,#0d1117)}
+  h1{margin:0 0 4px;font-size:23px}
+  header p{margin:0;color:var(--muted);font-size:14px}
+  main{max-width:880px;margin:0 auto;padding:0 24px}
+  .stage{background:var(--panel);border:1px solid var(--line);border-radius:12px;
+         padding:18px 22px;margin:22px 0}
+  canvas{background:#0d1117;border:1px solid var(--line);border-radius:8px;display:block;margin:0 auto}
+  .controls{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:18px 0 6px}
+  button{background:var(--blue);color:#0d1117;border:0;padding:11px 18px;border-radius:8px;
+         font-weight:700;cursor:pointer;font-size:15px}
+  button.alt{background:var(--panel);color:var(--ink);border:1px solid var(--line)}
+  button:disabled{opacity:.4;cursor:not-allowed}
+  .stepbar{display:flex;gap:8px;justify-content:center;margin:14px 0}
+  .pill{flex:1;max-width:200px;text-align:center;padding:10px 6px;border-radius:9px;
+        border:1px solid var(--line);background:#0d1117;font-size:13px;font-weight:700;color:var(--muted);
+        transition:all .3s}
+  .pill.active{color:#0d1117}
+  .pill.s0.active{background:var(--muted);color:#0d1117}
+  .pill.s1.active{background:var(--blue)}
+  .pill.s2.active{background:var(--yellow)}
+  .pill.s3.active{background:var(--green)}
+  .explain{background:#0d1117;border-left:3px solid var(--blue);border-radius:0 8px 8px 0;
+           padding:12px 16px;margin:14px 0;min-height:64px;font-size:15px}
+  .explain b{color:var(--blue)}
+  code{background:#0d1117;padding:1px 6px;border-radius:5px;color:var(--yellow);font-size:13px}
+  .legend{display:flex;gap:18px;justify-content:center;font-size:13px;color:var(--muted);margin-top:8px;flex-wrap:wrap}
+  .legend span{display:flex;align-items:center;gap:6px}
+  .dot{width:11px;height:11px;border-radius:50%;display:inline-block}
+</style>
+</head>
+<body>
+<header>
+  <h1>SVD, one step at a time</h1>
+  <p>Watch a circle of vectors become a tilted ellipse: rotate → stretch → rotate. That's $A = U\Sigma V^\top$.</p>
+</header>
+<main>
+  <div class="stage">
+    <div class="stepbar">
+      <div class="pill s0 active" id="p0">Start: circle</div>
+      <div class="pill s1" id="p1">1. Vᵀ rotate</div>
+      <div class="pill s2" id="p2">2. Σ stretch</div>
+      <div class="pill s3" id="p3">3. U rotate</div>
+    </div>
+    <canvas id="cv" width="560" height="420"></canvas>
+    <div class="legend">
+      <span><span class="dot" style="background:#58a6ff"></span> first axis (σ₁ = 3)</span>
+      <span><span class="dot" style="background:#d29922"></span> second axis (σ₂ = 1.3)</span>
+      <span><span class="dot" style="background:#8b949e"></span> the shape (circle → ellipse)</span>
+    </div>
+    <div class="explain" id="explain">
+      <b>Start.</b> Here's a unit circle of input vectors — every direction, all length 1. The two
+      coloured arrows are reference axes we'll track. Press <b>Next step ▶</b> to apply A one piece at a time.
+    </div>
+    <div class="controls">
+      <button class="alt" id="back">◀ Back</button>
+      <button id="next">Next step ▶</button>
+      <button class="alt" id="auto">▶▶ Auto-play</button>
+      <button class="alt" id="reset">↻ Reset</button>
+    </div>
+  </div>
+
+  <div class="stage">
+    <b>What you're seeing.</b> The matrix being applied is
+    $$A = U\,\Sigma\,V^\top,\qquad \Sigma=\begin{pmatrix}3&0\\0&1.3\end{pmatrix}$$
+    <ul style="margin:10px 0;color:var(--muted);font-size:14px">
+      <li><b style="color:#58a6ff">Step 1 — Vᵀ rotate:</b> spin the circle so its hidden "natural axes" line up with x and y. A circle looks identical, but the arrows turn — that alignment is the whole point.</li>
+      <li><b style="color:#d29922">Step 2 — Σ stretch:</b> pull the x-axis by σ₁ = 3 and the y-axis by σ₂ = 1.3. Now it's a <i>flat</i>, axis-aligned ellipse. (This is the only step that changes size.)</li>
+      <li><b style="color:#3fb950">Step 3 — U rotate:</b> spin that flat ellipse to its final <i>tilted</i> angle. Done — that's exactly what A does.</li>
+    </ul>
+    <p style="color:var(--muted);font-size:14px;margin:0">Notice: stretch alone (step 2) can only make a flat ellipse. The two rotations are what let SVD tilt it — which is why <b>every</b> matrix needs all three pieces.</p>
+  </div>
+</main>
+
+<script>
+const cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+const W = cv.width, H = cv.height, cx = W/2, cy = H/2, scale = 55;
+
+// SVD pieces we'll demo
+const theta_V = -30 * Math.PI/180;   // Vᵀ rotation angle
+const s1 = 3, s2 = 1.3;              // singular values (stretch)
+const theta_U = 50 * Math.PI/180;    // U rotation angle
+
+function rot(a){ return [[Math.cos(a),-Math.sin(a)],[Math.sin(a),Math.cos(a)]]; }
+function mul(M,v){ return [M[0][0]*v[0]+M[0][1]*v[1], M[1][0]*v[0]+M[1][1]*v[1]]; }
+
+// step 0 start, then cumulative transforms
+const Vt = rot(theta_V);
+const U  = rot(theta_U);
+function stretch(v){ return [v[0]*s1, v[1]*s2]; }
+
+// transform a unit vector up to step k
+function applyTo(v, k, t){
+  // t = interpolation 0..1 within the step animation
+  let out = v.slice();
+  if(k>=1){ out = lerpRot(out, theta_V, k===1? t:1); }
+  if(k>=2){ out = lerpStretch(out, k===2? t:1); }
+  if(k>=3){ out = lerpRotU(out, k===3? t:1); }
+  return out;
+}
+function lerpRot(v,a,t){ return mul(rot(a*t), v); }
+function lerpStretch(v,t){ return [v[0]*(1+(s1-1)*t), v[1]*(1+(s2-1)*t)]; }
+function lerpRotU(v,t){ return mul(rot(theta_U*t), v); }
+
+// fully apply step1 then step2 then step3 with per-step progress
+function pointAt(v, step, t){
+  let out = v.slice();
+  out = mul(rot(theta_V * (step>1?1:(step===1?t:0))), out);
+  out = lerpStretch(out, step>2?1:(step===2?t:0));
+  out = mul(rot(theta_U * (step>3?1:(step===3?t:0))), out);
+  return out;
+}
+
+function toScreen(v){ return [cx + v[0]*scale, cy - v[1]*scale]; }
+
+function drawGrid(){
+  ctx.clearRect(0,0,W,H);
+  ctx.strokeStyle='#21262d'; ctx.lineWidth=1;
+  for(let i=-5;i<=5;i++){
+    ctx.beginPath(); ctx.moveTo(cx+i*scale,0); ctx.lineTo(cx+i*scale,H); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0,cy+i*scale); ctx.lineTo(W,cy+i*scale); ctx.stroke();
+  }
+  ctx.strokeStyle='#30363d'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(0,cy); ctx.lineTo(W,cy); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx,0); ctx.lineTo(cx,H); ctx.stroke();
+}
+
+function drawShape(step,t){
+  // the circle/ellipse outline
+  ctx.beginPath();
+  for(let i=0;i<=120;i++){
+    const a=i/120*2*Math.PI, v=[Math.cos(a),Math.sin(a)];
+    const p=toScreen(pointAt(v,step,t));
+    i===0?ctx.moveTo(p[0],p[1]):ctx.lineTo(p[0],p[1]);
+  }
+  ctx.closePath();
+  ctx.strokeStyle='#8b949e'; ctx.lineWidth=2.5; ctx.stroke();
+  ctx.fillStyle='rgba(139,148,158,.10)'; ctx.fill();
+}
+
+function arrow(v,color){
+  const o=toScreen([0,0]), p=toScreen(v);
+  ctx.strokeStyle=color; ctx.fillStyle=color; ctx.lineWidth=3;
+  ctx.beginPath(); ctx.moveTo(o[0],o[1]); ctx.lineTo(p[0],p[1]); ctx.stroke();
+  const ang=Math.atan2(p[1]-o[1],p[0]-o[0]), hl=11;
+  ctx.beginPath(); ctx.moveTo(p[0],p[1]);
+  ctx.lineTo(p[0]-hl*Math.cos(ang-0.4),p[1]-hl*Math.sin(ang-0.4));
+  ctx.lineTo(p[0]-hl*Math.cos(ang+0.4),p[1]-hl*Math.sin(ang+0.4));
+  ctx.closePath(); ctx.fill();
+}
+
+function render(step,t){
+  drawGrid();
+  drawShape(step,t);
+  // two reference axes that start as e1, e2
+  arrow(pointAt([1,0],step,t), '#58a6ff');
+  arrow(pointAt([0,1],step,t), '#d29922');
+}
+
+const texts = [
+  "<b>Start.</b> A unit circle of input vectors — every direction, all length 1. The blue & orange arrows are reference axes we'll track. Press <b>Next step ▶</b>.",
+  "<b>Step 1 — Vᵀ rotate (spin).</b> The arrows turned, but the shape is still a circle (a spun circle looks the same!). We've lined the hidden natural axes up with x and y. <i>Length unchanged, direction changed.</i>",
+  "<b>Step 2 — Σ stretch.</b> Now pull x by σ₁ = 3 and y by σ₂ = 1.3. The circle becomes a <b>flat, axis-aligned ellipse</b>. This is the only step that resizes anything. <i>Length changed, direction (of the axes) unchanged.</i>",
+  "<b>Step 3 — U rotate.</b> Spin the flat ellipse to its final <b>tilted</b> angle. This tilted ellipse is exactly what the matrix A does to a circle. <b>rotate → stretch → rotate = A.</b> ✅"
+];
+
+let step=0;
+function update(){
+  render(step,1);
+  for(let i=0;i<4;i++) document.getElementById('p'+i).classList.toggle('active', i===step);
+  document.getElementById('explain').innerHTML = texts[step];
+  document.getElementById('back').disabled = step===0;
+  document.getElementById('next').disabled = step===3;
+}
+
+function animateTo(target){
+  const start=step, dir=Math.sign(target-start);
+  if(dir===0){update();return;}
+  step=target;
+  let t=0; const dur=42;
+  // animate just the single step between start and target (assume adjacent)
+  const from = start<target? target : start;   // the step whose transform animates
+  let frame=0;
+  function tick(){
+    frame++; t=frame/dur;
+    if(t>=1){ update(); return; }
+    if(dir>0){ render(target, t); }
+    else { render(start, 1-t); }
+    for(let i=0;i<4;i++) document.getElementById('p'+i).classList.toggle('active', i===target);
+    requestAnimationFrame(tick);
+  }
+  tick();
+}
+
+document.getElementById('next').onclick = ()=>{ if(step<3) animateTo(step+1); };
+document.getElementById('back').onclick = ()=>{ if(step>0) animateTo(step-1); };
+document.getElementById('reset').onclick = ()=>{ step=0; update(); };
+let autoTimer=null;
+document.getElementById('auto').onclick = ()=>{
+  if(autoTimer){clearInterval(autoTimer);autoTimer=null;return;}
+  step=0; update();
+  autoTimer=setInterval(()=>{ if(step<3) animateTo(step+1); else {clearInterval(autoTimer);autoTimer=null;} }, 1300);
+};
+update();
+</script>
+</body>
+</html>

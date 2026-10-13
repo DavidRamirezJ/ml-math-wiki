@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Where does σ₁ come from?</title>
+<script>
+  MathJax = { tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']] } };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+<style>
+  :root { --bg:#0d1117; --panel:#161b22; --ink:#e6edf3; --muted:#8b949e;
+          --green:#3fb950; --yellow:#d29922; --red:#f85149; --blue:#58a6ff; --line:#30363d; }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+       line-height:1.55;padding:0 0 60px}
+  header{padding:26px 24px 16px;border-bottom:1px solid var(--line);
+         background:linear-gradient(180deg,#161b22,#0d1117)}
+  h1{margin:0 0 4px;font-size:23px}
+  header p{margin:0;color:var(--muted);font-size:14px}
+  main{max-width:900px;margin:0 auto;padding:0 24px}
+  .stage{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 22px;margin:22px 0}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+  @media(max-width:760px){.grid{grid-template-columns:1fr}}
+  canvas{background:#0d1117;border:1px solid var(--line);border-radius:8px;display:block;margin:0 auto}
+  h2{font-size:18px;margin:0 0 10px}
+  label{display:block;margin:12px 0 4px;font-size:14px;color:var(--muted)}
+  input[type=range]{width:100%}
+  .val{color:var(--blue);font-weight:700}
+  .matrix-in{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;max-width:200px;margin:6px 0}
+  .matrix-in input{background:#0d1117;border:1px solid var(--line);color:var(--ink);
+                   padding:8px;border-radius:6px;font-size:15px;text-align:center;width:100%}
+  .readout{background:#0d1117;border:1px solid var(--line);border-radius:8px;padding:14px;margin-top:12px;font-size:15px}
+  .big-sigma{font-size:20px;color:var(--blue);font-weight:800}
+  .big-sigma2{font-size:20px;color:var(--yellow);font-weight:800}
+  .step{border-left:3px solid var(--line);padding:6px 14px;margin:10px 0;color:var(--muted);font-size:14px}
+  .step.on{border-color:var(--blue);color:var(--ink)}
+  .legend{display:flex;gap:16px;justify-content:center;font-size:13px;color:var(--muted);margin-top:8px;flex-wrap:wrap}
+  .legend span{display:flex;align-items:center;gap:6px}
+  .dot{width:11px;height:11px;border-radius:50%;display:inline-block}
+  code{background:#0d1117;padding:1px 6px;border-radius:5px;color:var(--yellow);font-size:13px}
+  button{background:var(--blue);color:#0d1117;border:0;padding:9px 15px;border-radius:7px;font-weight:700;cursor:pointer;font-size:14px;margin:4px 4px 0 0}
+  button.alt{background:var(--panel);color:var(--ink);border:1px solid var(--line)}
+</style>
+</head>
+<body>
+<header>
+  <h1>Where does σ₁ actually come from?</h1>
+  <p>Two answers, same number: measure it off the ellipse, or compute it from $A^\top A$. Change A and watch.</p>
+</header>
+<main>
+
+<div class="stage">
+  <div class="grid">
+    <div>
+      <h2>1. The visual answer 👀</h2>
+      <p style="font-size:14px;color:var(--muted)">Apply A to the unit circle (gray). It becomes an ellipse (blue).
+      <b style="color:var(--ink)">σ₁ is just the length of the ellipse's longest radius.</b> σ₂ is the shortest. Literally measure them.</p>
+      <canvas id="cv" width="380" height="380"></canvas>
+      <div class="legend">
+        <span><span class="dot" style="background:#8b949e"></span> input circle (radius 1)</span>
+        <span><span class="dot" style="background:#58a6ff"></span> longest = σ₁</span>
+        <span><span class="dot" style="background:#d29922"></span> shortest = σ₂</span>
+      </div>
+    </div>
+    <div>
+      <h2>2. The formula answer 🧮</h2>
+      <p style="font-size:14px;color:var(--muted)">Pick a matrix A (try the arrows or type numbers):</p>
+      <div class="matrix-in">
+        <input id="a" type="number" step="0.5" value="3">
+        <input id="b" type="number" step="0.5" value="0">
+        <input id="c" type="number" step="0.5" value="1">
+        <input id="d" type="number" step="0.5" value="2">
+      </div>
+      <div>
+        <button class="alt" onclick="preset(3,0,0,1.3)">Pure stretch</button>
+        <button class="alt" onclick="preset(2,1,1,2)">Symmetric</button>
+        <button class="alt" onclick="preset(1,2,3,4)">Generic</button>
+      </div>
+
+      <div class="step on" id="st1"></div>
+      <div class="step on" id="st2"></div>
+      <div class="step on" id="st3"></div>
+
+      <div class="readout">
+        <div class="big-sigma" id="s1out"></div>
+        <div class="big-sigma2" id="s2out"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="stage">
+  <h2>So — what do you actually DO to get σ₁?</h2>
+  <p>Three steps. Both panels above show the same σ₁ — the visual length and the formula always agree:</p>
+  <ol style="color:var(--muted);font-size:15px;line-height:1.7">
+    <li>Form the matrix $A^\top A$ (multiply A's transpose by A). It's always square &amp; symmetric.</li>
+    <li>Find its <b>eigenvalues</b> $\lambda_1 \ge \lambda_2$ — the "natural stretch factors squared".</li>
+    <li>Take square roots: $\;\sigma_i = \sqrt{\lambda_i}$. The biggest is $\sigma_1$.</li>
+  </ol>
+  <p style="font-size:14px;color:var(--muted)">Why $A^\top A$ and a square root? Because stretching twice (once by $A^\top$, once by $A$)
+  squares the stretch factor — so you undo it with a square root. The longest radius of the ellipse
+  <i>is</i> $\sqrt{\lambda_1}$. Same number, two viewpoints.</p>
+</div>
+
+</main>
+
+<script>
+const cv=document.getElementById('cv'), ctx=cv.getContext('2d');
+const W=cv.width,H=cv.height,cx=W/2,cy=H/2,scale=42;
+const ins=['a','b','c','d'].map(id=>document.getElementById(id));
+function preset(a,b,c,d){ ins[0].value=a;ins[1].value=b;ins[2].value=c;ins[3].value=d; update(); }
+ins.forEach(i=>i.addEventListener('input',update));
+
+// 2x2 SVD via AtA eigenvalues
+function compute(a,b,c,d){
+  // A = [[a,b],[c,d]];  AtA = [[a*a+c*c, a*b+c*d],[a*b+c*d, b*b+d*d]]
+  const p=a*a+c*c, q=a*b+c*d, r=b*b+d*d;
+  const tr=p+r, det=p*r-q*q;
+  const disc=Math.sqrt(Math.max(0,tr*tr-4*det));
+  const l1=(tr+disc)/2, l2=(tr-disc)/2;
+  return {p,q,r,l1,l2,s1:Math.sqrt(Math.max(0,l1)),s2:Math.sqrt(Math.max(0,l2))};
+}
+
+function drawEllipse(a,b,c,d,res){
+  ctx.clearRect(0,0,W,H);
+  // grid
+  ctx.strokeStyle='#21262d';ctx.lineWidth=1;
+  for(let i=-4;i<=4;i++){ctx.beginPath();ctx.moveTo(cx+i*scale,0);ctx.lineTo(cx+i*scale,H);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(0,cy+i*scale);ctx.lineTo(W,cy+i*scale);ctx.stroke();}
+  ctx.strokeStyle='#30363d';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(W,cy);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx,H);ctx.stroke();
+  // input circle
+  ctx.beginPath();ctx.arc(cx,cy,scale,0,2*Math.PI);ctx.strokeStyle='#8b949e';ctx.lineWidth=1.5;ctx.setLineDash([4,4]);ctx.stroke();ctx.setLineDash([]);
+  // output ellipse: A applied to unit circle
+  ctx.beginPath();
+  let maxR=0,maxA=0,minR=1e9,minA=0;
+  for(let i=0;i<=160;i++){
+    const t=i/160*2*Math.PI, x=Math.cos(t),y=Math.sin(t);
+    const ox=a*x+b*y, oy=c*x+d*y;
+    const px=cx+ox*scale, py=cy-oy*scale;
+    i===0?ctx.moveTo(px,py):ctx.lineTo(px,py);
+    const R=Math.hypot(ox,oy);
+    if(R>maxR){maxR=R;maxA=Math.atan2(oy,ox);}
+    if(R<minR){minR=R;minA=Math.atan2(oy,ox);}
+  }
+  ctx.closePath();ctx.strokeStyle='#58a6ff';ctx.lineWidth=2.5;ctx.stroke();
+  ctx.fillStyle='rgba(88,166,255,.08)';ctx.fill();
+  // σ1 arrow (longest radius)
+  arrow(cx,cy,cx+Math.cos(maxA)*res.s1*scale, cy-Math.sin(maxA)*res.s1*scale,'#58a6ff');
+  // σ2 arrow (shortest radius)
+  arrow(cx,cy,cx+Math.cos(minA)*res.s2*scale, cy-Math.sin(minA)*res.s2*scale,'#d29922');
+}
+function arrow(x0,y0,x1,y1,col){
+  ctx.strokeStyle=col;ctx.fillStyle=col;ctx.lineWidth=3;
+  ctx.beginPath();ctx.moveTo(x0,y0);ctx.lineTo(x1,y1);ctx.stroke();
+  const ang=Math.atan2(y1-y0,x1-x0),hl=10;
+  ctx.beginPath();ctx.moveTo(x1,y1);
+  ctx.lineTo(x1-hl*Math.cos(ang-0.4),y1-hl*Math.sin(ang-0.4));
+  ctx.lineTo(x1-hl*Math.cos(ang+0.4),y1-hl*Math.sin(ang+0.4));
+  ctx.closePath();ctx.fill();
+}
+
+function fmt(x){return (Math.round(x*1000)/1000);}
+function update(){
+  const a=+ins[0].value,b=+ins[1].value,c=+ins[2].value,d=+ins[3].value;
+  const res=compute(a,b,c,d);
+  drawEllipse(a,b,c,d,res);
+  document.getElementById('st1').innerHTML=`<b>Step 1.</b> $A^\\top A = \\begin{pmatrix}${fmt(res.p)}&${fmt(res.q)}\\\\${fmt(res.q)}&${fmt(res.r)}\\end{pmatrix}$`;
+  document.getElementById('st2').innerHTML=`<b>Step 2.</b> eigenvalues: $\\lambda_1=${fmt(res.l1)},\\ \\lambda_2=${fmt(res.l2)}$`;
+  document.getElementById('st3').innerHTML=`<b>Step 3.</b> $\\sigma_i=\\sqrt{\\lambda_i}$`;
+  document.getElementById('s1out').innerHTML=`σ₁ = √${fmt(res.l1)} = <b>${fmt(res.s1)}</b>  ← longest radius`;
+  document.getElementById('s2out').innerHTML=`σ₂ = √${fmt(res.l2)} = <b>${fmt(res.s2)}</b>  ← shortest radius`;
+  if(window.MathJax&&MathJax.typesetPromise)MathJax.typesetPromise();
+}
+update();
+</script>
+</body>
+</html>

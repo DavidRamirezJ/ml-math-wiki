@@ -58,3 +58,30 @@ Recent activity: `grep "^## \[" log.md | tail -5`.
 - Tooling: pure Pillow (no ffmpeg/matplotlib available); 268 frames @ 90ms, 1040×560.
 - Files: generator `assets/matrix-multiply-anim.py` (reproducible) → `assets/matrix-multiply.gif`.
 - Filed back into the wiki: embedded in [[matrix]] under the 🟡 Mechanics tier.
+
+## [2026-06-11] query | 3-min lesson — the kernel trick (rendered HTML)
+Human asked to be taught something from the wiki for ~3 min. Drew from [[kernel-trick]] (§12.4).
+Built self-contained HTML artifact `kernel-trick-lesson.html` with MathJax-rendered formulas
+(three-tier 🟢🟡🔴 structure + "why it's free" + interactive quiz). No new wiki page created —
+the concept page already exists and is complete.
+
+## [2026-06-18] query | Atomic concepts — the irreducible foundations
+
+Human asked which "atomic" concepts underpin everything. Measured in-degree across `wiki/concepts/` to separate *popular* pages (PCA=30, matrix=25) from *atomic* foundations. Organized the true atoms into the four pillars (linear algebra, vector calculus, probability, optimization) and an 11-item ordered shortlist. Filed as the previously-pending `wiki/maps/learning-path.md`; updated index to mark it live.
+
+## [2026-10-13] query | MLP vs CNN
+Human asked the difference between an MLP and a CNN. Not covered by the MML book (flagged on the page).
+Built `explainers/2026-10-13_mlp-vs-cnn.html` (MathJax formulas with symbol-by-symbol translation, sliding-filter demo,
+Toeplitz-matrix view, parameter-count slider, quiz). Filed back as `wiki/maps/mlp-vs-cnn.md`; added to index.
+
+## [2026-10-13] ingest | Build a Large Language Model (From Scratch) — full book
+Source: `raw/Build_a_Large_Language_Model_(From_Scrat.pdf` (Raschka, Manning 2025, 370 pp.). Book page N = PDF page N+22.
+Method: multi-agent workflow (247 agents). Per chapter, one note-taker per section (50 chapter sections + A.1–A.9, D.1–D.4, E.1–E.4, plus App. B and C),
+each followed by an adversarial validator against the PDF text (66/69 section notes needed fixes). One consolidator deduped concepts across the book and
+against existing pages and assigned one owner per page. Pages were written in batches of 6, each batch validated against the book; then one source page
+and one coverage audit per unit. Staging text and notes: `.staging/llm-book/` (git-ignored).
+Result: 10 source pages (`llm-ch01`…`llm-ch07`, `llm-appA`, `llm-appD`, `llm-appE`; App. B references and App. C exercise solutions folded into each),
+182 new concept pages, 32 existing pages extended (no content removed), 23 new people pages. 22 mentioned-only terms were dropped by the consolidator.
+New map: [[llm-learning-path]]. Index rebuilt: 278 concepts, 48 people, 21 sources.
+Lint after ingest: all frontmatter valid, every concept page has all three tiers; only 4 dangling links remain (auto-encoder, gaussian-process, overview,
+convolutional-neural-network), all older TODO markers.

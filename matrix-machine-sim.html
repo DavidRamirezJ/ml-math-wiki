@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulación — Matriz como máquina (escalar + sumar columnas)</title>
+<style>
+  :root{
+    --bg:#0e1116; --panel:#161b22; --ink:#e6edf3; --dim:#8b949e;
+    --col1:#f0a93b; --col2:#3aa0ff; --col3:#7ee787; --out:#ff7b9c;
+    --grid:#30363d;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    padding:24px;line-height:1.5}
+  h1{font-size:20px;margin:0 0 4px}
+  .sub{color:var(--dim);font-size:13px;margin-bottom:20px}
+  .wrap{display:flex;flex-wrap:wrap;gap:28px;align-items:flex-start}
+  .panel{background:var(--panel);border:1px solid var(--grid);border-radius:12px;padding:18px}
+  .label{font-size:12px;color:var(--dim);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
+  /* matrix + vector cells */
+  table{border-collapse:separate;border-spacing:6px}
+  td{width:54px;height:46px;text-align:center;border-radius:8px;font-size:18px;
+     font-variant-numeric:tabular-nums;border:1px solid var(--grid);background:#0d1117}
+  input.cell{width:54px;height:46px;text-align:center;border-radius:8px;font-size:18px;
+     border:1px solid var(--grid);background:#0d1117;color:var(--ink);font-variant-numeric:tabular-nums}
+  input.cell:focus{outline:2px solid #4c8fff}
+  .col1{box-shadow:inset 0 0 0 2px var(--col1)}
+  .col2{box-shadow:inset 0 0 0 2px var(--col2)}
+  .col3{box-shadow:inset 0 0 0 2px var(--col3)}
+  .xc1{color:var(--col1);font-weight:700}
+  .xc2{color:var(--col2);font-weight:700}
+  .xc3{color:var(--col3);font-weight:700}
+  .outcell{box-shadow:inset 0 0 0 2px var(--out);font-weight:700}
+  .eq{font-size:30px;color:var(--dim);padding:0 6px}
+  .shape{margin-top:14px;font-size:14px}
+  .pill{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:600;margin:2px}
+  .pIn{background:rgba(58,160,255,.15);color:#9cd1ff;border:1px solid #2a6aa8}
+  .pOut{background:rgba(255,123,156,.15);color:#ffb3c6;border:1px solid #a8466a}
+  .work{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:15px;white-space:pre;
+    background:#0d1117;border:1px solid var(--grid);border-radius:10px;padding:16px;margin-top:6px;overflow-x:auto}
+  .controls{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+  button{background:#21262d;color:var(--ink);border:1px solid var(--grid);border-radius:8px;
+    padding:8px 14px;font-size:13px;cursor:pointer}
+  button:hover{border-color:#4c8fff}
+  button.active{background:#1f6feb;border-color:#1f6feb;color:#fff}
+  .legend{font-size:12px;color:var(--dim);margin-top:8px}
+  .machine{font-size:22px;font-weight:700;text-align:center;margin:8px 0}
+  .arrow{color:var(--dim)}
+  .note{font-size:13px;color:var(--dim);max-width:420px;margin-top:10px}
+  .big{font-size:15px;color:var(--ink)}
+</style>
+</head>
+<body>
+  <h1>La matriz es una máquina: escalar columnas, luego sumarlas</h1>
+  <div class="sub">Cambia los números si quieres. Mira cómo <b>columnas = lo que entra</b> y <b>filas = lo que sale</b>.</div>
+
+  <div class="controls">
+    <span class="label" style="align-self:center;margin:0">Ejemplos:</span>
+    <button data-shape="2x2" class="active">R² → R² (2×2)</button>
+    <button data-shape="3x2">R² → R³ (3×2)  ← la tuya</button>
+    <button data-shape="2x3">R³ → R² (2×3)</button>
+    <button data-shape="1x3">R³ → R¹ (1×3)</button>
+  </div>
+
+  <div class="wrap">
+    <div class="panel">
+      <div class="label">A · x = y</div>
+      <table><tbody id="grid"></tbody></table>
+      <div class="machine">
+        <span class="pill pIn" id="inPill">entra R²</span>
+        <span class="arrow">────►</span>
+        <span class="pill pOut" id="outPill">sale R²</span>
+      </div>
+      <div class="shape" id="shapeTxt"></div>
+      <div class="legend">
+        ⬛ columnas con borde de color = se escalan por la entrada del mismo color de x.<br>
+        ⬛ borde rosa = el resultado y.
+      </div>
+    </div>
+
+    <div class="panel" style="flex:1;min-width:320px">
+      <div class="label">La cuenta, paso a paso</div>
+      <div class="work" id="work"></div>
+      <div class="note" id="note"></div>
+    </div>
+  </div>
+
+<script>
+const C = ['col1','col2','col3'];
+const XC = ['xc1','xc2','xc3'];
+const COLNAMES = ['naranja','azul','verde'];
+
+let A, x; // A is array of rows; x is array
+
+const PRESETS = {
+  '2x2': {A:[[2,0],[1,3]], x:[4,5]},
+  '3x2': {A:[[1,0],[0,1],[1,1]], x:[4,5]},
+  '2x3': {A:[[1,0,1],[0,1,1]], x:[2,3,4]},
+  '1x3': {A:[[1,1,1]], x:[2,3,4]},
+};
+
+function load(shape){
+  const p = PRESETS[shape];
+  A = p.A.map(r=>r.slice());
+  x = p.x.slice();
+  render();
+  document.querySelectorAll('button[data-shape]').forEach(b=>
+     b.classList.toggle('active', b.dataset.shape===shape));
+}
+
+function rows(){return A.length;}
+function cols(){return A[0].length;}
+
+function render(){
+  const m=rows(), n=cols();
+  // build the grid: matrix (m x n) | x (n x 1) | = | y (m x 1)
+  const y = computeY();
+  const grid = document.getElementById('grid');
+  grid.innerHTML='';
+  for(let i=0;i<m;i++){
+    const tr=document.createElement('tr');
+    // matrix row
+    for(let j=0;j<n;j++){
+      const td=document.createElement('td');
+      const inp=document.createElement('input');
+      inp.className='cell '+C[j];
+      inp.value=A[i][j];
+      inp.addEventListener('input',e=>{A[i][j]=parseFloat(e.target.value)||0;render();});
+      td.appendChild(inp);
+      tr.appendChild(td);
+    }
+    // dot separator
+    const dot=document.createElement('td');
+    dot.style.border='none';dot.style.width='24px';
+    dot.innerHTML = i===Math.floor(m/2)?'<span class="eq">·</span>':'';
+    tr.appendChild(dot);
+    // x column (only first n rows hold x; but x has n entries, matrix has m rows)
+    const xtd=document.createElement('td');
+    if(i<n){
+      const inp=document.createElement('input');
+      inp.className='cell '+XC[i];
+      inp.value=x[i];
+      inp.addEventListener('input',e=>{x[i]=parseFloat(e.target.value)||0;render();});
+      xtd.appendChild(inp);
+    } else { xtd.style.border='none'; }
+    tr.appendChild(xtd);
+    // equals
+    const eq=document.createElement('td');
+    eq.style.border='none';eq.style.width='24px';
+    eq.innerHTML = i===Math.floor(m/2)?'<span class="eq">=</span>':'';
+    tr.appendChild(eq);
+    // y column
+    const ytd=document.createElement('td');
+    ytd.className='outcell';
+    ytd.textContent = round(y[i]);
+    tr.appendChild(ytd);
+    grid.appendChild(tr);
+  }
+  // pills + shape text
+  document.getElementById('inPill').textContent = 'entra R'+sup(n);
+  document.getElementById('outPill').textContent = 'sale R'+sup(m);
+  document.getElementById('shapeTxt').innerHTML =
+    `<span class="big">${m} filas × ${n} columnas</span><br>`+
+    `<span style="color:var(--col2)">${n} columnas → entran ${n} números</span><br>`+
+    `<span style="color:var(--out)">${m} filas → salen ${m} números</span>`;
+  renderWork(y);
+}
+
+function computeY(){
+  const m=rows(), n=cols();
+  const y=new Array(m).fill(0);
+  for(let i=0;i<m;i++) for(let j=0;j<n;j++) y[i]+=A[i][j]*x[j];
+  return y;
+}
+
+function renderWork(y){
+  const m=rows(), n=cols();
+  let s='A·x = escalar cada COLUMNA por su número de x, luego SUMAR:\n\n';
+  // build the scaled-columns expression
+  let parts=[];
+  for(let j=0;j<n;j++){
+    const colvals = A.map(r=>r[j]);
+    parts.push(`${x[j]}·[${colvals.join(', ')}]`);
+  }
+  s += parts.join('  +  ') + '\n\n';
+  // numeric per slot
+  for(let i=0;i<m;i++){
+    let terms=[];
+    for(let j=0;j<n;j++) terms.push(`${A[i][j]}·${x[j]}`);
+    s += `fila ${i+1}:  ${terms.join(' + ')}  =  ${round(y[i])}\n`;
+  }
+  s += `\nresultado y = [${y.map(round).join(', ')}]   (${m} números)`;
+  document.getElementById('work').textContent=s;
+
+  const n2=cols(), m2=rows();
+  document.getElementById('note').innerHTML =
+    `Fíjate: x tuvo que traer <b>${n2}</b> número(s) — uno por cada columna. `+
+    `Y el resultado salió con <b>${m2}</b> número(s) — uno por cada fila. `+
+    (n2===m2? 'Aquí entra y sale el mismo tamaño.' :
+      (m2>n2? 'Entró chico y salió más grande: la matriz <b>subió</b> la dimensión.' :
+              'Entró grande y salió más chico: la matriz <b>bajó</b> la dimensión.'));
+}
+
+function round(v){return Math.round(v*100)/100;}
+function sup(n){const map={'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};return String(n).split('').map(d=>map[d]).join('');}
+
+document.querySelectorAll('button[data-shape]').forEach(b=>
+  b.addEventListener('click',()=>load(b.dataset.shape)));
+
+load('2x2');
+</script>
+</body>
+</html>

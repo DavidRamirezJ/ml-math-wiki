@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Kernel Trick — a 3-minute lesson</title>
+<script>
+MathJax = { tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']] }, svg: { fontCache: 'global' } };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<style>
+  :root{
+    --bg:#0f1117; --card:#171a22; --ink:#e8eaf0; --muted:#9aa3b2;
+    --green:#3fb950; --yellow:#d9a441; --red:#f06b6b; --accent:#6ea8fe;
+    --line:#262b36;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font:17px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    padding:48px 20px 100px;
+  }
+  .wrap{max-width:760px;margin:0 auto}
+  .kicker{color:var(--accent);font-weight:600;letter-spacing:.08em;text-transform:uppercase;font-size:13px}
+  h1{font-size:40px;line-height:1.1;margin:8px 0 6px}
+  .sub{color:var(--muted);font-size:18px;margin:0 0 8px}
+  .timer{color:var(--muted);font-size:14px;border:1px solid var(--line);display:inline-block;padding:3px 10px;border-radius:20px;margin-bottom:32px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 26px;margin:22px 0}
+  .tier{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;margin-bottom:6px}
+  .g{color:var(--green)} .y{color:var(--yellow)} .r{color:var(--red)}
+  .dot{width:11px;height:11px;border-radius:50%;display:inline-block}
+  .dg{background:var(--green)} .dy{background:var(--yellow)} .dr{background:var(--red)}
+  h2{font-size:22px;margin:4px 0 10px}
+  p{margin:12px 0}
+  .muted{color:var(--muted)}
+  .big{font-size:19px}
+  code{background:#0b0d12;padding:2px 6px;border-radius:5px;font-size:.9em;color:#cbd3e1}
+  .kbox{background:#0b0d12;border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin:14px 0}
+  .kbox b{color:var(--accent)}
+  .takeaway{border-left:3px solid var(--accent);padding:8px 0 8px 18px;margin:18px 0;font-size:18px}
+  .quiz{background:linear-gradient(180deg,#1a1f2b,#171a22);border:1px solid var(--line)}
+  .quiz button{display:block;width:100%;text-align:left;background:#0b0d12;color:var(--ink);
+    border:1px solid var(--line);border-radius:9px;padding:13px 16px;margin:9px 0;font-size:16px;cursor:pointer;transition:.15s}
+  .quiz button:hover{border-color:var(--accent)}
+  .quiz button.right{border-color:var(--green);background:#142016}
+  .quiz button.wrong{border-color:var(--red);background:#201416}
+  .verdict{margin-top:12px;font-size:15px;min-height:22px}
+  .footer{color:var(--muted);font-size:13px;margin-top:40px;border-top:1px solid var(--line);padding-top:16px}
+  .footer a{color:var(--accent);text-decoration:none}
+  svg text{font-family:inherit}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="kicker">ML Math Wiki · Concept</div>
+  <h1>The Kernel Trick</h1>
+  <p class="sub">How a straight-line classifier learns to draw curves — for free.</p>
+  <div class="timer">⏱ ~3 minute read · difficulty: advanced</div>
+
+  <!-- GREEN -->
+  <div class="card">
+    <div class="tier g"><span class="dot dg"></span>🟢 Intuition</div>
+    <p class="big">Picture dots arranged in a <b>bullseye</b>: one color in the center, the other in a ring around it. No straight line can separate them — the boundary you want is a circle.</p>
+    <p>But here's the move. <b>Lift the dots onto a hill</b> — push the center ones <i>up</i> out of the page. Now a flat sheet, held at the right height, slices cleanly between the raised center and the low-lying ring. Project that flat cut back down to the page and it becomes… a circle.</p>
+    <p class="muted">The kernel trick does this lifting <b>without ever building the hill.</b> It uses a shortcut formula that returns <i>how similar two points would be after lifting</i> — and that turns out to be all a classifier ever needs.</p>
+  </div>
+
+  <div class="takeaway">A linear method + a similarity shortcut = curved decision boundaries, with the expensive "lifting" never actually computed.</div>
+
+  <!-- YELLOW -->
+  <div class="card">
+    <div class="tier y"><span class="dot dy"></span>🟡 Mechanics</div>
+    <p>The key observation: the <b>dual SVM</b> touches your data <b>only through inner products</b> $\langle x_i, x_j\rangle$ — never the raw coordinates alone. So wherever you see an inner product, swap in a <b>kernel</b>:</p>
+    $$ k(x_i,x_j) \;=\; \langle\, \phi(x_i),\, \phi(x_j)\,\rangle_{\mathcal H} $$
+    <p>Here $\phi:\mathcal X \to \mathcal H$ is a (possibly nonlinear, possibly <i>infinite-dimensional</i>) map into a feature space $\mathcal H$. <b>You never compute $\phi$.</b> You only ever evaluate $k$. The dual objective becomes:</p>
+    $$ \min_{\alpha}\ \tfrac12\sum_{i,j} y_i y_j\,\alpha_i\alpha_j\, k(x_i,x_j) \;-\; \sum_i \alpha_i,\quad \text{s.t. } \sum_i y_i\alpha_i = 0,\ 0\le\alpha_i\le C $$
+    <p>and a new point is classified by $\;f(x)=\sum_{n\in SV}\alpha_n y_n\, k(x_n,x) + b$.</p>
+
+    <div class="kbox">
+      <p style="margin:4px 0"><b>The kernels you'll actually use</b> (for $x\in\mathbb R^D$):</p>
+      <p style="margin:6px 0">• <b>Linear:</b> $k(x,x')=\langle x,x'\rangle$ — the plain SVM.</p>
+      <p style="margin:6px 0">• <b>Polynomial:</b> $k(x,x')=(\langle x,x'\rangle + c)^d$ — boundaries that are degree-$d$ curves.</p>
+      <p style="margin:6px 0">• <b>Gaussian RBF:</b> $k(x,x')=\exp(-\gamma\|x-x'\|^2)$ — its feature space is <b>infinite-dimensional</b>, yet each evaluation is one line of arithmetic.</p>
+    </div>
+    <p class="muted">Stack all pairwise values into the <b>Gram matrix</b> $K_{ij}=k(x_i,x_j)$. For $k$ to be a legal kernel, $K$ must be symmetric <b>positive semidefinite</b>: $z^\top K z \ge 0$ for every $z$.</p>
+  </div>
+
+  <!-- RED -->
+  <div class="card">
+    <div class="tier r"><span class="dot dr"></span>🔴 Theory</div>
+    <p>A function $k:\mathcal X\times\mathcal X\to\mathbb R$ <b>is a kernel iff</b> it is symmetric and positive semidefinite. Equivalently (Mercer / Moore–Aronszajn), there <i>exists</i> a Hilbert space and a feature map with $k(x,x')=\langle\phi(x),\phi(x')\rangle$ — you're guaranteed the hill exists even though you never build it.</p>
+    <p>Every kernel has a unique <b>reproducing-kernel Hilbert space (RKHS)</b> (Aronszajn, 1950), with canonical feature map $\phi(x)=k(\cdot,x)$ and the reproducing property $\langle f,\,k(\cdot,x)\rangle = f(x)$.</p>
+    <p class="muted"><b>The hidden bonus:</b> $\mathcal X$ need not be $\mathbb R^D$ at all. Kernels are defined on strings, graphs, sets, even probability distributions — so an SVM can classify non-vector data. And the same trick powers kernel PCA, Gaussian processes, and kernel ridge regression: <i>any</i> algorithm written purely in inner products inherits it.</p>
+    <p class="muted" style="font-size:14px">⚠ Don't confuse this "kernel" (RKHS) with the linear-algebra <i>kernel = null space</i>, or the <i>smoothing kernel</i> in kernel density estimation. Three different "kernels."</p>
+  </div>
+
+  <!-- WHY IT'S CHEAP -->
+  <div class="card">
+    <h2>Why "for free" is literally true</h2>
+    <p>Take the polynomial kernel with $d=2$ on 2-D points. Expanding $\phi$ explicitly gives terms $x_1^2, x_2^2, x_1x_2, x_1, x_2, 1$ — and for high $D$ or $d$ the number of terms explodes combinatorially. For the RBF kernel, $\phi$ has <b>infinitely</b> many terms. You could never write them down.</p>
+    <p>Yet computing $k(x,x')$ is just $(\langle x,x'\rangle+c)^2$ or $\exp(-\gamma\|x-x'\|^2)$ — a handful of multiplications. <b>The trick replaces an impossible computation with a trivial one</b>, and the math guarantees the answer is identical.</p>
+  </div>
+
+  <!-- QUIZ -->
+  <div class="card quiz">
+    <h2>Quick check</h2>
+    <p>Why can the SVM use the kernel trick at all, when most algorithms can't?</p>
+    <button onclick="mark(this,false)">Because the SVM stores all the lifted feature vectors $\phi(x_i)$ in memory.</button>
+    <button onclick="mark(this,true)">Because the dual SVM uses the training data <i>only</i> through inner products — so swapping $\langle\cdot,\cdot\rangle$ for $k(\cdot,\cdot)$ changes nothing else.</button>
+    <button onclick="mark(this,false)">Because the RBF kernel's feature space is infinite, which makes any boundary linear.</button>
+    <div class="verdict" id="v"></div>
+  </div>
+
+  <div class="footer">
+    Source: <code>raw/mml-book.pdf</code> §12.4 (Eqs. 12.52–12.53), pp. 388–390 ·
+    Wiki page: <b>kernel-trick.md</b> · builds on <i>inner-product</i>, <i>dual-support-vector-machine</i>, <i>symmetric-positive-definite-matrix</i>.
+  </div>
+
+</div>
+
+<script>
+function mark(btn, ok){
+  document.querySelectorAll('.quiz button').forEach(b=>b.disabled=true);
+  btn.classList.add(ok?'right':'wrong');
+  const v=document.getElementById('v');
+  if(ok){ v.style.color='#3fb950'; v.innerHTML='✓ Exactly. Inner-products-only is the whole hinge. Any algorithm with that property — PCA, GPs, ridge regression — gets curved/nonlinear power the same way.'; }
+  else { v.style.color='#f06b6b'; v.innerHTML='✗ Not quite — the point of the trick is that $\\phi$ is <b>never</b> formed (it may be infinite-dimensional). Try again on the inner-product idea.';
+         document.querySelectorAll('.quiz button').forEach(b=>b.disabled=false); btn.disabled=true; }
+  if(window.MathJax) MathJax.typesetPromise([v]);
+}
+</script>
+</body>
+</html>

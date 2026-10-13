@@ -7,7 +7,7 @@ sources: [mml-ch06-probability-and-distributions]
 created: 2026-06-04
 updated: 2026-06-04
 ---
-
+s
 # Sufficient Statistics
 
 > **One-liner:** A sufficient statistic is a summary of your data that captures everything the data can tell you about an unknown parameter — so you can throw the raw data away.

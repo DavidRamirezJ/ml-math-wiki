@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3-Minute Lesson — Eigenvalues & Eigenvectors</title>
+<script>
+MathJax = { tex: { inlineMath: [['\\(','\\)']], displayMath: [['$$','$$']] } };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+<style>
+  :root{
+    --bg:#0f1117; --card:#171a23; --ink:#e7e9ee; --dim:#9aa3b2;
+    --green:#4ade80; --yellow:#fbbf24; --red:#f87171; --accent:#60a5fa; --line:#262a36;
+  }
+  *{box-sizing:border-box}
+  body{margin:0; background:var(--bg); color:var(--ink);
+    font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    padding:40px 18px 80px;}
+  .wrap{max-width:760px; margin:0 auto}
+  h1{font-size:30px; line-height:1.2; margin:0 0 6px}
+  .sub{color:var(--dim); margin:0 0 28px; font-size:15px}
+  .one{background:linear-gradient(90deg,#1c2230,#171a23);
+    border-left:4px solid var(--accent); border-radius:8px;
+    padding:14px 18px; margin:0 0 30px; font-size:17px;}
+  .tier{background:var(--card); border:1px solid var(--line); border-radius:12px;
+    padding:20px 22px; margin:0 0 20px;}
+  .tier h2{margin:0 0 12px; font-size:19px; display:flex; align-items:center; gap:10px}
+  .badge{font-size:12px; font-weight:600; padding:3px 10px; border-radius:999px}
+  .badge.g{background:rgba(74,222,128,.12); color:var(--green)}
+  .badge.y{background:rgba(251,191,36,.12); color:var(--yellow)}
+  .badge.r{background:rgba(248,113,113,.12); color:var(--red)}
+  p{margin:0 0 14px}
+  .dim{color:var(--dim)}
+  code{background:#0b0d13; padding:2px 6px; border-radius:5px; font-size:14px; color:#cbd5e1}
+  ul{margin:0 0 6px; padding-left:20px} li{margin:6px 0}
+  .demo{background:var(--card); border:1px solid var(--line); border-radius:12px;
+    padding:18px; margin:0 0 22px;}
+  canvas{width:100%; height:auto; background:#0b0d13; border-radius:8px; display:block; cursor:crosshair}
+  .readout{font-variant-numeric:tabular-nums; font-size:13px; color:var(--dim); margin-top:10px; line-height:1.5}
+  .takeaway{border:1px dashed #3a4252; border-radius:12px; padding:16px 20px; margin-top:8px}
+  .takeaway h3{margin:0 0 10px; font-size:16px}
+  .src{color:var(--dim); font-size:13px; margin-top:26px; border-top:1px solid var(--line); padding-top:14px}
+  b.g{color:var(--green)} b.y{color:var(--yellow)} b.r{color:var(--red)} b.a{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Eigenvalues &amp; Eigenvectors</h1>
+  <p class="sub">A 3-minute lesson · from your ML-math wiki (<code>wiki/concepts/eigenvalues-and-eigenvectors.md</code>) · source: <em>Mathematics for Machine Learning</em> §4.2</p>
+
+  <div class="one">
+    <strong>One-liner:</strong> an eigenvector is a special direction a matrix only <em>stretches or shrinks</em> (never knocks off its line), and its eigenvalue is the stretch factor.
+  </div>
+
+  <div class="tier">
+    <h2><span class="badge g">🟢 Intuition</span> The matrix's "magic directions"</h2>
+    <p>A <b>matrix</b> usually does something messy to a vector: it rotates, shears, and stretches all at once. But almost every matrix has a few <em>magic directions</em> where the effect is boring — the vector just gets longer or shorter while still pointing along the same line.</p>
+    <p>Those directions are the <b class="y">eigenvectors</b>; the amount of stretch is the <b class="g">eigenvalue</b> (<em>eigen</em> = German for "own / characteristic"). If λ = 2 that direction doubles; λ = 0.5 halves it; λ &lt; 0 flips it; λ = 0 crushes it to nothing.</p>
+  </div>
+
+  <div class="demo">
+    <p style="margin:0 0 12px"><strong>See it.</strong> The <b class="a">blue</b> arrow is a vector <code>x</code> you drag. The <b class="r">red</b> arrow is <code>Ax</code> — what the matrix does to it. On most directions they point differently; rotate <code>x</code> until red and blue line up — that's an <b class="y">eigenvector</b>, and the length ratio is its eigenvalue.</p>
+    <canvas id="cv" width="720" height="420"></canvas>
+    <div id="ro" class="readout">Drag the blue arrow…</div>
+  </div>
+
+  <div class="tier">
+    <h2><span class="badge y">🟡 Mechanics</span> The eigenvalue equation</h2>
+    <p>For a square matrix \(A\in\mathbb R^{n\times n}\), a scalar \(\lambda\) and nonzero vector \(\mathbf x\) are an eigenvalue / eigenvector pair when:</p>
+    $$ A\mathbf x = \lambda\mathbf x $$
+    <p><strong>How to find them:</strong></p>
+    <ul>
+      <li><b>Eigenvalues:</b> solve \(\det(A-\lambda I)=0\) — the roots of the <em>characteristic polynomial</em>.</li>
+      <li><b>Eigenvectors:</b> for each \(\lambda\), solve \((A-\lambda I)\mathbf x=\mathbf 0\).</li>
+    </ul>
+    <p><strong>Worked example.</strong> The demo above uses \(A=\begin{pmatrix}4&2\\1&3\end{pmatrix}\). Its characteristic polynomial factors as \((\lambda-2)(\lambda-5)\), so:</p>
+    $$ \lambda_1=5,\ \mathbf x_1=\begin{pmatrix}2\\1\end{pmatrix}\qquad \lambda_2=2,\ \mathbf x_2=\begin{pmatrix}1\\-1\end{pmatrix} $$
+    <p class="dim">Two free clues: \(\det A=\prod_i\lambda_i\) (here \(10=5\cdot2\)) and \(\operatorname{tr}A=\sum_i\lambda_i\) (here \(7=5+2\)).</p>
+  </div>
+
+  <div class="tier">
+    <h2><span class="badge r">🔴 Theory</span> Why ML cares</h2>
+    <ul>
+      <li><b>Basis-invariant fingerprint.</b> Similar matrices share eigenvalues, so the spectrum describes the underlying <em>linear map</em>, not the coordinates you happened to pick.</li>
+      <li><b>Diagonalization.</b> Eigenvectors of \(n\) distinct eigenvalues are linearly independent → they form a basis, and \(A\) becomes a pure stretch in those coordinates (the <code>eigendecomposition</code>). A <em>defective</em> matrix with too few eigenvectors can't be diagonalized.</li>
+      <li><b>Symmetric case.</b> Any symmetric \(A\) has an <em>orthonormal</em> eigenbasis with real eigenvalues (the <em>spectral theorem</em>) — and \(A^\top A\) is always symmetric positive semidefinite, the foundation of the <code>SVD</code>.</li>
+    </ul>
+    <p><strong>Where it shows up:</strong> the principal directions in <code>PCA</code> are eigenvectors of the covariance matrix; Google's <b>PageRank</b> is the dominant eigenvector of a transition matrix; the eigenvalues of the <b>Hessian</b> tell you whether an optimization landscape curves up (min), down (max), or is a saddle.</p>
+  </div>
+
+  <div class="tier takeaway">
+    <h3>The 30-second recap</h3>
+    <ul>
+      <li><b>What:</b> directions where \(A\mathbf x=\lambda\mathbf x\) — matrix acts as pure scaling.</li>
+      <li><b>Find:</b> eigenvalues from \(\det(A-\lambda I)=0\), eigenvectors from the null space.</li>
+      <li><b>Shortcut:</b> eigenvalues sum to the trace, multiply to the determinant.</li>
+      <li><b>Why it matters:</b> the engine under PCA, SVD, PageRank, and Hessian/stability analysis.</li>
+    </ul>
+    <p class="dim" style="margin:10px 0 0">Next in your wiki: <code>eigendecomposition</code> · <code>spectral-theorem</code> · <code>singular-value-decomposition</code> · <code>principal-component-analysis</code>.</p>
+  </div>
+
+  <div class="src">
+    From <code>wiki/concepts/eigenvalues-and-eigenvectors.md</code> → <code>raw/mml-book.pdf</code> §4.2 (Defs 4.6–4.13, Examples 4.4–4.9), pp. 105–114.
+  </div>
+
+</div>
+
+<script>
+const cv=document.getElementById('cv'), ctx=cv.getContext('2d');
+const W=cv.width, H=cv.height, cx=W/2, cy=H/2, U=70; // U px per unit
+// matrix A = [[4,2],[1,3]]
+const A=[[4,2],[1,3]];
+function mul(v){ return [A[0][0]*v[0]+A[0][1]*v[1], A[1][0]*v[0]+A[1][1]*v[1]]; }
+// eigenvectors (normalized): [2,1]/√5 (λ5), [1,-1]/√2 (λ2)
+const E=[ {v:[2/Math.sqrt(5),1/Math.sqrt(5)],lam:5}, {v:[1/Math.sqrt(2),-1/Math.sqrt(2)],lam:2} ];
+
+let x=[1.4,1.4]; // user vector (data units)
+
+function toPx(v){ return [cx+v[0]*U, cy-v[1]*U]; }
+function arrow(v,color,wd,scaleClamp){
+  let vv=v;
+  const p=toPx(vv);
+  ctx.strokeStyle=color; ctx.fillStyle=color; ctx.lineWidth=wd;
+  ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(p[0],p[1]); ctx.stroke();
+  const a=Math.atan2(p[1]-cy,p[0]-cx), s=11;
+  ctx.beginPath(); ctx.moveTo(p[0],p[1]);
+  ctx.lineTo(p[0]-s*Math.cos(a-0.4),p[1]-s*Math.sin(a-0.4));
+  ctx.lineTo(p[0]-s*Math.cos(a+0.4),p[1]-s*Math.sin(a+0.4));
+  ctx.closePath(); ctx.fill();
+}
+function draw(){
+  ctx.clearRect(0,0,W,H);
+  // grid
+  ctx.strokeStyle='#1a1f2b'; ctx.lineWidth=1;
+  for(let gx=-5;gx<=5;gx++){ ctx.beginPath(); ctx.moveTo(cx+gx*U,0); ctx.lineTo(cx+gx*U,H); ctx.stroke(); }
+  for(let gy=-3;gy<=3;gy++){ ctx.beginPath(); ctx.moveTo(0,cy+gy*U); ctx.lineTo(W,cy+gy*U); ctx.stroke(); }
+  // axes
+  ctx.strokeStyle='#39414f'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(0,cy); ctx.lineTo(W,cy); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx,0); ctx.lineTo(cx,H); ctx.stroke();
+  // eigenlines (faint dashed)
+  ctx.setLineDash([5,5]); ctx.strokeStyle='rgba(251,191,36,.35)';
+  E.forEach(e=>{ const a=e.v; ctx.beginPath();
+    ctx.moveTo(cx-a[0]*U*6, cy+a[1]*U*6); ctx.lineTo(cx+a[0]*U*6, cy-a[1]*U*6); ctx.stroke(); });
+  ctx.setLineDash([]);
+  // Ax (red) then x (blue) on top
+  const Ax=mul(x);
+  // scale Ax down visually if huge
+  arrow(Ax,'rgba(248,113,113,.9)',3,true);
+  arrow(x,'#60a5fa',3.5,false);
+  // alignment check
+  const nx=Math.hypot(x[0],x[1]), nax=Math.hypot(Ax[0],Ax[1]);
+  const cos=(x[0]*Ax[0]+x[1]*Ax[1])/(nx*nax);
+  const ro=document.getElementById('ro');
+  const ratio=(nax/nx).toFixed(2);
+  if(cos>0.9995){
+    ro.innerHTML='✓ <span style="color:#fbbf24">EIGENVECTOR!</span> Ax points the same way as x — pure scaling. Stretch factor λ ≈ <b>'+ratio+'</b>.';
+  } else if(cos<-0.9995){
+    ro.innerHTML='✓ <span style="color:#fbbf24">EIGENVECTOR (flipped)!</span> Ax is antiparallel — λ ≈ <b>-'+ratio+'</b>.';
+  } else {
+    ro.innerHTML='x = ['+x[0].toFixed(2)+', '+x[1].toFixed(2)+']  ·  Ax = ['+Ax[0].toFixed(2)+', '+Ax[1].toFixed(2)+']  ·  '
+      +'alignment '+(cos*100).toFixed(0)+'%  — rotate x until red &amp; blue overlap.';
+  }
+}
+function setFromEvent(e){
+  const r=cv.getBoundingClientRect();
+  const px=(e.clientX-r.left)*(W/r.width), py=(e.clientY-r.top)*(H/r.height);
+  x=[(px-cx)/U, (cy-py)/U];
+  if(Math.hypot(x[0],x[1])<0.2) x=[0.2,0];
+  draw();
+}
+let dragging=false;
+cv.addEventListener('mousedown',e=>{dragging=true; setFromEvent(e);});
+window.addEventListener('mousemove',e=>{ if(dragging) setFromEvent(e); });
+window.addEventListener('mouseup',()=>dragging=false);
+cv.addEventListener('mousemove',e=>{ if(!dragging) setFromEvent(e); }); // hover-to-move too
+draw();
+</script>
+</body>
+</html>
