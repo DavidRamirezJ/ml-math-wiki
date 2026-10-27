@@ -1,18 +1,19 @@
 ---
 title: Index
 type: map
-updated: 2026-10-13
+updated: 2026-10-27
 ---
 
 # 📇 Wiki Index
 
 The catalog of everything in this wiki. Read this first when answering a query, then drill into the linked pages. Updated on every ingest. See [[CLAUDE]] for the schema.
 
-**Counts:** 21 sources · 278 concepts · 48 people · 3 maps (+1 pending)
+**Counts:** 21 sources · 278 concepts · 48 people · 4 maps (+1 pending)
 
 ---
 
 ## 🗺️ Maps
+- [[atoms-and-molecules]] — 8 first principles + 15 atoms → 16 molecules → compounds (PCA, SVM, GPT); re-derive anything you forget
 - [[index]] — this catalog
 - [[overview]] — what this wiki covers and how it's organized *(pending)*
 - [[llm-learning-path]] — the route through the LLM book: from math atoms to a fine-tuned GPT, in 8 steps

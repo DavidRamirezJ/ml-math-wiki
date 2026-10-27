@@ -1,0 +1,22 @@
+[
+ {
+  "term": "dot product",
+  "definition": "Multiply matching components and add: the result is one number.",
+  "video": "05-inner-product"
+ },
+ {
+  "term": "orthogonal",
+  "definition": "Two vectors are orthogonal when their inner product is zero: they meet at a right angle.",
+  "video": "05-inner-product"
+ },
+ {
+  "term": "cosine similarity",
+  "definition": "The dot product divided by the two lengths: the cosine of the angle, from −1 to 1.",
+  "video": "05-inner-product"
+ },
+ {
+  "term": "inner product",
+  "definition": "A rule ⟨x, y⟩ that turns two vectors into one number. It is symmetric, linear in each input, and positive.",
+  "video": "05-inner-product"
+ }
+]

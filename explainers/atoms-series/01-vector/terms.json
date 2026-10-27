@@ -1,0 +1,32 @@
+[
+ {
+  "term": "component",
+  "definition": "One entry of a vector: the number in one position of the list.",
+  "video": "01-vector"
+ },
+ {
+  "term": "vector",
+  "definition": "Anything you can add to another of its kind and scale by a number, and still get the same kind of thing.",
+  "video": "01-vector"
+ },
+ {
+  "term": "scalar",
+  "definition": "An ordinary single number, used to stretch, shrink or flip a vector.",
+  "video": "01-vector"
+ },
+ {
+  "term": "linear combination",
+  "definition": "Scale some vectors, then add them: a·u + b·v.",
+  "video": "01-vector"
+ },
+ {
+  "term": "span",
+  "definition": "All the vectors you can reach with linear combinations of a set of vectors.",
+  "video": "01-vector"
+ },
+ {
+  "term": "vector space",
+  "definition": "A collection where adding and scaling never take you outside it, and the usual rules hold.",
+  "video": "01-vector"
+ }
+]

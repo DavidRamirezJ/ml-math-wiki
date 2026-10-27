@@ -1,0 +1,703 @@
+1
+00:00:00,093 --> 00:00:02,446
+A neural network is a stack of layers.
+
+2
+00:00:02,872 --> 00:00:05,731
+Each layer multiplies its input by a matrix.
+
+3
+00:00:06,170 --> 00:00:07,513
+So here is a strange fact.
+
+4
+00:00:07,925 --> 00:00:14,760
+If that is all the layers do, then a network with one hundred layers is no smarter than a network with one layer.
+
+5
+00:00:15,172 --> 00:00:16,941
+All that depth is wasted.
+
+6
+00:00:17,380 --> 00:00:21,529
+In this video we find out why, and we fix it with one small bend.
+
+7
+00:00:22,439 --> 00:00:24,953
+That bend is called an activation function.
+
+8
+00:00:25,391 --> 00:00:33,224
+You will see why two linear layers collapse into one, how the ReLU function works, and how a few bends can draw a curve.
+
+9
+00:00:33,649 --> 00:00:35,697
+This is the last atom of the series.
+
+10
+00:00:36,123 --> 00:00:41,335
+You need matrix multiplication from video two, and the derivative from video seven.
+
+11
+00:00:43,073 --> 00:00:45,440
+Let's test the claim with real numbers.
+
+12
+00:00:45,865 --> 00:00:49,708
+Here is a toy input x, equal to three, minus one.
+
+13
+00:00:50,147 --> 00:00:56,038
+The first layer is the matrix W one, with rows one, two and zero, one.
+
+14
+00:00:56,477 --> 00:01:01,410
+Multiply: one times three plus two times minus one is one.
+
+15
+00:01:01,836 --> 00:01:05,998
+Zero times three plus one times minus one is minus one.
+
+16
+00:01:06,424 --> 00:01:08,977
+So the first layer gives one, minus one.
+
+17
+00:01:09,906 --> 00:01:16,089
+The second layer is the matrix W two, with rows two, zero and one, one.
+
+18
+00:01:16,528 --> 00:01:19,068
+Multiply the result one, minus one.
+
+19
+00:01:19,507 --> 00:01:21,980
+Two times one plus zero is two.
+
+20
+00:01:22,406 --> 00:01:26,010
+One times one plus one times minus one is zero.
+
+21
+00:01:26,435 --> 00:01:29,680
+So two layers in a row give two, zero.
+
+22
+00:01:30,606 --> 00:01:33,465
+Now multiply the two matrices first.
+
+23
+00:01:33,877 --> 00:01:40,406
+W two times W one is the matrix with rows two, four and one, three.
+
+24
+00:01:40,832 --> 00:01:42,813
+Apply this one matrix to x.
+
+25
+00:01:43,239 --> 00:01:46,776
+Two times three plus four times minus one is two.
+
+26
+00:01:47,215 --> 00:01:51,218
+One times three plus three times minus one is zero.
+
+27
+00:01:51,643 --> 00:01:53,146
+Again two, zero.
+
+28
+00:01:53,598 --> 00:01:56,231
+One matrix did the job of two layers.
+
+29
+00:01:57,773 --> 00:01:58,663
+This is not luck.
+
+30
+00:01:59,089 --> 00:02:07,945
+Matrix multiplication is associative: W two times W one x equals W two W one, times x.
+
+31
+00:02:08,358 --> 00:02:12,919
+So any stack of linear layers is just one linear layer in disguise.
+
+32
+00:02:13,331 --> 00:02:17,959
+Linear maps can only stretch, turn, flip and squash space.
+
+33
+00:02:18,398 --> 00:02:20,618
+Stacking them never creates a curve.
+
+34
+00:02:22,353 --> 00:02:26,196
+The fix is to put something that is not linear between the layers.
+
+35
+00:02:26,608 --> 00:02:30,198
+A function that is not linear is called a nonlinearity.
+
+36
+00:02:30,597 --> 00:02:36,821
+In a neural network, the nonlinearity applied after a layer is called an activation function.
+
+37
+00:02:37,246 --> 00:02:39,174
+It acts on every number separately.
+
+38
+00:02:40,706 --> 00:02:45,998
+The simplest and most popular one is ReLU, the rectified linear unit.
+
+39
+00:02:46,411 --> 00:02:50,147
+ReLU of z is the maximum of zero and z.
+
+40
+00:02:50,573 --> 00:02:53,432
+In words: if z is positive, keep it.
+
+41
+00:02:53,871 --> 00:02:57,049
+If z is negative, replace it with zero.
+
+42
+00:02:57,488 --> 00:03:02,541
+The graph is flat at zero on the left, and a straight diagonal line on the right.
+
+43
+00:03:03,473 --> 00:03:04,856
+Let's compute some values.
+
+44
+00:03:05,281 --> 00:03:07,701
+ReLU of minus two is zero.
+
+45
+00:03:08,114 --> 00:03:11,571
+ReLU of minus zero point five is also zero.
+
+46
+00:03:11,997 --> 00:03:13,898
+ReLU of zero is zero.
+
+47
+00:03:14,310 --> 00:03:17,462
+ReLU of one point five is one point five.
+
+48
+00:03:17,901 --> 00:03:20,068
+And ReLU of three is three.
+
+49
+00:03:20,494 --> 00:03:22,276
+Negative numbers are switched off.
+
+50
+00:03:22,728 --> 00:03:25,241
+Positive numbers pass through unchanged.
+
+51
+00:03:26,773 --> 00:03:29,472
+Now put ReLU between our two layers.
+
+52
+00:03:29,911 --> 00:03:32,171
+The first layer gave one, minus one.
+
+53
+00:03:32,570 --> 00:03:35,443
+ReLU turns that into one, zero.
+
+54
+00:03:35,882 --> 00:03:38,288
+Then W two gives two, one.
+
+55
+00:03:38,727 --> 00:03:41,148
+Without ReLU we got two, zero.
+
+56
+00:03:41,586 --> 00:03:46,733
+The answer changed, so the two layers no longer collapse into one matrix.
+
+57
+00:03:47,158 --> 00:03:48,913
+The bend broke the shortcut.
+
+58
+00:03:50,659 --> 00:03:52,401
+ReLU is not the only bend.
+
+59
+00:03:52,827 --> 00:03:57,321
+The sigmoid function squashes any number into the range from zero to one.
+
+60
+00:03:57,760 --> 00:04:01,750
+It is smooth, and sigmoid of zero is exactly one half.
+
+61
+00:04:02,202 --> 00:04:05,500
+That makes it useful when the output should look like a probability.
+
+62
+00:04:06,439 --> 00:04:13,593
+The tanh function, the hyperbolic tangent, has a similar S shape, but its range is from minus one to one.
+
+63
+00:04:14,019 --> 00:04:15,827
+Tanh of zero is zero.
+
+64
+00:04:16,266 --> 00:04:17,543
+It is smooth as well.
+
+65
+00:04:17,968 --> 00:04:24,445
+Both sigmoid and tanh become very flat for large positive or large negative inputs.
+
+66
+00:04:25,359 --> 00:04:27,633
+GELU is a smooth version of ReLU.
+
+67
+00:04:28,045 --> 00:04:33,990
+It multiplies z by the probability that a standard normal random value is below z.
+
+68
+00:04:34,455 --> 00:04:37,088
+For large positive z it is almost z.
+
+69
+00:04:37,567 --> 00:04:40,412
+For large negative z it is almost zero.
+
+70
+00:04:40,838 --> 00:04:43,524
+GELU of one is about zero point eight four.
+
+71
+00:04:44,426 --> 00:04:45,849
+Look closely at the left side.
+
+72
+00:04:46,274 --> 00:04:48,828
+GELU dips slightly below zero.
+
+73
+00:04:49,266 --> 00:04:53,296
+GELU of minus one is about minus zero point one six.
+
+74
+00:04:53,708 --> 00:04:56,660
+So negative inputs still give a small output.
+
+75
+00:04:57,085 --> 00:05:01,726
+GPT-2 uses GELU inside every transformer block.
+
+76
+00:05:03,473 --> 00:05:06,132
+How can simple bends build complex shapes?
+
+77
+00:05:06,571 --> 00:05:11,598
+Let's try to draw the curve y equals x squared, between minus two and two.
+
+78
+00:05:12,023 --> 00:05:14,204
+We will use only ReLU pieces.
+
+79
+00:05:14,616 --> 00:05:17,994
+Each piece is a shifted ReLU, times a weight.
+
+80
+00:05:18,419 --> 00:05:20,986
+Each piece adds one corner to the graph.
+
+81
+00:05:21,926 --> 00:05:25,942
+Start with the constant four, the height of the curve at minus two.
+
+82
+00:05:26,367 --> 00:05:29,519
+Add minus three times ReLU of x plus two.
+
+83
+00:05:29,945 --> 00:05:32,538
+Now the line goes down with slope minus three.
+
+84
+00:05:32,976 --> 00:05:35,317
+Add two times ReLU of x plus one.
+
+85
+00:05:35,729 --> 00:05:39,785
+At minus one, the slope changes from minus three to minus one.
+
+86
+00:05:40,706 --> 00:05:43,126
+Add two times ReLU of x.
+
+87
+00:05:43,552 --> 00:05:46,344
+At zero, the slope becomes plus one.
+
+88
+00:05:46,783 --> 00:05:49,602
+Add two times ReLU of x minus one.
+
+89
+00:05:50,041 --> 00:05:52,674
+At one, the slope becomes plus three.
+
+90
+00:05:53,126 --> 00:05:59,177
+Four pieces, and we have a bent line that touches the curve at every whole number from minus two to two.
+
+91
+00:06:00,106 --> 00:06:01,010
+How close is it?
+
+92
+00:06:01,409 --> 00:06:05,518
+Our demo measured the largest gap between the bent line and the curve.
+
+93
+00:06:05,944 --> 00:06:08,922
+With four pieces the gap is zero point two five.
+
+94
+00:06:09,348 --> 00:06:13,311
+With eight pieces it is only zero point zero six two five.
+
+95
+00:06:13,736 --> 00:06:15,678
+More pieces, smaller error.
+
+96
+00:06:16,117 --> 00:06:23,377
+With enough ReLU units, a network can approximate any continuous curve on an interval as closely as you like.
+
+97
+00:06:25,126 --> 00:06:28,051
+Training needs slopes, as we saw in video fifteen.
+
+98
+00:06:28,490 --> 00:06:30,605
+So what is the derivative of ReLU?
+
+99
+00:06:31,017 --> 00:06:34,115
+On the right side the graph is a line with slope one.
+
+100
+00:06:34,528 --> 00:06:38,224
+On the left side it is flat, so the slope is zero.
+
+101
+00:06:38,650 --> 00:06:40,631
+At exactly zero there is a corner.
+
+102
+00:06:41,043 --> 00:06:44,275
+Libraries such as PyTorch simply use zero there.
+
+103
+00:06:45,206 --> 00:06:47,028
+Our demo checked this numerically.
+
+104
+00:06:47,453 --> 00:06:49,967
+At minus two the slope is zero.
+
+105
+00:06:50,405 --> 00:06:52,267
+At three the slope is one.
+
+106
+00:06:52,693 --> 00:06:58,052
+A slope of one is good news: the signal passes back through the unit without shrinking.
+
+107
+00:06:58,477 --> 00:07:05,472
+This is one reason ReLU replaced sigmoid and tanh, whose slopes become tiny in their flat tails.
+
+108
+00:07:06,993 --> 00:07:09,054
+But a slope of zero has a dark side.
+
+109
+00:07:09,479 --> 00:07:15,570
+Imagine a unit with weight one and bias minus ten, and inputs between zero and five.
+
+110
+00:07:15,982 --> 00:07:18,801
+Its input to ReLU is always negative.
+
+111
+00:07:19,213 --> 00:07:24,293
+So its output is always zero, and its slope is always zero.
+
+112
+00:07:24,719 --> 00:07:28,894
+The demo found zero inputs, out of eleven, with slope one.
+
+113
+00:07:29,839 --> 00:07:33,563
+Such a unit gets no learning signal, so it never changes.
+
+114
+00:07:34,001 --> 00:07:35,557
+It is called a dead ReLU.
+
+115
+00:07:35,983 --> 00:07:39,028
+This is one reason for smooth cousins like GELU.
+
+116
+00:07:39,454 --> 00:07:46,049
+Their slope for negative inputs is small, but it is not exactly zero, so the unit can still learn.
+
+117
+00:07:47,773 --> 00:07:49,980
+Now let's see where activations live.
+
+118
+00:07:50,379 --> 00:07:59,714
+A multilayer perceptron, or MLP, alternates layers and bends: linear, ReLU, linear, ReLU, linear.
+
+119
+00:08:00,126 --> 00:08:07,227
+The book Build a Large Language Model uses exactly this pattern, with thirty and then twenty hidden units.
+
+120
+00:08:07,666 --> 00:08:12,320
+There is one activation after every linear layer, except the last.
+
+121
+00:08:13,226 --> 00:08:21,138
+In a transformer like GPT-2, each block has a small feed-forward network: linear, GELU, linear.
+
+122
+00:08:21,564 --> 00:08:25,207
+The GELU is the only nonlinear piece in that sub-network.
+
+123
+00:08:25,606 --> 00:08:29,502
+An activation like ReLU or GELU has no parameters at all.
+
+124
+00:08:29,928 --> 00:08:34,263
+It adds zero to the parameter count, but it is what makes depth useful.
+
+125
+00:08:35,773 --> 00:08:37,023
+Where does this atom come from?
+
+126
+00:08:37,461 --> 00:08:40,400
+The layers come from axiom A, linearity.
+
+127
+00:08:40,812 --> 00:08:45,081
+The activation is the one piece that is deliberately not linear.
+
+128
+00:08:45,493 --> 00:08:48,140
+Linearity alone gives one matrix.
+
+129
+00:08:48,552 --> 00:08:51,664
+Linearity plus a bend gives deep learning.
+
+130
+00:08:53,373 --> 00:08:54,237
+Now it is your turn.
+
+131
+00:08:54,662 --> 00:08:56,404
+Pause the video and try this.
+
+132
+00:08:56,843 --> 00:09:01,484
+Apply ReLU to the vector minus three, zero point five, two.
+
+133
+00:09:01,923 --> 00:09:05,487
+Then give the slope of ReLU at each of the three entries.
+
+134
+00:09:05,912 --> 00:09:06,551
+Take a moment.
+
+135
+00:09:07,486 --> 00:09:08,310
+Here is the answer.
+
+136
+00:09:08,723 --> 00:09:11,090
+ReLU of minus three is zero.
+
+137
+00:09:11,502 --> 00:09:14,680
+ReLU of zero point five is zero point five.
+
+138
+00:09:15,106 --> 00:09:16,887
+ReLU of two is two.
+
+139
+00:09:17,326 --> 00:09:20,824
+So the result is zero, zero point five, two.
+
+140
+00:09:21,262 --> 00:09:27,007
+The slopes are zero, one and one, because only the first entry is negative.
+
+141
+00:09:28,539 --> 00:09:29,324
+One more question.
+
+142
+00:09:29,749 --> 00:09:35,042
+Define g of x as ReLU of x plus ReLU of minus x.
+
+143
+00:09:35,467 --> 00:09:36,864
+What is g of minus two?
+
+144
+00:09:37,276 --> 00:09:38,473
+What is g of three?
+
+145
+00:09:38,898 --> 00:09:40,241
+Can you name the function g?
+
+146
+00:09:40,667 --> 00:09:41,345
+Pause and try.
+
+147
+00:09:42,346 --> 00:09:48,782
+For minus two: ReLU of minus two is zero, and ReLU of two is two.
+
+148
+00:09:49,207 --> 00:09:51,309
+So g of minus two is two.
+
+149
+00:09:51,774 --> 00:09:58,396
+For three: ReLU of three is three, and ReLU of minus three is zero.
+
+150
+00:09:58,835 --> 00:10:00,843
+So g of three is three.
+
+151
+00:10:01,269 --> 00:10:03,596
+The function g is the absolute value.
+
+152
+00:10:04,035 --> 00:10:06,628
+Two ReLU pieces made a corner at zero.
+
+153
+00:10:08,339 --> 00:10:11,198
+Let's check everything in Python with NumPy.
+
+154
+00:10:11,624 --> 00:10:15,746
+ReLU is one line: the maximum of zero and z.
+
+155
+00:10:16,158 --> 00:10:21,571
+We compare two layers with one combined matrix, and then with ReLU in between.
+
+156
+00:10:22,009 --> 00:10:26,730
+Then we build the curve x squared from shifted ReLUs and measure the error.
+
+157
+00:10:27,222 --> 00:10:29,044
+Finally, we check the slopes.
+
+158
+00:10:30,573 --> 00:10:34,402
+This output is real; the script ran while the video was made.
+
+159
+00:10:34,828 --> 00:10:38,830
+Two layers and one matrix both give two, zero.
+
+160
+00:10:39,269 --> 00:10:41,503
+With ReLU in between we get two, one.
+
+161
+00:10:41,929 --> 00:10:49,722
+The four ReLU weights are minus three, two, two and two, with a largest error of zero point two five.
+
+162
+00:10:50,160 --> 00:10:55,652
+The slopes are zero and one, and the dead unit has slope one for zero inputs.
+
+163
+00:10:57,406 --> 00:10:58,084
+In summary.
+
+164
+00:10:58,496 --> 00:11:06,089
+A stack of linear layers is just one linear layer, because matrix multiplication is associative.
+
+165
+00:11:06,488 --> 00:11:10,385
+An activation function puts a nonlinearity between the layers.
+
+166
+00:11:10,784 --> 00:11:15,238
+ReLU keeps positive numbers and turns negative numbers into zero.
+
+167
+00:11:15,677 --> 00:11:19,307
+Sigmoid, tanh and GELU are smooth alternatives.
+
+168
+00:11:20,226 --> 00:11:23,072
+Sums of shifted ReLUs can draw curves.
+
+169
+00:11:23,497 --> 00:11:29,348
+The slope of ReLU is zero or one, and units that are always negative can die.
+
+170
+00:11:29,761 --> 00:11:34,867
+MLPs use ReLU, and GPT-2 uses GELU.
+
+171
+00:11:35,306 --> 00:11:36,782
+That completes the atoms.
+
+172
+00:11:37,221 --> 00:11:43,896
+Next, the molecules map shows how these atoms combine into gradient descent, attention and more.
+
+173
+00:11:44,348 --> 00:11:45,412
+Thank you for learning with me.
+
+174
+00:11:47,339 --> 00:11:49,161
+This video was made by David R.
+
+175
+00:11:49,600 --> 00:11:52,831
+You can find more lessons at David Ramirez J dot com.
+
+176
+00:11:53,390 --> 00:11:54,108
+Thanks for watching.

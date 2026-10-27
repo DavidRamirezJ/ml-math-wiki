@@ -1,0 +1,10 @@
+00:00 Intro
+00:41 A matrix is a table
+01:59 A matrix is a machine
+03:42 Moving the plane
+05:22 Multiplying matrices
+07:59 Transpose and identity
+09:51 Matrices in ML
+11:11 Try it yourself
+12:23 Python demo
+13:02 Summary

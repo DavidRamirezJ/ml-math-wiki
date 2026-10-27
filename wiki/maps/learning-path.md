@@ -105,7 +105,7 @@ atoms combined:
 ## Connections
 
 - Builds on: nothing — this **is** the foundation layer.
-- Leads to: every concept page in the wiki.
+- Leads to: every concept page in the wiki; next layer up: [[atoms-and-molecules]].
 - See also: [[index]] (full catalog), [[overview]] *(pending)*
 
 ## Sources

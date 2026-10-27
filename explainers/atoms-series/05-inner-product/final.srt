@@ -1,0 +1,599 @@
+1
+00:00:00,106 --> 00:00:05,039
+How does a language model know that the word cat is closer to dog than to car?
+
+2
+00:00:05,452 --> 00:00:08,789
+Every word is a vector, as we saw in video one.
+
+3
+00:00:09,228 --> 00:00:15,452
+To compare two vectors, the model computes a single number that says how much they point the same way.
+
+4
+00:00:15,877 --> 00:00:21,329
+That number is the inner product, and it is the engine inside attention.
+
+5
+00:00:22,273 --> 00:00:32,791
+In this video you will compute the dot product by hand, see what it means as a picture, use its sign to detect right angles, and measure similarity with the cosine.
+
+6
+00:00:33,203 --> 00:00:39,241
+You need video one on vectors and video two on matrices, especially the transpose.
+
+7
+00:00:40,999 --> 00:00:42,302
+Here is the recipe.
+
+8
+00:00:42,741 --> 00:00:45,560
+Take two vectors with the same number of components.
+
+9
+00:00:45,986 --> 00:00:51,544
+Multiply the matching components, first with first, second with second, and so on.
+
+10
+00:00:51,983 --> 00:00:53,805
+Then add up all the products.
+
+11
+00:00:54,244 --> 00:00:56,903
+The result is one number, not a vector.
+
+12
+00:00:57,342 --> 00:00:58,712
+This is called the dot product.
+
+13
+00:01:00,239 --> 00:01:04,907
+In symbols: x dot y equals the sum over i of x i times y i.
+
+14
+00:01:05,332 --> 00:01:08,856
+The letter i runs over the components, from one to n.
+
+15
+00:01:09,282 --> 00:01:17,620
+In matrix language we also write x transpose y: a row times a column, which gives a one by one matrix, just a number.
+
+16
+00:01:19,126 --> 00:01:21,732
+Example one, with three components.
+
+17
+00:01:22,158 --> 00:01:27,597
+Let x be one, two, three, and y be four, minus five, six.
+
+18
+00:01:28,089 --> 00:01:30,908
+First components: one times four is four.
+
+19
+00:01:31,333 --> 00:01:34,751
+Second: two times minus five is minus ten.
+
+20
+00:01:35,190 --> 00:01:38,035
+Third: three times six is eighteen.
+
+21
+00:01:38,474 --> 00:01:42,091
+Add them: four minus ten plus eighteen is twelve.
+
+22
+00:01:42,517 --> 00:01:44,206
+So x dot y is twelve.
+
+23
+00:01:45,093 --> 00:01:46,901
+Example two, in the plane.
+
+24
+00:01:47,327 --> 00:01:48,989
+Take one, one and one, two.
+
+25
+00:01:49,414 --> 00:01:52,366
+One times one plus one times two is three.
+
+26
+00:01:52,792 --> 00:01:53,922
+Notice something familiar.
+
+27
+00:01:54,335 --> 00:02:02,327
+In video two, the row view of a matrix times a vector was exactly this: multiply matching entries and add.
+
+28
+00:02:02,765 --> 00:02:05,585
+Every entry of a matrix product is a dot product.
+
+29
+00:02:07,306 --> 00:02:08,223
+What does this number mean?
+
+30
+00:02:08,676 --> 00:02:09,939
+Here is the picture.
+
+31
+00:02:10,364 --> 00:02:15,205
+Let y lie along the horizontal axis, y equals three, zero.
+
+32
+00:02:15,630 --> 00:02:16,774
+Let x be two, one.
+
+33
+00:02:17,199 --> 00:02:21,574
+Shine a light from above, and x casts a shadow on the line of y.
+
+34
+00:02:22,000 --> 00:02:23,476
+The shadow has length two.
+
+35
+00:02:24,379 --> 00:02:30,470
+Now compute x dot y: two times three plus one times zero is six.
+
+36
+00:02:30,895 --> 00:02:36,560
+And the length of y times the length of the shadow is three times two, also six.
+
+37
+00:02:36,999 --> 00:02:42,784
+That is the meaning: the dot product is the length of one vector times the shadow of the other on it.
+
+38
+00:02:43,222 --> 00:02:45,031
+This shadow is called a projection.
+
+39
+00:02:45,973 --> 00:02:47,409
+This gives a famous formula.
+
+40
+00:02:47,834 --> 00:02:55,015
+x dot y equals the length of x, times the length of y, times the cosine of the angle theta between them.
+
+41
+00:02:55,454 --> 00:03:00,228
+The cosine is one when the angle is zero, and zero for a right angle.
+
+42
+00:03:00,680 --> 00:03:03,792
+Here, length means the usual length of the arrow.
+
+43
+00:03:04,231 --> 00:03:06,598
+Video six makes that idea exact.
+
+44
+00:03:08,139 --> 00:03:11,889
+Let's use the formula with one, one and one, two.
+
+45
+00:03:12,328 --> 00:03:14,243
+Their dot product is three.
+
+46
+00:03:14,682 --> 00:03:23,751
+By Pythagoras, the length of one, one is the square root of two, and the length of one, two is the square root of five.
+
+47
+00:03:24,176 --> 00:03:30,506
+So the cosine of theta is three divided by the square root of ten, about zero point nine five.
+
+48
+00:03:31,439 --> 00:03:33,992
+That means the angle is about eighteen degrees.
+
+49
+00:03:34,431 --> 00:03:40,482
+The two arrows point almost the same way, and the dot product told us that without any protractor.
+
+50
+00:03:40,947 --> 00:03:46,093
+From the dot product we get angles, and in video six we will get lengths from it too.
+
+51
+00:03:47,806 --> 00:03:49,907
+The sign of the dot product tells you a lot.
+
+52
+00:03:50,332 --> 00:03:54,176
+Watch the green vector turn while the blue vector stays fixed.
+
+53
+00:03:54,601 --> 00:03:58,883
+When they point roughly the same way, the dot product is positive.
+
+54
+00:03:59,295 --> 00:04:01,942
+As the angle grows, the value shrinks.
+
+55
+00:04:02,859 --> 00:04:08,537
+At a right angle, the dot product is exactly zero: the shadow has no length.
+
+56
+00:04:08,963 --> 00:04:14,907
+Turn further, and the value becomes negative: the vectors point in opposite directions.
+
+57
+00:04:15,319 --> 00:04:20,559
+When they point exactly opposite, the dot product is as negative as it can be.
+
+58
+00:04:22,106 --> 00:04:26,228
+Vectors whose dot product is zero are called orthogonal.
+
+59
+00:04:26,654 --> 00:04:30,484
+It is the general word for perpendicular, at a right angle.
+
+60
+00:04:30,922 --> 00:04:37,239
+Check one, one and minus one, one: one times minus one plus one times one is zero.
+
+61
+00:04:37,664 --> 00:04:38,741
+So they are orthogonal.
+
+62
+00:04:39,167 --> 00:04:43,010
+And the zero vector is orthogonal to every vector.
+
+63
+00:04:44,539 --> 00:04:46,627
+Orthogonal directions share nothing.
+
+64
+00:04:47,052 --> 00:04:50,390
+If you walk purely north, you make no progress east.
+
+65
+00:04:50,802 --> 00:04:56,321
+In machine learning, orthogonal features carry separate information, with no overlap.
+
+66
+00:04:56,747 --> 00:05:00,337
+Keep this in mind for later videos about data and directions.
+
+67
+00:05:02,073 --> 00:05:05,410
+Often we care only about direction, not about size.
+
+68
+00:05:05,836 --> 00:05:11,753
+A long arrow and a short arrow that point the same way should count as equally similar.
+
+69
+00:05:12,192 --> 00:05:14,852
+So we divide the dot product by the two lengths.
+
+70
+00:05:15,264 --> 00:05:17,751
+The result is called cosine similarity.
+
+71
+00:05:18,673 --> 00:05:22,915
+Cosine similarity is always between minus one and one.
+
+72
+00:05:23,327 --> 00:05:24,763
+One means the same direction.
+
+73
+00:05:25,189 --> 00:05:26,598
+Zero means orthogonal.
+
+74
+00:05:27,024 --> 00:05:28,513
+Minus one means opposite.
+
+75
+00:05:28,939 --> 00:05:32,436
+It is exactly the cosine of the angle between the two vectors.
+
+76
+00:05:33,986 --> 00:05:35,209
+Here is a toy example.
+
+77
+00:05:35,622 --> 00:05:40,329
+These are not real word vectors, just small numbers chosen to show the idea.
+
+78
+00:05:40,754 --> 00:05:44,864
+Cat is zero point nine, zero point eight, zero point one.
+
+79
+00:05:45,302 --> 00:05:49,225
+Dog is zero point eight, zero point nine, zero point two.
+
+80
+00:05:49,651 --> 00:05:53,614
+Car is zero point one, zero point two, zero point nine.
+
+81
+00:05:54,552 --> 00:06:00,842
+The cosine similarity of cat and dog is about zero point nine nine: almost the same direction.
+
+82
+00:06:01,281 --> 00:06:06,241
+The cosine similarity of cat and car is only about zero point three.
+
+83
+00:06:06,667 --> 00:06:11,494
+So, in this toy space, cat is much closer to dog than to car.
+
+84
+00:06:11,893 --> 00:06:15,749
+Real embeddings work the same way, with hundreds of components.
+
+85
+00:06:17,506 --> 00:06:19,261
+So far we used the dot product.
+
+86
+00:06:19,687 --> 00:06:25,564
+Mathematicians write a more general inner product with angle brackets: x, y inside brackets.
+
+87
+00:06:25,990 --> 00:06:32,439
+Any rule that pairs two vectors into one number can be an inner product, if it follows three rules.
+
+88
+00:06:33,346 --> 00:06:35,261
+Rule one: it is symmetric.
+
+89
+00:06:35,700 --> 00:06:38,971
+The order does not matter: x with y equals y with x.
+
+90
+00:06:39,503 --> 00:06:42,442
+Rule two: it is linear in each input.
+
+91
+00:06:42,867 --> 00:06:48,771
+Scale or add inside one slot, and the result scales or adds the same way.
+
+92
+00:06:49,197 --> 00:06:51,192
+Rule three: it is positive.
+
+93
+00:06:51,604 --> 00:06:57,362
+A vector paired with itself gives a positive number, unless the vector is zero.
+
+94
+00:06:58,873 --> 00:07:01,173
+Check rule three with the dot product.
+
+95
+00:07:01,599 --> 00:07:07,888
+One, two, three dotted with itself is one plus four plus nine, which is fourteen.
+
+96
+00:07:08,327 --> 00:07:13,234
+Squares are never negative, so the sum is positive for any non-zero vector.
+
+97
+00:07:13,686 --> 00:07:16,319
+The dot product follows all three rules.
+
+98
+00:07:17,873 --> 00:07:18,710
+Why does this matter?
+
+99
+00:07:19,109 --> 00:07:21,795
+A vector space only knows how to add and scale.
+
+100
+00:07:22,221 --> 00:07:24,468
+It has no lengths and no angles.
+
+101
+00:07:24,894 --> 00:07:26,224
+The inner product adds them.
+
+102
+00:07:26,636 --> 00:07:33,817
+This is our second axiom, axiom B: the inner product, the source of all geometry in this series.
+
+103
+00:07:34,256 --> 00:07:38,165
+There are other inner products too, and they give different angles.
+
+104
+00:07:39,893 --> 00:07:41,329
+Now the inner product at work.
+
+105
+00:07:41,754 --> 00:07:46,807
+In attention, each word asks every other word: how related are we?
+
+106
+00:07:47,233 --> 00:07:50,305
+The answer is a dot product, called an attention score.
+
+107
+00:07:50,717 --> 00:08:00,637
+In the book Build a Large Language Model from Scratch, the word Your has the vector zero point four three, zero point one five, zero point eight nine.
+
+108
+00:08:01,573 --> 00:08:08,328
+The word journey has the vector zero point five five, zero point eight seven, zero point six six.
+
+109
+00:08:08,767 --> 00:08:12,743
+Their dot product is about zero point nine five four four.
+
+110
+00:08:13,182 --> 00:08:18,860
+A bigger score means the two words are more related, so attention mixes in more of that word.
+
+111
+00:08:20,419 --> 00:08:22,627
+Similarity search works the same way.
+
+112
+00:08:23,052 --> 00:08:32,587
+To find documents or products like a query, a system compares the query vector with many stored vectors and keeps the ones with the largest cosine similarity.
+
+113
+00:08:33,012 --> 00:08:40,034
+And a single neuron computes w dot x, the weights dotted with the input: a weighted sum is a dot product.
+
+114
+00:08:41,739 --> 00:08:42,258
+Your turn.
+
+115
+00:08:42,683 --> 00:08:44,479
+Pause the video and try this.
+
+116
+00:08:44,891 --> 00:08:49,931
+Compute the dot product of two, minus one, three and one, four, two.
+
+117
+00:08:50,873 --> 00:08:52,202
+Two times one is two.
+
+118
+00:08:52,641 --> 00:08:55,261
+Minus one times four is minus four.
+
+119
+00:08:55,713 --> 00:08:57,495
+Three times two is six.
+
+120
+00:08:57,907 --> 00:09:01,019
+Add them: two minus four plus six is four.
+
+121
+00:09:01,444 --> 00:09:03,107
+So the dot product is four.
+
+122
+00:09:03,532 --> 00:09:07,162
+It is positive, so the vectors point roughly the same way.
+
+123
+00:09:08,706 --> 00:09:09,530
+Second question.
+
+124
+00:09:09,969 --> 00:09:14,836
+Are the vectors three, six and minus two, one orthogonal?
+
+125
+00:09:15,262 --> 00:09:16,113
+Pause and check.
+
+126
+00:09:17,099 --> 00:09:19,732
+Three times minus two is minus six.
+
+127
+00:09:20,171 --> 00:09:21,634
+Six times one is six.
+
+128
+00:09:22,059 --> 00:09:24,493
+Minus six plus six is zero.
+
+129
+00:09:24,932 --> 00:09:28,482
+The dot product is zero, so yes, they are orthogonal.
+
+130
+00:09:28,921 --> 00:09:30,410
+They meet at a right angle.
+
+131
+00:09:32,126 --> 00:09:33,522
+Let's check it in NumPy.
+
+132
+00:09:33,961 --> 00:09:37,139
+The at sign gives the dot product of two vectors.
+
+133
+00:09:37,565 --> 00:09:46,700
+We compute our examples, the angle, the orthogonal pair, the rule checks, the toy cosine similarities, and the attention score from the book.
+
+134
+00:09:48,239 --> 00:09:52,229
+This output is real; the script ran while the video was made.
+
+135
+00:09:52,654 --> 00:09:54,090
+x dot y is twelve.
+
+136
+00:09:54,529 --> 00:09:57,388
+The angle is about eighteen point four degrees.
+
+137
+00:09:57,814 --> 00:10:00,048
+The orthogonal pair gives zero.
+
+138
+00:10:00,487 --> 00:10:09,529
+The toy cosine similarities are zero point nine nine and zero point three, and the book's attention score is zero point nine five four four.
+
+139
+00:10:11,239 --> 00:10:11,917
+In summary.
+
+140
+00:10:12,370 --> 00:10:17,755
+The dot product multiplies matching components and adds them, giving one number.
+
+141
+00:10:18,181 --> 00:10:23,513
+It equals the length of x times the length of y times the cosine of the angle.
+
+142
+00:10:23,939 --> 00:10:27,715
+Its sign says same direction, right angle, or opposite.
+
+143
+00:10:28,154 --> 00:10:30,029
+Zero means orthogonal.
+
+144
+00:10:30,959 --> 00:10:35,467
+Cosine similarity divides by the lengths and keeps only direction.
+
+145
+00:10:35,893 --> 00:10:44,151
+An inner product is symmetric, linear in each input, and positive: axiom B, the source of geometry.
+
+146
+00:10:44,563 --> 00:10:49,629
+Next, in video six: the norm, which measures length and distance.
+
+147
+00:10:50,055 --> 00:10:50,653
+See you there.
+
+148
+00:10:52,606 --> 00:10:54,428
+This video was made by David R.
+
+149
+00:10:54,867 --> 00:10:58,098
+You can find more lessons at David Ramirez J dot com.
+
+150
+00:10:58,656 --> 00:10:59,374
+Thanks for watching.

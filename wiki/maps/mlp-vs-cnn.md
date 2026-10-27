@@ -44,8 +44,18 @@ Both train the same way: a loss, [[backpropagation]], [[gradient-descent]]. A sh
 - **Multi-channel:** $\mathbf{K}\in\mathbb{R}^{C_\text{out}\times C_\text{in}\times k\times k}$, parameters $C_\text{out}(C_\text{in}k^2+1)$. A 1×1 convolution is an MLP applied per pixel.
 - Libraries implement cross-correlation (no kernel flip) and call it convolution; with learned kernels the difference is irrelevant.
 
+## Foundations — what to learn first
+Read these in order. Each layer of the list needs the one above it.
+1. **Data as numbers:** [[vector]] → [[matrix]] → [[tensor]]
+2. **The core operation:** [[inner-product]] (dot product) → [[matrix-multiplication]] → [[linear-mapping]]
+3. **One neuron, one layer:** [[bias-vector]] → [[activation-function]] ([[relu]], [[sigmoid-function]]) → [[linear-layer]] → [[forward-pass]]
+4. **Stacking layers:** [[neural-network]] → [[multilayer-perceptron]] → [[model-parameters]]
+5. **Learning:** [[loss-function]] ([[cross-entropy-loss]]) → [[gradient]] / [[partial-derivative]] → [[chain-rule]] → [[backpropagation]] → [[gradient-descent]] / [[stochastic-gradient-descent]]
+6. **Why the CNN's constraints help:** [[overfitting]] → [[regularization]] (weight sharing acts like a built-in regularizer)
+7. **CNN-only ideas** (no wiki page yet): convolution / cross-correlation, local receptive field, weight sharing, pooling, translation equivariance — all explained on this page above.
+
 ## Connections
-- Builds on: [[matrix]], [[linear-mapping]], [[vector]]
+- Builds on: [[matrix]], [[linear-mapping]], [[vector]], [[multilayer-perceptron]], [[backpropagation]]
 - Leads to: [[convolutional-neural-network]], [[multilayer-perceptron]]
 - Used by: [[backpropagation]], [[gradient-descent]]
 

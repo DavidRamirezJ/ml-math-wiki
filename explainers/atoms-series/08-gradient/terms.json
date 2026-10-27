@@ -1,0 +1,12 @@
+[
+ {
+  "term": "partial derivative",
+  "definition": "The slope of a function when only one input moves and all the other inputs are frozen.",
+  "video": "08-gradient"
+ },
+ {
+  "term": "gradient",
+  "definition": "The vector of all partial derivatives. It points in the direction of steepest increase.",
+  "video": "08-gradient"
+ }
+]

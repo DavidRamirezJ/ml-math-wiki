@@ -1,0 +1,17 @@
+[
+ {
+  "term": "loss function",
+  "definition": "A rule that takes the label and the prediction and returns one number, never negative: how wrong the prediction is.",
+  "video": "15-loss-function"
+ },
+ {
+  "term": "parameter",
+  "definition": "A number inside a model that we can change, like a knob. Learning means choosing its value.",
+  "video": "15-loss-function"
+ },
+ {
+  "term": "optimization",
+  "definition": "Finding the input that makes a function as small (or as large) as possible.",
+  "video": "15-loss-function"
+ }
+]

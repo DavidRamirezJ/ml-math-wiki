@@ -1,0 +1,763 @@
+1
+00:00:00,106 --> 00:00:03,098
+How does a machine learning model know that it is getting better?
+
+2
+00:00:03,523 --> 00:00:04,375
+It needs a score.
+
+3
+00:00:04,800 --> 00:00:10,305
+Not a feeling, not a picture, but one single number that says how wrong it is right now.
+
+4
+00:00:10,744 --> 00:00:12,234
+That number is called the loss.
+
+5
+00:00:12,672 --> 00:00:18,058
+Training a model means one thing: change the model so that this number gets smaller.
+
+6
+00:00:18,993 --> 00:00:21,333
+Even a large language model works this way.
+
+7
+00:00:21,745 --> 00:00:29,844
+In the book Build a Large Language Model, an untrained GPT model starts with a loss near eleven on its training text.
+
+8
+00:00:30,269 --> 00:00:35,628
+After ten passes over the text, the training loss is below zero point four.
+
+9
+00:00:36,040 --> 00:00:38,713
+In this video you will build a loss by hand.
+
+10
+00:00:39,139 --> 00:00:41,160
+You need the mean from video thirteen.
+
+11
+00:00:42,906 --> 00:00:44,023
+Start with one guess.
+
+12
+00:00:44,448 --> 00:00:47,773
+You guess that your friend is one hundred seventy centimeters tall.
+
+13
+00:00:48,198 --> 00:00:51,869
+In fact, your friend is one hundred eighty centimeters tall.
+
+14
+00:00:52,294 --> 00:00:54,209
+The true value is called the label, y.
+
+15
+00:00:54,648 --> 00:00:57,161
+The guess is called the prediction, y hat.
+
+16
+00:00:57,613 --> 00:00:58,757
+How bad was the guess?
+
+17
+00:00:59,169 --> 00:01:01,297
+We want a rule that answers with one number.
+
+18
+00:01:02,239 --> 00:01:04,460
+Such a rule is called a loss function.
+
+19
+00:01:04,885 --> 00:01:10,058
+It takes the label and the prediction, and it returns a number that is never negative.
+
+20
+00:01:10,497 --> 00:01:12,146
+Zero means a perfect guess.
+
+21
+00:01:12,585 --> 00:01:13,702
+Bigger means worse.
+
+22
+00:01:14,127 --> 00:01:16,667
+We write it as l of y and y hat.
+
+23
+00:01:17,106 --> 00:01:19,806
+Different rules give different loss functions.
+
+24
+00:01:20,739 --> 00:01:25,806
+The most common rule is the squared error: y minus y hat, all squared.
+
+25
+00:01:26,271 --> 00:01:30,287
+Here, one hundred eighty minus one hundred seventy is ten.
+
+26
+00:01:30,699 --> 00:01:32,348
+Ten squared is one hundred.
+
+27
+00:01:32,774 --> 00:01:34,928
+So the squared error is one hundred.
+
+28
+00:01:35,354 --> 00:01:40,141
+A second rule is the absolute error: the size of the gap, without its sign.
+
+29
+00:01:40,566 --> 00:01:41,510
+Here it is just ten.
+
+30
+00:01:43,073 --> 00:01:45,213
+The squared error grows fast.
+
+31
+00:01:45,639 --> 00:01:47,221
+A gap of one costs one.
+
+32
+00:01:47,647 --> 00:01:49,362
+A gap of two costs four.
+
+33
+00:01:49,775 --> 00:01:51,703
+A gap of ten costs one hundred.
+
+34
+00:01:52,142 --> 00:01:56,171
+The absolute error grows evenly: one, two, ten.
+
+35
+00:01:56,596 --> 00:02:00,559
+So the squared error punishes big mistakes much more.
+
+36
+00:02:00,985 --> 00:02:02,807
+We will see why that matters soon.
+
+37
+00:02:04,339 --> 00:02:06,174
+Some tasks have no distance at all.
+
+38
+00:02:06,613 --> 00:02:08,408
+Is this photo a cat or a dog?
+
+39
+00:02:08,847 --> 00:02:10,868
+Here we can use the zero one loss.
+
+40
+00:02:11,307 --> 00:02:14,379
+If the prediction is right, the loss is zero.
+
+41
+00:02:14,818 --> 00:02:16,985
+If it is wrong, the loss is one.
+
+42
+00:02:17,411 --> 00:02:19,087
+It simply counts mistakes.
+
+43
+00:02:19,525 --> 00:02:22,624
+It is honest, but we will see that it is hard to learn from.
+
+44
+00:02:24,373 --> 00:02:25,516
+One guess is not enough.
+
+45
+00:02:25,915 --> 00:02:30,955
+A model makes many predictions, one for each example in a data set.
+
+46
+00:02:31,407 --> 00:02:34,160
+Here is a toy data set with three examples.
+
+47
+00:02:34,585 --> 00:02:37,391
+The labels are two, four and six.
+
+48
+00:02:37,830 --> 00:02:40,450
+The model predicts one, four and eight.
+
+49
+00:02:40,889 --> 00:02:43,561
+Let's compute the loss of each prediction.
+
+50
+00:02:44,506 --> 00:02:49,572
+With squared error: two minus one is one, and one squared is one.
+
+51
+00:02:50,051 --> 00:02:51,767
+Four minus four is zero.
+
+52
+00:02:52,205 --> 00:02:56,926
+Six minus eight is minus two, and minus two squared is four.
+
+53
+00:02:57,365 --> 00:03:00,530
+So the three losses are one, zero and four.
+
+54
+00:03:00,929 --> 00:03:04,306
+Notice that the minus sign disappears when we square.
+
+55
+00:03:05,239 --> 00:03:11,370
+Now take the mean of the losses: one plus zero plus four is five, divided by three.
+
+56
+00:03:11,808 --> 00:03:13,750
+That is about one point six seven.
+
+57
+00:03:14,189 --> 00:03:17,899
+This average loss over the data is called the empirical risk.
+
+58
+00:03:18,324 --> 00:03:22,074
+Empirical means measured on the data we actually have.
+
+59
+00:03:23,519 --> 00:03:24,942
+Here is the formula.
+
+60
+00:03:25,381 --> 00:03:32,429
+R equals one over N, times the sum over n from one to N, of the loss of example n.
+
+61
+00:03:33,027 --> 00:03:35,155
+N is the number of examples.
+
+62
+00:03:35,594 --> 00:03:37,482
+The sum adds up all the losses.
+
+63
+00:03:37,921 --> 00:03:40,634
+One over N turns the sum into a mean.
+
+64
+00:03:41,072 --> 00:03:46,618
+With absolute error, the losses are one, zero and two, and the mean is one.
+
+65
+00:03:48,339 --> 00:03:50,507
+Now we can use the loss to choose a model.
+
+66
+00:03:50,946 --> 00:03:52,342
+Here are four toy points.
+
+67
+00:03:52,754 --> 00:03:56,185
+We want a straight line through the origin that fits them.
+
+68
+00:03:56,611 --> 00:03:59,682
+The line is y hat equals w times x.
+
+69
+00:04:00,108 --> 00:04:02,076
+The number w is the slope.
+
+70
+00:04:02,515 --> 00:04:05,214
+Different values of w give different lines.
+
+71
+00:04:06,139 --> 00:04:08,573
+The number w is a parameter of the model.
+
+72
+00:04:08,985 --> 00:04:12,775
+A parameter is a knob that we can turn to change what the model predicts.
+
+73
+00:04:13,174 --> 00:04:14,690
+A straight line has one knob.
+
+74
+00:04:15,115 --> 00:04:19,184
+A large language model has millions or billions of knobs.
+
+75
+00:04:19,623 --> 00:04:21,698
+Learning means choosing the knob settings.
+
+76
+00:04:22,639 --> 00:04:24,089
+Let's try some knob settings.
+
+77
+00:04:24,528 --> 00:04:27,918
+With w equal to one, the line is too flat.
+
+78
+00:04:28,344 --> 00:04:31,296
+The mean squared error is eight point seven five.
+
+79
+00:04:31,722 --> 00:04:38,051
+With w equal to three, the line is too steep, and the loss is six point seven five.
+
+80
+00:04:38,490 --> 00:04:44,820
+With w equal to two, the line is close to all points, and the loss is only zero point two five.
+
+81
+00:04:45,726 --> 00:04:48,385
+Now let the computer try many values.
+
+82
+00:04:48,798 --> 00:04:54,596
+On the right we draw the loss for every slope, from zero to four in small steps.
+
+83
+00:04:55,034 --> 00:04:57,029
+This curve is L of w.
+
+84
+00:04:57,534 --> 00:05:01,723
+Watch the line turn on the left, while a dot moves along the curve on the right.
+
+85
+00:05:02,162 --> 00:05:04,689
+Each slope gives one point on the loss curve.
+
+86
+00:05:05,652 --> 00:05:09,629
+The curve has the shape of a bowl, and the bottom is the best slope.
+
+87
+00:05:10,067 --> 00:05:12,408
+Our demo tried four hundred and one slopes.
+
+88
+00:05:12,847 --> 00:05:19,296
+The lowest loss is at w equal to two point zero seven, with a loss of about zero point two two.
+
+89
+00:05:19,722 --> 00:05:21,504
+That slope is the fitted model.
+
+90
+00:05:23,206 --> 00:05:25,785
+Why is the squared error so popular?
+
+91
+00:05:26,211 --> 00:05:28,206
+Because its loss curve is smooth.
+
+92
+00:05:28,631 --> 00:05:32,248
+At every point, the curve has a slope, a derivative.
+
+93
+00:05:32,687 --> 00:05:34,815
+The slope tells us which way is downhill.
+
+94
+00:05:35,240 --> 00:05:38,299
+If the slope is positive, make w smaller.
+
+95
+00:05:38,724 --> 00:05:40,865
+If it is negative, make w bigger.
+
+96
+00:05:42,372 --> 00:05:44,114
+Now look at the zero one loss.
+
+97
+00:05:44,553 --> 00:05:47,159
+Here is a toy task with six points on a line.
+
+98
+00:05:47,598 --> 00:05:50,284
+Each point has a class, zero or one.
+
+99
+00:05:50,710 --> 00:05:55,258
+The rule is: predict one when x is bigger than a threshold b.
+
+100
+00:05:55,723 --> 00:05:58,024
+For each b, we count the mistakes.
+
+101
+00:05:59,619 --> 00:06:01,747
+The loss curve is a staircase.
+
+102
+00:06:02,185 --> 00:06:05,177
+Our demo tried seven hundred and one values of b.
+
+103
+00:06:05,603 --> 00:06:08,342
+It found only three different loss values.
+
+104
+00:06:08,768 --> 00:06:11,387
+Between the steps the curve is completely flat.
+
+105
+00:06:11,800 --> 00:06:15,776
+A flat curve has slope zero, so the slope gives no direction.
+
+106
+00:06:16,215 --> 00:06:18,688
+And at the steps there is no slope at all.
+
+107
+00:06:20,239 --> 00:06:25,970
+That is why we usually train with a smooth loss, and we only report the count of mistakes at the end.
+
+108
+00:06:26,396 --> 00:06:30,279
+The smooth loss is a stand-in that we can actually minimize.
+
+109
+00:06:30,744 --> 00:06:37,672
+For classification, this stand-in is often the cross-entropy loss, a molecule we will meet later.
+
+110
+00:06:39,406 --> 00:06:42,105
+The choice of loss also changes the answer.
+
+111
+00:06:42,557 --> 00:06:44,007
+Here are five toy points.
+
+112
+00:06:44,445 --> 00:06:48,222
+The first four lie exactly on the line y equals two x.
+
+113
+00:06:48,648 --> 00:06:52,225
+The fifth point should be ten, but it was recorded as thirty.
+
+114
+00:06:52,650 --> 00:06:56,254
+A point far away from the pattern like this is called an outlier.
+
+115
+00:06:57,192 --> 00:07:01,461
+At w equal to two, the outlier has an error of twenty.
+
+116
+00:07:01,873 --> 00:07:04,041
+The absolute error charges twenty.
+
+117
+00:07:04,466 --> 00:07:06,900
+The squared error charges four hundred.
+
+118
+00:07:07,339 --> 00:07:11,926
+So with squared error, this one point is louder than all the others together.
+
+119
+00:07:12,365 --> 00:07:13,655
+The fit will bend toward it.
+
+120
+00:07:14,572 --> 00:07:17,298
+Our demo found the best slope for each loss.
+
+121
+00:07:17,737 --> 00:07:21,447
+With squared error, the best slope is three point eight two.
+
+122
+00:07:21,846 --> 00:07:24,306
+The line is pulled far up by one bad point.
+
+123
+00:07:24,732 --> 00:07:28,389
+With absolute error, the best slope is exactly two.
+
+124
+00:07:28,814 --> 00:07:32,272
+The absolute error ignores the outlier much better.
+
+125
+00:07:33,806 --> 00:07:35,907
+So neither loss is always better.
+
+126
+00:07:36,332 --> 00:07:41,731
+Squared error is smooth and easy to minimize, but sensitive to outliers.
+
+127
+00:07:42,143 --> 00:07:47,383
+Absolute error is robust to outliers, but it has a sharp corner at zero.
+
+128
+00:07:47,822 --> 00:07:51,465
+Choosing the loss is choosing what kind of mistakes you care about.
+
+129
+00:07:53,172 --> 00:07:54,768
+Now we can say what learning is.
+
+130
+00:07:55,207 --> 00:07:59,662
+Learning means choosing the parameters that make the loss small on the data.
+
+131
+00:08:00,127 --> 00:08:04,023
+Finding the smallest value of a function is called optimization.
+
+132
+00:08:04,449 --> 00:08:10,672
+In this series, this is our last axiom, axiom E: learning equals optimization.
+
+133
+00:08:11,606 --> 00:08:14,518
+Axiom E is a choice, not a theorem.
+
+134
+00:08:14,943 --> 00:08:16,858
+No law of mathematics forces it.
+
+135
+00:08:17,297 --> 00:08:21,087
+Machine learning simply adopts it, and it works very well.
+
+136
+00:08:21,512 --> 00:08:27,723
+Every model you will meet, from a straight line to GPT, is trained by minimizing some loss.
+
+137
+00:08:29,239 --> 00:08:30,436
+But how do we find the minimum?
+
+138
+00:08:30,875 --> 00:08:33,508
+Trying four hundred slopes worked for one knob.
+
+139
+00:08:33,946 --> 00:08:38,069
+With a billion knobs, a grid would need far too many tries.
+
+140
+00:08:38,508 --> 00:08:42,111
+Instead, we follow the slope downhill, step by step.
+
+141
+00:08:42,550 --> 00:08:45,010
+That method is called gradient descent.
+
+142
+00:08:45,449 --> 00:08:49,039
+It is a molecule: it combines the gradient with the loss.
+
+143
+00:08:50,572 --> 00:08:54,256
+And for language models, the loss is the cross-entropy.
+
+144
+00:08:54,681 --> 00:08:59,415
+It uses the logarithm of the probability of the correct next token.
+
+145
+00:08:59,841 --> 00:09:04,894
+Both gradient descent and cross-entropy are molecules built from this atom.
+
+146
+00:09:05,320 --> 00:09:07,035
+You will find them in the molecules map.
+
+147
+00:09:08,739 --> 00:09:09,630
+Now it is your turn.
+
+148
+00:09:10,082 --> 00:09:11,984
+Pause the video and try this.
+
+149
+00:09:12,422 --> 00:09:14,484
+The labels are three and five.
+
+150
+00:09:14,936 --> 00:09:17,077
+The predictions are one and six.
+
+151
+00:09:17,502 --> 00:09:19,138
+What is the mean squared error?
+
+152
+00:09:19,577 --> 00:09:21,492
+And what is the mean absolute error?
+
+153
+00:09:21,917 --> 00:09:22,502
+Take a moment.
+
+154
+00:09:23,452 --> 00:09:24,609
+Here is the answer.
+
+155
+00:09:25,114 --> 00:09:28,678
+Three minus one is two, and two squared is four.
+
+156
+00:09:29,157 --> 00:09:33,758
+Five minus six is minus one, and minus one squared is one.
+
+157
+00:09:34,197 --> 00:09:39,609
+The mean squared error is four plus one, divided by two, which is two point five.
+
+158
+00:09:40,048 --> 00:09:45,460
+The absolute errors are two and one, so the mean absolute error is one point five.
+
+159
+00:09:47,006 --> 00:09:47,803
+One more question.
+
+160
+00:09:48,242 --> 00:09:51,713
+Two points: one, three, and two, six.
+
+161
+00:09:52,125 --> 00:09:55,250
+The model is y hat equals w times x.
+
+162
+00:09:55,689 --> 00:10:00,224
+Which slope is better, w equal to two or w equal to three?
+
+163
+00:10:00,649 --> 00:10:02,365
+Use the mean squared error.
+
+164
+00:10:02,790 --> 00:10:03,468
+Pause and try.
+
+165
+00:10:04,406 --> 00:10:08,368
+With w equal to two, the predictions are two and four.
+
+166
+00:10:08,807 --> 00:10:14,445
+The errors are one and two, so the squared errors are one and four, and the mean is two point five.
+
+167
+00:10:14,871 --> 00:10:19,379
+With w equal to three, the predictions are three and six.
+
+168
+00:10:19,791 --> 00:10:22,557
+Both are exact, so the loss is zero.
+
+169
+00:10:22,996 --> 00:10:24,592
+The slope three wins.
+
+170
+00:10:26,306 --> 00:10:28,925
+Let's check everything in Python with NumPy.
+
+171
+00:10:29,417 --> 00:10:33,978
+First we compute squared and absolute errors for the three predictions.
+
+172
+00:10:34,404 --> 00:10:38,819
+Then we try four hundred and one slopes and keep the one with the smallest loss.
+
+173
+00:10:39,258 --> 00:10:41,731
+Then we count mistakes with the zero one loss.
+
+174
+00:10:42,197 --> 00:10:46,651
+Finally, we fit the data with the outlier, using both losses.
+
+175
+00:10:48,206 --> 00:10:52,195
+This output is real; the script ran while the video was made.
+
+176
+00:10:52,647 --> 00:10:57,900
+The mean squared error is one point six seven, and the mean absolute error is one.
+
+177
+00:10:58,325 --> 00:11:00,878
+The best slope is two point zero seven.
+
+178
+00:11:01,317 --> 00:11:04,788
+The zero one loss takes only three different values.
+
+179
+00:11:05,227 --> 00:11:11,011
+And with the outlier, squared error gives three point eight two, while absolute error gives two.
+
+180
+00:11:12,739 --> 00:11:13,377
+In summary.
+
+181
+00:11:13,789 --> 00:11:20,053
+A loss function turns how wrong one prediction is into one number that is never negative.
+
+182
+00:11:20,478 --> 00:11:25,890
+Squared error, absolute error and the zero one loss are three common choices.
+
+183
+00:11:26,329 --> 00:11:29,401
+The mean loss over a data set is the empirical risk.
+
+184
+00:11:29,827 --> 00:11:32,034
+Parameters are the knobs of the model.
+
+185
+00:11:32,939 --> 00:11:37,460
+Learning is optimization: choose the parameters that make the loss small.
+
+186
+00:11:37,886 --> 00:11:43,577
+Smooth losses are easier to minimize, and squared error punishes outliers hard.
+
+187
+00:11:44,003 --> 00:11:50,984
+Next, in video sixteen, the last atom: the activation function, the bend that makes networks deep.
+
+188
+00:11:51,410 --> 00:11:51,955
+See you there.
+
+189
+00:11:53,872 --> 00:11:55,694
+This video was made by David R.
+
+190
+00:11:56,133 --> 00:11:59,364
+You can find more lessons at David Ramirez J dot com.
+
+191
+00:11:59,923 --> 00:12:00,641
+Thanks for watching.

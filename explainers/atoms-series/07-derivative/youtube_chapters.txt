@@ -1,0 +1,10 @@
+00:00 Intro
+00:41 From average slope to the tangent
+02:00 The derivative as a limit
+03:57 Local linearity
+05:55 Three quick rules
+07:16 Flat at the bottom
+08:15 Derivatives in ML
+09:27 Try it yourself
+10:39 Python demo
+11:22 Summary

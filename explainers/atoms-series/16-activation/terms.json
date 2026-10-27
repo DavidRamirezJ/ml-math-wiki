@@ -1,0 +1,17 @@
+[
+ {
+  "term": "nonlinearity",
+  "definition": "A function that is not linear: it does not keep adding and scaling.",
+  "video": "16-activation"
+ },
+ {
+  "term": "activation function",
+  "definition": "The nonlinearity applied to every output number of a layer, before the next layer.",
+  "video": "16-activation"
+ },
+ {
+  "term": "ReLU",
+  "definition": "Rectified linear unit: ReLU(z) = max(0, z). Keeps positive numbers, turns negative numbers into 0.",
+  "video": "16-activation"
+ }
+]

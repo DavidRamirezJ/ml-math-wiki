@@ -1,0 +1,859 @@
+1
+00:00:00,119 --> 00:00:02,047
+Two classes take the same quiz.
+
+2
+00:00:02,486 --> 00:00:05,199
+Both classes have an average score of five out of ten.
+
+3
+00:00:05,625 --> 00:00:07,127
+Are the two classes the same?
+
+4
+00:00:07,553 --> 00:00:08,085
+Not at all.
+
+5
+00:00:08,510 --> 00:00:11,555
+In one class, almost everybody scored five.
+
+6
+00:00:11,981 --> 00:00:15,851
+In the other class, some students scored two and some scored eight.
+
+7
+00:00:16,276 --> 00:00:18,244
+The average hides this difference.
+
+8
+00:00:18,683 --> 00:00:20,917
+We need a second number that measures spread.
+
+9
+00:00:22,439 --> 00:00:24,926
+Machine learning needs that number all the time.
+
+10
+00:00:25,351 --> 00:00:29,673
+We often rescale every input so that its spread is one.
+
+11
+00:00:30,099 --> 00:00:36,442
+Inside every GPT block, layer normalization computes a spread for each token.
+
+12
+00:00:36,867 --> 00:00:42,373
+In this video you will compute variance, standard deviation and covariance by hand.
+
+13
+00:00:42,812 --> 00:00:45,325
+You need the expected value from video thirteen.
+
+14
+00:00:47,052 --> 00:00:49,619
+Here are the two classes as dot plots.
+
+15
+00:00:50,031 --> 00:00:52,824
+Each dot is one student, placed at its score.
+
+16
+00:00:53,249 --> 00:00:56,082
+This is a toy example with five students per class.
+
+17
+00:00:56,521 --> 00:01:00,683
+Class A has the scores four, five, five, five and six.
+
+18
+00:01:01,122 --> 00:01:04,965
+Class B has two, four, five, six and eight.
+
+19
+00:01:05,404 --> 00:01:09,021
+Both lists add up to twenty-five, so both means are five.
+
+20
+00:01:09,939 --> 00:01:10,684
+Remember the mean.
+
+21
+00:01:11,109 --> 00:01:15,923
+It is the expected value: each value times its probability, added up.
+
+22
+00:01:16,349 --> 00:01:21,495
+With five equally likely students, every probability is one fifth.
+
+23
+00:01:21,921 --> 00:01:24,341
+So the mean is the balance point of the dots.
+
+24
+00:01:24,806 --> 00:01:27,785
+For both classes, the balance point sits at five.
+
+25
+00:01:28,224 --> 00:01:29,607
+The center is the same.
+
+26
+00:01:30,006 --> 00:01:31,003
+The spread is not.
+
+27
+00:01:31,939 --> 00:01:33,069
+How can we measure spread?
+
+28
+00:01:33,482 --> 00:01:37,498
+A natural idea: measure how far each dot is from the mean.
+
+29
+00:01:37,937 --> 00:01:41,447
+That distance, with its sign, is called a deviation.
+
+30
+00:01:41,926 --> 00:01:49,359
+For class B, the deviations are minus three, minus one, zero, plus one and plus three.
+
+31
+00:01:49,772 --> 00:01:52,298
+Dots on the left get negative deviations.
+
+32
+00:01:52,710 --> 00:01:55,117
+Dots on the right get positive ones.
+
+33
+00:01:56,073 --> 00:01:57,894
+Now average the deviations.
+
+34
+00:01:58,333 --> 00:02:04,038
+Minus three, minus one, zero, one and three add up to zero.
+
+35
+00:02:04,477 --> 00:02:06,817
+So the average deviation is zero.
+
+36
+00:02:07,256 --> 00:02:08,506
+And this is not bad luck.
+
+37
+00:02:08,958 --> 00:02:13,453
+The mean is the balance point, so the deviations always cancel.
+
+38
+00:02:13,892 --> 00:02:17,190
+The plain average of deviations is always zero.
+
+39
+00:02:17,615 --> 00:02:19,237
+It tells us nothing about spread.
+
+40
+00:02:20,973 --> 00:02:24,457
+The fix is to square each deviation before averaging.
+
+41
+00:02:24,882 --> 00:02:28,113
+A square is never negative, so nothing can cancel.
+
+42
+00:02:28,552 --> 00:02:30,387
+Minus three squared is nine.
+
+43
+00:02:30,879 --> 00:02:32,688
+Three squared is also nine.
+
+44
+00:02:33,113 --> 00:02:37,223
+The left side and the right side now both add to the total.
+
+45
+00:02:37,648 --> 00:02:40,959
+Big deviations count a lot, small ones count a little.
+
+46
+00:02:41,873 --> 00:02:43,136
+This gives the definition.
+
+47
+00:02:43,561 --> 00:02:48,920
+The variance of X is the expected value of X minus mu, all squared.
+
+48
+00:02:49,333 --> 00:02:50,370
+Read it from the inside.
+
+49
+00:02:50,782 --> 00:02:52,232
+X is the random value.
+
+50
+00:02:52,670 --> 00:02:53,362
+Mu is its mean.
+
+51
+00:02:53,774 --> 00:02:55,928
+X minus mu is the deviation.
+
+52
+00:02:56,367 --> 00:02:57,072
+We square it.
+
+53
+00:02:57,498 --> 00:03:02,697
+Then E, the expected value, averages the squares with their probabilities.
+
+54
+00:03:03,639 --> 00:03:05,248
+Let's compute it for class B.
+
+55
+00:03:05,687 --> 00:03:11,392
+The deviations are minus three, minus one, zero, one and three.
+
+56
+00:03:11,844 --> 00:03:15,195
+The squares are nine, one, zero, one and nine.
+
+57
+00:03:15,634 --> 00:03:16,631
+They add up to twenty.
+
+58
+00:03:17,057 --> 00:03:21,246
+Each student has probability one fifth, so we divide by five.
+
+59
+00:03:21,671 --> 00:03:24,158
+Twenty divided by five is four.
+
+60
+00:03:24,597 --> 00:03:26,817
+The variance of class B is four.
+
+61
+00:03:27,773 --> 00:03:28,890
+Now class A.
+
+62
+00:03:29,315 --> 00:03:34,767
+The deviations are minus one, zero, zero, zero and one.
+
+63
+00:03:35,206 --> 00:03:39,288
+The squares are one, zero, zero, zero and one.
+
+64
+00:03:39,714 --> 00:03:40,512
+They add up to two.
+
+65
+00:03:40,924 --> 00:03:43,757
+Two divided by five is zero point four.
+
+66
+00:03:44,195 --> 00:03:48,743
+So class A has variance zero point four, and class B has variance four.
+
+67
+00:03:49,169 --> 00:03:51,549
+Ten times more spread, in one number.
+
+68
+00:03:53,106 --> 00:03:54,077
+Two facts follow.
+
+69
+00:03:54,502 --> 00:03:58,186
+A variance is never negative, because it averages squares.
+
+70
+00:03:58,624 --> 00:04:01,909
+It is zero only when every value equals the mean.
+
+71
+00:04:02,335 --> 00:04:06,962
+And a common mistake is to forget the square: then you always get zero.
+
+72
+00:04:08,706 --> 00:04:11,552
+There is one problem with variance: its units.
+
+73
+00:04:11,977 --> 00:04:13,121
+The scores are in points.
+
+74
+00:04:13,560 --> 00:04:18,506
+But we squared the deviations, so the variance of four is in points squared.
+
+75
+00:04:18,919 --> 00:04:21,113
+A points squared is hard to imagine.
+
+76
+00:04:21,525 --> 00:04:25,182
+To go back to the original units, we take the square root.
+
+77
+00:04:26,106 --> 00:04:29,510
+The square root of the variance is called the standard deviation.
+
+78
+00:04:29,949 --> 00:04:31,385
+Its symbol is sigma.
+
+79
+00:04:31,851 --> 00:04:35,281
+For class B, the square root of four is two.
+
+80
+00:04:35,720 --> 00:04:38,380
+So the standard deviation is two points.
+
+81
+00:04:38,805 --> 00:04:41,332
+You can read it as a typical distance from the mean.
+
+82
+00:04:41,797 --> 00:04:47,130
+For class A, the square root of zero point four is about zero point six three.
+
+83
+00:04:48,639 --> 00:04:50,900
+There is also a shortcut for variance.
+
+84
+00:04:51,325 --> 00:04:56,339
+The variance equals the expected value of X squared, minus mu squared.
+
+85
+00:04:56,764 --> 00:05:00,900
+In words: the mean of the squares, minus the square of the mean.
+
+86
+00:05:01,339 --> 00:05:04,051
+Let's check it on class B, with the same numbers.
+
+87
+00:05:04,973 --> 00:05:11,475
+The squares of the scores are four, sixteen, twenty-five, thirty-six and sixty-four.
+
+88
+00:05:11,901 --> 00:05:14,095
+They add up to one hundred forty-five.
+
+89
+00:05:14,520 --> 00:05:17,034
+Divided by five, that is twenty-nine.
+
+90
+00:05:17,459 --> 00:05:20,903
+The mean is five, and five squared is twenty-five.
+
+91
+00:05:21,329 --> 00:05:23,869
+Twenty-nine minus twenty-five is four.
+
+92
+00:05:24,308 --> 00:05:25,837
+The same variance as before.
+
+93
+00:05:27,573 --> 00:05:34,634
+Now take two variables at the same time, for example hours studied, called x, and quiz score, called y.
+
+94
+00:05:35,033 --> 00:05:37,599
+Each pair becomes one dot in a scatter plot.
+
+95
+00:05:38,025 --> 00:05:39,660
+Look at three toy clouds.
+
+96
+00:05:40,086 --> 00:05:42,759
+In the first, y goes up when x goes up.
+
+97
+00:05:43,198 --> 00:05:44,913
+In the second, y goes down.
+
+98
+00:05:45,325 --> 00:05:46,974
+In the third, there is no pattern.
+
+99
+00:05:48,459 --> 00:05:50,600
+We want one number that tells these three apart.
+
+100
+00:05:51,039 --> 00:05:54,656
+The idea is to multiply the two deviations.
+
+101
+00:05:55,082 --> 00:06:02,954
+If a dot is right of the mean of x and above the mean of y, both deviations are positive, and the product is positive.
+
+102
+00:06:03,379 --> 00:06:08,127
+Left and below gives minus times minus, which is also positive.
+
+103
+00:06:08,552 --> 00:06:11,199
+The other two corners give negative products.
+
+104
+00:06:12,093 --> 00:06:15,085
+Average these products, and you get the covariance.
+
+105
+00:06:15,523 --> 00:06:20,311
+It is the expected value of X minus its mean, times Y minus its mean.
+
+106
+00:06:20,736 --> 00:06:24,353
+A positive covariance means the variables move together.
+
+107
+00:06:24,765 --> 00:06:28,529
+A negative covariance means they move in opposite directions.
+
+108
+00:06:28,968 --> 00:06:32,678
+A covariance near zero means no straight-line pattern.
+
+109
+00:06:33,117 --> 00:06:39,539
+Our three clouds give zero point five nine, minus zero point six five, and zero point one.
+
+110
+00:06:41,073 --> 00:06:42,469
+Let's compute one by hand.
+
+111
+00:06:42,934 --> 00:06:47,402
+Four students studied one, three, five and seven hours.
+
+112
+00:06:47,841 --> 00:06:51,152
+Their scores were two, three, six and five.
+
+113
+00:06:51,578 --> 00:06:52,788
+The mean of x is four.
+
+114
+00:06:53,227 --> 00:06:54,995
+The mean of y is also four.
+
+115
+00:06:55,421 --> 00:07:00,474
+So the x deviations are minus three, minus one, one and three.
+
+116
+00:07:00,913 --> 00:07:05,900
+The y deviations are minus two, minus one, two and one.
+
+117
+00:07:06,826 --> 00:07:08,169
+Multiply the pairs.
+
+118
+00:07:08,595 --> 00:07:11,467
+Minus three times minus two is six.
+
+119
+00:07:11,892 --> 00:07:14,499
+Minus one times minus one is one.
+
+120
+00:07:14,924 --> 00:07:16,493
+One times two is two.
+
+121
+00:07:16,999 --> 00:07:18,501
+Three times one is three.
+
+122
+00:07:18,954 --> 00:07:20,815
+The products add up to twelve.
+
+123
+00:07:21,241 --> 00:07:25,044
+Divide by four students, and the covariance is three.
+
+124
+00:07:25,483 --> 00:07:29,938
+It is positive, so more hours go with higher scores in this toy data.
+
+125
+00:07:31,473 --> 00:07:32,111
+One warning.
+
+126
+00:07:32,536 --> 00:07:35,887
+Covariance only sees straight-line patterns.
+
+127
+00:07:36,326 --> 00:07:40,582
+Take x from minus two up to two, and y equal to x squared.
+
+128
+00:07:40,994 --> 00:07:45,688
+The covariance is zero, even though y depends completely on x.
+
+129
+00:07:46,167 --> 00:07:48,946
+Zero covariance does not mean unrelated.
+
+130
+00:07:50,673 --> 00:07:57,720
+With two variables we have three numbers: the variance of x, the variance of y, and their covariance.
+
+131
+00:07:58,119 --> 00:08:02,521
+We can store them in a two by two matrix, called the covariance matrix.
+
+132
+00:08:02,946 --> 00:08:04,821
+The variances go on the diagonal.
+
+133
+00:08:05,260 --> 00:08:08,425
+The covariance goes in both off-diagonal places.
+
+134
+00:08:09,379 --> 00:08:15,829
+For our four students, the variance of x is five, and the variance of y is two point five.
+
+135
+00:08:16,281 --> 00:08:18,009
+The covariance is three.
+
+136
+00:08:18,448 --> 00:08:22,664
+So the matrix is five, three, three, two point five.
+
+137
+00:08:23,089 --> 00:08:29,924
+The matrix is symmetric, because the covariance of x and y equals the covariance of y and x.
+
+138
+00:08:30,323 --> 00:08:33,781
+With ten features, the matrix would be ten by ten.
+
+139
+00:08:35,306 --> 00:08:36,396
+Where does all this come from?
+
+140
+00:08:36,822 --> 00:08:44,894
+The mean is a weighted sum, from axiom A, linearity, with weights that follow axiom D, the probability rules.
+
+141
+00:08:45,332 --> 00:08:50,452
+Now put the x deviations in one vector and the y deviations in another.
+
+142
+00:08:50,891 --> 00:08:56,037
+Their dot product is six plus one plus two plus three, which is twelve.
+
+143
+00:08:56,463 --> 00:08:58,883
+Divide by four, and you get three.
+
+144
+00:08:59,806 --> 00:09:03,795
+So covariance is an average dot product of deviation vectors.
+
+145
+00:09:04,234 --> 00:09:06,654
+That is axiom B, the inner product.
+
+146
+00:09:07,067 --> 00:09:12,545
+Variance is the same thing with a vector and itself: an average squared length.
+
+147
+00:09:12,957 --> 00:09:18,104
+So variance and covariance are built from axioms A, B and D.
+
+148
+00:09:19,639 --> 00:09:20,517
+One honest detail.
+
+149
+00:09:20,956 --> 00:09:23,682
+We divided by n, the number of data points.
+
+150
+00:09:24,147 --> 00:09:30,012
+For a sample from a larger population, many tools divide by n minus one instead.
+
+151
+00:09:30,450 --> 00:09:32,006
+This is called Bessel's correction.
+
+152
+00:09:32,445 --> 00:09:37,924
+NumPy's var divides by n by default, but NumPy's cov divides by n minus one.
+
+153
+00:09:39,673 --> 00:09:41,707
+Now let's use variance in machine learning.
+
+154
+00:09:42,133 --> 00:09:44,340
+The first use is standardization.
+
+155
+00:09:44,806 --> 00:09:49,327
+For each value, subtract the mean and divide by the standard deviation.
+
+156
+00:09:49,752 --> 00:09:51,441
+The result is called a z-score.
+
+157
+00:09:51,920 --> 00:10:03,476
+For class B, the scores two, four, five, six and eight become minus one point five, minus zero point five, zero, zero point five and one point five.
+
+158
+00:10:04,406 --> 00:10:09,060
+After standardization, the mean is zero and the variance is one.
+
+159
+00:10:09,526 --> 00:10:17,478
+Features in meters, dollars or years now share one scale, and many learning methods train more stably.
+
+160
+00:10:18,993 --> 00:10:24,192
+The second use is layer normalization, inside every GPT block.
+
+161
+00:10:24,671 --> 00:10:32,078
+For one token, the model takes its list of features, computes their mean and variance, and standardizes them.
+
+162
+00:10:32,503 --> 00:10:37,224
+GPT-2 small has seven hundred sixty-eight features per token.
+
+163
+00:10:37,649 --> 00:10:43,886
+A tiny number, epsilon, is added to the variance, so the model never divides by zero.
+
+164
+00:10:45,439 --> 00:10:50,027
+The third use is principal component analysis, or PCA.
+
+165
+00:10:50,466 --> 00:10:54,322
+It looks for the directions in which the data spreads the most.
+
+166
+00:10:54,748 --> 00:10:57,713
+Those directions come from the covariance matrix.
+
+167
+00:10:58,112 --> 00:11:04,083
+Layer normalization and PCA are molecules: they combine this atom with others.
+
+168
+00:11:04,522 --> 00:11:06,623
+We will meet them in the molecules map.
+
+169
+00:11:08,339 --> 00:11:09,204
+Now it is your turn.
+
+170
+00:11:09,642 --> 00:11:11,517
+Pause the video and try this.
+
+171
+00:11:11,930 --> 00:11:15,520
+The data set is one, one, five and five.
+
+172
+00:11:15,932 --> 00:11:18,924
+What is its variance, and what is its standard deviation?
+
+173
+00:11:19,337 --> 00:11:23,419
+Start with the mean, then the deviations, then the squares.
+
+174
+00:11:24,366 --> 00:11:25,603
+Here is the answer.
+
+175
+00:11:26,028 --> 00:11:27,012
+The mean is three.
+
+176
+00:11:27,438 --> 00:11:32,025
+The deviations are minus two, minus two, two and two.
+
+177
+00:11:32,438 --> 00:11:34,193
+Every square is four.
+
+178
+00:11:34,672 --> 00:11:37,810
+Four plus four plus four plus four is sixteen.
+
+179
+00:11:38,235 --> 00:11:41,081
+Divide by four, and the variance is four.
+
+180
+00:11:41,507 --> 00:11:45,762
+The square root of four is two, so the standard deviation is two.
+
+181
+00:11:47,293 --> 00:11:48,051
+One more question.
+
+182
+00:11:48,516 --> 00:11:52,519
+Three points: one, six, then two, four, then three, two.
+
+183
+00:11:52,944 --> 00:11:56,787
+Is the covariance of x and y positive or negative?
+
+184
+00:11:57,213 --> 00:11:57,971
+Can you compute it?
+
+185
+00:11:58,410 --> 00:11:59,128
+Pause and try.
+
+186
+00:12:00,039 --> 00:12:03,643
+The mean of x is two, and the mean of y is four.
+
+187
+00:12:04,082 --> 00:12:10,784
+The deviation pairs are minus one and two, then zero and zero, then one and minus two.
+
+188
+00:12:11,236 --> 00:12:14,654
+The products are minus two, zero and minus two.
+
+189
+00:12:15,066 --> 00:12:16,475
+They add up to minus four.
+
+190
+00:12:16,901 --> 00:12:21,050
+Divide by three, and the covariance is minus four thirds.
+
+191
+00:12:21,475 --> 00:12:24,773
+It is negative: when x goes up, y goes down.
+
+192
+00:12:26,506 --> 00:12:29,139
+Let's check everything in Python with NumPy.
+
+193
+00:12:29,578 --> 00:12:34,870
+We make the two classes, compute the deviations, and average their squares.
+
+194
+00:12:35,309 --> 00:12:36,253
+We check the shortcut.
+
+195
+00:12:36,692 --> 00:12:43,221
+Then we build the covariance matrix of hours and scores, once with n and once with n minus one.
+
+196
+00:12:43,727 --> 00:12:45,735
+Finally, we standardize class B.
+
+197
+00:12:47,273 --> 00:12:51,235
+This output is real; the script ran while the video was made.
+
+198
+00:12:51,661 --> 00:12:55,810
+Both means are five, and the deviations average to zero.
+
+199
+00:12:56,235 --> 00:12:59,134
+The variances are zero point four and four.
+
+200
+00:12:59,560 --> 00:13:03,536
+The shortcut also gives four, and the covariance is three.
+
+201
+00:13:03,975 --> 00:13:06,900
+With n minus one, the matrix grows.
+
+202
+00:13:07,326 --> 00:13:09,081
+The z-scores have variance one.
+
+203
+00:13:10,839 --> 00:13:11,504
+In summary.
+
+204
+00:13:11,943 --> 00:13:15,001
+Variance is the expected squared distance from the mean.
+
+205
+00:13:15,427 --> 00:13:20,174
+We square the deviations because plain deviations always cancel to zero.
+
+206
+00:13:20,573 --> 00:13:26,743
+The standard deviation is the square root of the variance, and it is in the original units.
+
+207
+00:13:27,182 --> 00:13:31,650
+The shortcut says: the mean of the squares minus the square of the mean.
+
+208
+00:13:32,573 --> 00:13:35,977
+Covariance is the average product of deviations.
+
+209
+00:13:36,416 --> 00:13:41,482
+Its sign says whether two variables move together or in opposite directions.
+
+210
+00:13:41,908 --> 00:13:46,442
+The covariance matrix collects all variances and covariances.
+
+211
+00:13:46,854 --> 00:13:53,503
+Next, in video fifteen, we meet the loss function: one number that says how wrong a model is.
+
+212
+00:13:53,942 --> 00:13:54,514
+See you there.
+
+213
+00:13:56,439 --> 00:13:58,261
+This video was made by David R.
+
+214
+00:13:58,700 --> 00:14:01,931
+You can find more lessons at David Ramirez J dot com.
+
+215
+00:14:02,490 --> 00:14:03,208
+Thanks for watching.

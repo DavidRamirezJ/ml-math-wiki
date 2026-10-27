@@ -1,0 +1,12 @@
+[
+ {
+  "term": "expected value",
+  "definition": "The probability-weighted average of the values: E[X] = Σ p(x)·x. The long-run average.",
+  "video": "13-expected-value"
+ },
+ {
+  "term": "mean",
+  "definition": "The average of values; for data: sum ÷ count. The expected value is the mean of a distribution.",
+  "video": "13-expected-value"
+ }
+]

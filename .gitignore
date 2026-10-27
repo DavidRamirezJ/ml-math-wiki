@@ -6,3 +6,7 @@ __pycache__/
 *.pyc
 .staging/
 raw/*.pdf
+# video render caches and drafts (re-creatable; only final.mp4 is kept)
+explainers/atoms-series/*/media/
+explainers/atoms-series/*/draft.mp4
+explainers/atoms-series/*/layout_warnings.txt

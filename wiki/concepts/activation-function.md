@@ -5,7 +5,7 @@ tags: [deep-learning, neural-networks, nonlinearity, llm]
 difficulty: beginner
 sources: [llm-ch04-implementing-a-gpt-model, llm-appA-introduction-to-pytorch]
 created: 2026-10-13
-updated: 2026-10-13
+updated: 2026-10-27
 ---
 
 # Activation Function
@@ -118,9 +118,9 @@ to better optimization properties during training."
   "input × a soft gate in $[0,1]$." This unifies ReLU (gate $=\mathbb 1[x>0]$) with its smooth successors.
 
 ## Connections
-- Builds on: [[linear-mapping]], [[matrix]], [[bias-vector]], [[linear-layer]], [[neural-network]]
+- Builds on: [[linear-mapping]], [[matrix]], [[bias-vector]], [[linear-layer]]
 - Leads to: [[relu]], [[sigmoid-function]], [[gelu]], [[swiglu]], [[feed-forward-network]], [[multilayer-perceptron]]
-- Used by: [[transformer-block]], [[logistic-regression]], [[backpropagation]], [[computational-graph]]
+- Used by: [[neural-network]], [[transformer-block]], [[logistic-regression]], [[backpropagation]], [[computational-graph]]
 - Related: [[vanishing-and-exploding-gradients]], [[shortcut-connections]], [[layer-normalization]], [[derivative]]
 - People: [[dan-hendrycks]]
 

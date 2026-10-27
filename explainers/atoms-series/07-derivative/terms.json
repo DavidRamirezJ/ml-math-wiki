@@ -1,0 +1,17 @@
+[
+ {
+  "term": "limit",
+  "definition": "The value that an expression gets closer and closer to as h approaches a number (here 0).",
+  "video": "07-derivative"
+ },
+ {
+  "term": "derivative",
+  "definition": "The slope of a function at one point: the limit of rise over run as the run shrinks to 0.",
+  "video": "07-derivative"
+ },
+ {
+  "term": "local linear approximation",
+  "definition": "Near x, replace the curve by its tangent line: f(x+h) ≈ f(x) + f′(x)·h.",
+  "video": "07-derivative"
+ }
+]

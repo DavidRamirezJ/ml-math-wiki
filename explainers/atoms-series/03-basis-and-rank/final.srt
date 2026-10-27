@@ -1,0 +1,703 @@
+1
+00:00:00,093 --> 00:00:03,204
+Imagine a table of data with one hundred columns.
+
+2
+00:00:03,643 --> 00:00:05,718
+It looks like one hundred different directions.
+
+3
+00:00:06,143 --> 00:00:08,550
+But some columns may only repeat others.
+
+4
+00:00:08,949 --> 00:00:14,454
+A length in meters and the same length in centimeters say the same thing twice.
+
+5
+00:00:14,906 --> 00:00:16,582
+So how many directions are really there?
+
+6
+00:00:16,994 --> 00:00:21,356
+That number has a name, the rank, and today we learn to count it.
+
+7
+00:00:22,259 --> 00:00:31,554
+You will learn when vectors are redundant, what a basis is, how to describe one point with two different bases, and how to find the rank of a matrix.
+
+8
+00:00:31,993 --> 00:00:37,831
+You need video one, about vectors and span, and video two, about matrices.
+
+9
+00:00:39,573 --> 00:00:41,448
+In video one we met a warning.
+
+10
+00:00:41,860 --> 00:00:45,743
+The vectors two, one and four, two point along the same line.
+
+11
+00:00:46,221 --> 00:00:48,908
+Four, two is just two times two, one.
+
+12
+00:00:49,333 --> 00:00:52,711
+Together they only reach a line, not the whole plane.
+
+13
+00:00:53,150 --> 00:00:55,796
+The second vector adds nothing new.
+
+14
+00:00:56,221 --> 00:00:57,299
+We say it is redundant.
+
+15
+00:00:58,239 --> 00:00:59,795
+Redundancy can also hide.
+
+16
+00:01:00,221 --> 00:01:01,949
+Take three vectors in the plane.
+
+17
+00:01:02,375 --> 00:01:03,838
+The vector a is two, one.
+
+18
+00:01:04,276 --> 00:01:06,125
+The vector b is one, two.
+
+19
+00:01:06,550 --> 00:01:09,104
+The vector c is three, three.
+
+20
+00:01:09,542 --> 00:01:11,284
+No two of them are parallel.
+
+21
+00:01:11,710 --> 00:01:13,106
+So is each one really needed?
+
+22
+00:01:14,073 --> 00:01:14,791
+Look closer.
+
+23
+00:01:15,216 --> 00:01:17,450
+Walk along a, and then along b.
+
+24
+00:01:17,889 --> 00:01:21,479
+You arrive at three, three, which is exactly c.
+
+25
+00:01:21,905 --> 00:01:23,421
+So c equals a plus b.
+
+26
+00:01:23,833 --> 00:01:28,128
+Anything you can build with c, you can already build with a and b.
+
+27
+00:01:28,567 --> 00:01:30,908
+The vector c brings no new direction.
+
+28
+00:01:31,826 --> 00:01:38,275
+So the span of a, b and c is the same as the span of a and b alone: the whole plane.
+
+29
+00:01:38,714 --> 00:01:42,278
+We have three vectors, but only two real directions.
+
+30
+00:01:42,717 --> 00:01:48,049
+We need a test that finds this kind of hidden redundancy, even in a hundred dimensions.
+
+31
+00:01:49,786 --> 00:01:51,009
+Here is the test.
+
+32
+00:01:51,435 --> 00:01:58,456
+A set of vectors is called linearly independent if no vector in the set is a linear combination of the others.
+
+33
+00:01:58,882 --> 00:02:01,661
+Then each vector adds a new direction.
+
+34
+00:02:02,100 --> 00:02:07,538
+If at least one vector can be built from the others, the set is linearly dependent.
+
+35
+00:02:08,473 --> 00:02:12,954
+There is an equivalent way to say it, and it is easier to check.
+
+36
+00:02:13,379 --> 00:02:17,728
+Look for weights that make the linear combination equal to the zero vector.
+
+37
+00:02:18,140 --> 00:02:20,095
+All-zero weights always work.
+
+38
+00:02:20,534 --> 00:02:23,552
+The vectors are independent when that is the only way.
+
+39
+00:02:23,978 --> 00:02:27,116
+If other weights also give zero, they are dependent.
+
+40
+00:02:28,073 --> 00:02:30,160
+Read the formula symbol by symbol.
+
+41
+00:02:30,573 --> 00:02:32,208
+Lambda is a Greek letter.
+
+42
+00:02:32,674 --> 00:02:35,998
+Here, lambda i is a weight, a scalar.
+
+43
+00:02:36,424 --> 00:02:38,817
+And x i is the i-th vector.
+
+44
+00:02:39,256 --> 00:02:41,743
+The big sum adds up the weighted vectors.
+
+45
+00:02:42,182 --> 00:02:48,737
+The arrow says: if this sum is the zero vector, then every lambda must be zero.
+
+46
+00:02:50,259 --> 00:02:54,195
+Example one: a, b and c from before.
+
+47
+00:02:54,621 --> 00:02:57,520
+Take the weights one, one, and minus one.
+
+48
+00:02:57,959 --> 00:03:02,613
+The first components give two plus one minus three, which is zero.
+
+49
+00:03:03,052 --> 00:03:07,773
+The second components give one plus two minus three, which is zero.
+
+50
+00:03:08,198 --> 00:03:13,916
+Walk along a, then b, then back along c, and you return to the start.
+
+51
+00:03:14,355 --> 00:03:19,568
+Non-zero weights give zero, so a, b and c are dependent.
+
+52
+00:03:21,093 --> 00:03:24,058
+Example two: only a and b.
+
+53
+00:03:24,603 --> 00:03:31,226
+Suppose lambda one times two, one plus lambda two times one, two is the zero vector.
+
+54
+00:03:31,664 --> 00:03:36,957
+The first components give two lambda one plus lambda two equals zero.
+
+55
+00:03:37,382 --> 00:03:40,986
+So lambda two equals minus two lambda one.
+
+56
+00:03:41,919 --> 00:03:47,784
+Put that into the second components: lambda one plus two lambda two equals zero.
+
+57
+00:03:48,209 --> 00:03:53,688
+That becomes lambda one minus four lambda one, which is minus three lambda one.
+
+58
+00:03:54,113 --> 00:03:58,701
+So lambda one is zero, and then lambda two is zero too.
+
+59
+00:03:59,127 --> 00:04:03,023
+Only the zero weights work, so a and b are independent.
+
+60
+00:04:04,539 --> 00:04:05,417
+Two quick facts.
+
+61
+00:04:05,829 --> 00:04:12,677
+Any set that contains the zero vector is dependent, because one times the zero vector is already zero.
+
+62
+00:04:13,090 --> 00:04:20,364
+And a set where one vector is a multiple of another, like two, one and four, two, is dependent too.
+
+63
+00:04:22,106 --> 00:04:25,377
+Now we can say exactly what a good set of building blocks is.
+
+64
+00:04:25,789 --> 00:04:31,999
+A basis of a vector space is a set of vectors that is linearly independent and spans the whole space.
+
+65
+00:04:32,425 --> 00:04:37,864
+It is a smallest spanning set: remove any vector and you lose part of the space.
+
+66
+00:04:39,373 --> 00:04:48,162
+The most familiar basis of the plane is e one, equal to one, zero, and e two, equal to zero, one.
+
+67
+00:04:48,588 --> 00:04:52,338
+They are independent, and every point is a combination of them.
+
+68
+00:04:52,790 --> 00:04:57,444
+The point one, three is one times e one plus three times e two.
+
+69
+00:04:57,883 --> 00:05:00,623
+We say its coordinates are one and three.
+
+70
+00:05:01,539 --> 00:05:03,281
+But a basis is not unique.
+
+71
+00:05:03,720 --> 00:05:04,731
+Here is another one.
+
+72
+00:05:05,156 --> 00:05:10,103
+The vector b one is one, one, and b two is minus one, one.
+
+73
+00:05:10,542 --> 00:05:15,263
+They are not parallel, so they are independent, and together they span the plane.
+
+74
+00:05:15,688 --> 00:05:19,877
+The new grid is turned and stretched, but it still covers everything.
+
+75
+00:05:20,793 --> 00:05:24,769
+Now describe the same point, one, three, with the new basis.
+
+76
+00:05:25,194 --> 00:05:33,293
+We need weights c one and c two, so that c one times b one plus c two times b two equals one, three.
+
+77
+00:05:33,731 --> 00:05:38,266
+The first components say: c one minus c two equals one.
+
+78
+00:05:38,705 --> 00:05:43,239
+The second components say: c one plus c two equals three.
+
+79
+00:05:44,159 --> 00:05:45,502
+Add the two equations.
+
+80
+00:05:45,928 --> 00:05:49,146
+Two c one equals four, so c one is two.
+
+81
+00:05:49,558 --> 00:05:50,954
+Then c two is one.
+
+82
+00:05:51,380 --> 00:05:51,792
+Check it.
+
+83
+00:05:52,231 --> 00:05:54,412
+Two times one, one is two, two.
+
+84
+00:05:54,824 --> 00:05:58,268
+Add minus one, one, and you get one, three.
+
+85
+00:05:58,707 --> 00:06:03,308
+So in the new basis, the same point has the coordinates two and one.
+
+86
+00:06:04,239 --> 00:06:06,580
+Same point, two different descriptions.
+
+87
+00:06:07,032 --> 00:06:09,479
+The coordinates depend on the basis you choose.
+
+88
+00:06:09,917 --> 00:06:16,872
+And because basis vectors are independent, each point has exactly one set of coordinates in a given basis.
+
+89
+00:06:17,311 --> 00:06:21,433
+With redundant vectors, one point could have many descriptions.
+
+90
+00:06:22,986 --> 00:06:24,076
+Here is a deep fact.
+
+91
+00:06:24,502 --> 00:06:27,853
+Every basis of a space has the same number of vectors.
+
+92
+00:06:28,292 --> 00:06:29,941
+This number is called the dimension.
+
+93
+00:06:30,366 --> 00:06:31,909
+The plane has dimension two.
+
+94
+00:06:32,348 --> 00:06:37,281
+Ordinary space, with length, width and height, has dimension three.
+
+95
+00:06:37,707 --> 00:06:41,523
+That is also why three vectors in the plane are always dependent.
+
+96
+00:06:43,059 --> 00:06:44,575
+Careful with a common mistake.
+
+97
+00:06:45,014 --> 00:06:48,498
+Dimension is not the number of entries in each vector.
+
+98
+00:06:48,937 --> 00:06:52,634
+The span of the single vector zero, one is a line.
+
+99
+00:06:53,073 --> 00:06:56,783
+Its vectors have two entries, but the line has dimension one.
+
+100
+00:06:57,195 --> 00:07:03,245
+In the same way, a flat plane through the origin in three-dimensional space has dimension two.
+
+101
+00:07:04,959 --> 00:07:06,422
+Now back to matrices.
+
+102
+00:07:06,861 --> 00:07:11,209
+The rank of a matrix is the number of linearly independent columns.
+
+103
+00:07:11,635 --> 00:07:16,209
+It answers our question: how many real directions do the columns contain?
+
+104
+00:07:16,635 --> 00:07:22,020
+All the combinations of the columns form the column space, and its dimension is the rank.
+
+105
+00:07:23,539 --> 00:07:24,297
+Example one.
+
+106
+00:07:24,736 --> 00:07:33,659
+This three by three matrix has the columns one, two, zero, then minus one, minus two, zero, then three, six, zero.
+
+107
+00:07:34,098 --> 00:07:37,382
+The second column is minus one times the first.
+
+108
+00:07:37,821 --> 00:07:40,574
+The third column is three times the first.
+
+109
+00:07:40,986 --> 00:07:43,260
+So only one column is independent.
+
+110
+00:07:43,712 --> 00:07:47,595
+The rank is one, and the column space is just a line.
+
+111
+00:07:49,113 --> 00:07:49,924
+Example two.
+
+112
+00:07:50,376 --> 00:07:55,376
+The columns are one, zero, one, then zero, one, one, then one, one, two.
+
+113
+00:07:55,801 --> 00:07:59,565
+The first two columns are not parallel, so they are independent.
+
+114
+00:08:00,004 --> 00:08:03,315
+But the third column is the first plus the second.
+
+115
+00:08:03,740 --> 00:08:09,179
+So the rank is two, and the column space is a flat plane through the origin.
+
+116
+00:08:10,693 --> 00:08:17,169
+And the three by three identity matrix has three independent columns, so its rank is three.
+
+117
+00:08:17,594 --> 00:08:20,653
+Its columns reach all of three-dimensional space.
+
+118
+00:08:21,092 --> 00:08:25,440
+The rank can never be larger than the number of rows or the number of columns.
+
+119
+00:08:25,879 --> 00:08:30,413
+When it is as large as possible, we say the matrix has full rank.
+
+120
+00:08:31,939 --> 00:08:33,761
+One more surprising fact from the book.
+
+121
+00:08:34,187 --> 00:08:39,173
+The number of independent rows always equals the number of independent columns.
+
+122
+00:08:39,612 --> 00:08:42,671
+So you can count the rank with rows or with columns.
+
+123
+00:08:43,096 --> 00:08:48,442
+In practice, a computer finds it for you, as we will see in the Python demo.
+
+124
+00:08:50,173 --> 00:08:52,048
+Why does this matter in machine learning?
+
+125
+00:08:52,486 --> 00:08:54,907
+Look at this toy table of three objects.
+
+126
+00:08:55,359 --> 00:08:57,978
+The first column is the length in meters.
+
+127
+00:08:58,417 --> 00:09:04,401
+The second column is the same length in centimeters, which is one hundred times the first column.
+
+128
+00:09:04,827 --> 00:09:07,752
+The third column is the weight in kilograms.
+
+129
+00:09:08,673 --> 00:09:13,034
+There are three columns, but the second one is a multiple of the first.
+
+130
+00:09:13,460 --> 00:09:15,907
+So the rank is two, not three.
+
+131
+00:09:16,332 --> 00:09:18,792
+The data has only two real directions.
+
+132
+00:09:19,191 --> 00:09:25,295
+A redundant feature like this adds no new information, and finding the rank helps us detect it.
+
+133
+00:09:26,793 --> 00:09:35,223
+Rank is also behind a popular method for fine-tuning large language models, called LoRA, which stands for low-rank adaptation.
+
+134
+00:09:35,649 --> 00:09:43,854
+LoRA lets each weight matrix change only along a few directions, for example sixteen out of seven hundred sixty-eight.
+
+135
+00:09:44,332 --> 00:09:47,471
+Fewer directions means far fewer numbers to train.
+
+136
+00:09:47,883 --> 00:09:48,894
+We only mention it here.
+
+137
+00:09:50,419 --> 00:09:51,496
+Where does all this come from?
+
+138
+00:09:51,922 --> 00:10:01,350
+Independence, basis, dimension and rank are all questions about linear combinations: which points can we reach by adding and scaling?
+
+139
+00:10:01,776 --> 00:10:05,778
+So this whole video rests on axiom A, linearity.
+
+140
+00:10:07,473 --> 00:10:07,991
+Your turn.
+
+141
+00:10:08,430 --> 00:10:10,172
+Pause the video and try this.
+
+142
+00:10:10,598 --> 00:10:15,544
+Are the vectors one, two and three, six linearly independent?
+
+143
+00:10:15,983 --> 00:10:21,502
+If not, find weights, not all zero, that combine them into the zero vector.
+
+144
+00:10:22,479 --> 00:10:24,979
+Three, six is three times one, two.
+
+145
+00:10:25,405 --> 00:10:26,375
+So they are dependent.
+
+146
+00:10:26,814 --> 00:10:29,886
+One choice of weights is three and minus one.
+
+147
+00:10:30,351 --> 00:10:36,402
+Three times one, two is three, six, and minus three, six cancels it.
+
+148
+00:10:36,881 --> 00:10:41,841
+Three times the first vector minus the second gives zero, zero.
+
+149
+00:10:43,373 --> 00:10:44,197
+Second question.
+
+150
+00:10:44,623 --> 00:10:51,285
+What is the rank of the two by three matrix with rows one, two, three and two, four, six?
+
+151
+00:10:51,684 --> 00:10:55,168
+Count the independent columns, or the independent rows.
+
+152
+00:10:55,593 --> 00:10:56,285
+Pause and try.
+
+153
+00:10:57,206 --> 00:11:00,118
+The second row is two times the first row.
+
+154
+00:11:00,557 --> 00:11:04,626
+So there is only one independent row, and the rank is one.
+
+155
+00:11:05,065 --> 00:11:09,573
+The columns agree: one, two, then two, four, then three, six.
+
+156
+00:11:10,012 --> 00:11:12,206
+They are all multiples of one, two.
+
+157
+00:11:12,631 --> 00:11:15,437
+One independent column, so the rank is one.
+
+158
+00:11:17,173 --> 00:11:18,476
+Let's check it in NumPy.
+
+159
+00:11:18,915 --> 00:11:22,771
+The function matrix rank counts the independent columns for us.
+
+160
+00:11:23,210 --> 00:11:34,194
+We test a, b and c, solve for the coordinates of one, three in the new basis, and find the rank of our three examples and of the toy table.
+
+161
+00:11:35,739 --> 00:11:39,582
+This output is real; the script ran while the video was made.
+
+162
+00:11:39,995 --> 00:11:46,258
+A plus b minus c is the zero vector, and the rank of a, b and c is two.
+
+163
+00:11:46,697 --> 00:11:49,768
+The coordinates in the new basis are two and one.
+
+164
+00:11:50,194 --> 00:11:53,838
+The ranks of the examples are one, two and three.
+
+165
+00:11:54,276 --> 00:11:56,098
+And the toy table has rank two.
+
+166
+00:11:57,839 --> 00:11:58,491
+In summary.
+
+167
+00:11:58,930 --> 00:12:05,539
+Vectors are linearly independent when the only way to combine them into zero is with all-zero weights.
+
+168
+00:12:05,964 --> 00:12:09,728
+A basis is an independent set that spans the space.
+
+169
+00:12:10,153 --> 00:12:16,390
+Every point has unique coordinates in a basis, and the coordinates change when the basis changes.
+
+170
+00:12:17,293 --> 00:12:20,790
+Every basis has the same size: the dimension.
+
+171
+00:12:21,215 --> 00:12:27,253
+The rank of a matrix is the number of independent columns, which equals the number of independent rows.
+
+172
+00:12:27,665 --> 00:12:33,955
+Next, in video four: linear mappings, the functions that respect adding and scaling.
+
+173
+00:12:34,394 --> 00:12:34,939
+See you there.
+
+174
+00:12:36,873 --> 00:12:38,694
+This video was made by David R.
+
+175
+00:12:39,133 --> 00:12:42,365
+You can find more lessons at David Ramirez J dot com.
+
+176
+00:12:42,923 --> 00:12:43,641
+Thanks for watching.

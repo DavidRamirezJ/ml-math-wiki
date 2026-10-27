@@ -1,0 +1,27 @@
+[
+ {
+  "term": "probability distribution",
+  "definition": "The complete list of the values of a random variable with their probabilities (or a density).",
+  "video": "12-distribution"
+ },
+ {
+  "term": "sum rule",
+  "definition": "To forget a variable, add over all its values. The result is a marginal, like p(rain).",
+  "video": "12-distribution"
+ },
+ {
+  "term": "conditional probability",
+  "definition": "The probability of y when we already know x: p(y | x) = p(x, y) / p(x).",
+  "video": "12-distribution"
+ },
+ {
+  "term": "product rule",
+  "definition": "Joint = conditional × marginal: p(x, y) = p(y | x) p(x).",
+  "video": "12-distribution"
+ },
+ {
+  "term": "independence",
+  "definition": "Knowing one variable tells nothing about the other: p(x, y) = p(x) p(y).",
+  "video": "12-distribution"
+ }
+]

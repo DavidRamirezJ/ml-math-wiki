@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>¿Por qué importa la función de activación?</title>
+<script>window.MathJax={tex:{inlineMath:[['$','$']],displayMath:[['$$','$$']]}};</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<style>
+  :root{--bg:#f6f4ee;--fg:#1c1c22;--muted:#66655f;--card:#ffffff;--line:#e2ded3;--accent:#5b4bdb;--a2:#e8590c;--ok:#0f9d76;--bad:#d6336c;--soft:#ece9ff;--warm:#fff1e6}
+  @media (prefers-color-scheme:dark){:root{--bg:#121318;--fg:#ecebe6;--muted:#a3a29b;--card:#1c1e25;--line:#2f323b;--accent:#a99cff;--a2:#ff922b;--ok:#38d9a9;--bad:#f06595;--soft:#272347;--warm:#3a2616}}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);font:17px/1.65 "Iowan Old Style",Charter,Georgia,serif}
+  main{max-width:980px;margin:0 auto;padding:0 22px 100px}
+  h1,h2,h3{font-family:"Avenir Next","Segoe UI",system-ui,sans-serif;line-height:1.2}
+  h2{font-size:1.55rem;margin:60px 0 10px;display:flex;align-items:center;gap:10px}
+  h2 .n{display:inline-flex;width:34px;height:34px;border-radius:50%;background:var(--accent);color:#fff;align-items:center;justify-content:center;font-size:1rem}
+  .heroWrap{background:linear-gradient(135deg,#5b4bdb 0%,#9b5de5 55%,#e8590c 100%);color:#fff;padding:46px 26px 40px;margin:0 -22px 10px;border-radius:0 0 26px 26px;position:relative;overflow:hidden}
+  .heroWrap h1{font-size:2.5rem;margin:0 0 10px}
+  .heroWrap p{font-size:1.18rem;max-width:760px;margin:.4em 0}
+  .heroWrap .tag{display:inline-block;background:rgba(255,255,255,.18);border-radius:20px;padding:3px 12px;font:600 .82rem system-ui,sans-serif;margin-bottom:12px}
+  #heroSvg{position:absolute;right:-20px;top:10px;opacity:.28;pointer-events:none}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin:14px 0;box-shadow:0 2px 0 rgba(0,0,0,.02)}
+  .big{font-size:1.12rem}
+  .note{color:var(--muted);font-size:.93rem}
+  .sym{display:grid;grid-template-columns:auto 1fr;gap:5px 14px;margin:10px 0;font-size:.95rem}
+  .sym div:nth-child(odd){text-align:right;font-weight:600}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media(max-width:780px){.grid2{grid-template-columns:1fr}}
+  button,select{font:600 .9rem system-ui,sans-serif;border:1px solid var(--line);background:var(--card);color:var(--fg);padding:7px 14px;border-radius:9px;cursor:pointer}
+  button:hover{border-color:var(--accent)} button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+  input[type=range]{width:100%;accent-color:var(--accent)}
+  .row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  .mono{font:.93rem ui-monospace,Menlo,monospace;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;white-space:pre-wrap}
+  canvas{background:var(--card);border:1px solid var(--line);border-radius:12px;max-width:100%;display:block}
+  table{border-collapse:collapse;width:100%;background:var(--card);font-size:.96rem}
+  td,th{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{font:600 .8rem system-ui,sans-serif;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+  .pill{display:inline-block;border-radius:14px;padding:1px 10px;font:700 .8rem system-ui,sans-serif}
+  .pill.ok{background:rgba(15,157,118,.15);color:var(--ok)} .pill.bad{background:rgba(214,51,108,.14);color:var(--bad)} .pill.mid{background:var(--warm);color:var(--a2)}
+  /* collapse animation */
+  .mats{display:flex;align-items:center;gap:14px;justify-content:center;min-height:120px;flex-wrap:wrap}
+  .mat{border:2px solid var(--accent);border-radius:10px;padding:10px 14px;font:700 1rem ui-monospace,Menlo,monospace;background:var(--soft);transition:all .9s cubic-bezier(.6,.0,.3,1)}
+  .mat small{display:block;font:600 .75rem system-ui,sans-serif;color:var(--muted);text-align:center}
+  .mats.merged #m2{transform:translateX(70px) scale(.6);opacity:0}
+  .mats.merged #m1{transform:translateX(-70px) scale(.6);opacity:0}
+  .mats.merged #mDot{opacity:0}
+  #mOne{transform:scale(.4);opacity:0;position:absolute}
+  .mats.merged #mOne{transform:scale(1);opacity:1;position:static}
+  /* gallery */
+  .gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+  .gal .card{margin:0;text-align:center;padding:12px}
+  .gal svg path.curve{stroke-dasharray:600;stroke-dashoffset:600;animation:draw 1.6s ease forwards}
+  .gal .card:hover svg path.curve{animation:draw 1.2s ease forwards;animation-iteration-count:1}
+  @keyframes draw{to{stroke-dashoffset:0}}
+  /* network */
+  #net circle{transition:fill .35s, r .35s}
+  #net line{transition:stroke .3s, stroke-width .3s, opacity .3s}
+  .glow{filter:drop-shadow(0 0 6px var(--a2))}
+  .quiz label{display:block;padding:6px 10px;border-radius:8px;cursor:pointer}.quiz label:hover{background:var(--line)}
+  .fb{font-size:.93rem;margin-top:4px}
+  .summary{background:var(--card);border-left:7px solid var(--accent);border-radius:12px;padding:16px 22px;margin-top:44px}
+  .legend span{display:inline-flex;align-items:center;gap:6px;margin-right:14px;font:600 .85rem system-ui,sans-serif}
+  .dot{width:12px;height:12px;border-radius:50%;display:inline-block}
+</style>
+</head>
+<body>
+<main>
+
+<div class="heroWrap">
+  <svg id="heroSvg" width="420" height="300" viewBox="0 0 420 300"></svg>
+  <span class="tag">Fundamentos de redes neuronales · 2026-10-13</span>
+  <h1>¿Por qué importa la función de activación?</h1>
+  <p><b>Respuesta corta:</b> sin activación, una red con 100 capas hace lo mismo que una sola capa, y solo puede dibujar <b>líneas rectas</b>. La activación pone un <b>doblez</b> en cada neurona, y con muchos dobleces la red puede formar casi cualquier curva.</p>
+  <p><b>¿Dónde va?</b> Se aplica <b>a cada neurona por separado</b>, pero se elige <b>una por capa</b>: todas las neuronas de una capa usan la misma. Va en las <b>capas ocultas</b>; en la salida depende del problema.</p>
+</div>
+
+<!-- ============ 1 ============ -->
+<h2><span class="n">1</span>Qué hace una neurona (y dónde entra la activación)</h2>
+<p>Cada neurona, o perceptrón, hace dos cosas. Primero calcula un número con sus pesos. Después le aplica la activación a <b>su propio</b> número:</p>
+$$z = \mathbf{w}\cdot\mathbf{x} + b \qquad\longrightarrow\qquad h = \sigma(z)$$
+<div class="sym">
+  <div>$\mathbf{x}$</div><div>las entradas que recibe la neurona</div>
+  <div>$\mathbf{w}\cdot\mathbf{x}$</div><div>producto punto: multiplica cada entrada por su peso y suma todo</div>
+  <div>$b$</div><div>el sesgo (<i>bias</i>): un número extra que sube o baja el resultado</div>
+  <div>$z$</div><div>la "pre-activación": el número crudo, todavía sin doblar</div>
+  <div>$\sigma$</div><div>la función de activación (sigma minúscula). Recibe un número y devuelve otro.</div>
+  <div>$h$</div><div>la salida de la neurona, la que pasa a la siguiente capa</div>
+</div>
+
+<h3>🎬 Animación: una capa trabajando</h3>
+<p>Presiona <b>Reproducir</b>. Mira cómo cada neurona oculta calcula su $z$ y luego le aplica <b>la misma</b> activación, que se elige arriba para toda la capa. Haz clic en una neurona para ver sus cuentas.</p>
+<div class="card">
+  <div class="row" style="margin-bottom:8px">
+    <button id="netPlay">▶ Reproducir</button>
+    <span>Activación de la capa oculta:</span>
+    <select id="netAct"><option value="relu">ReLU</option><option value="sigmoid">sigmoide</option><option value="tanh">tanh</option><option value="gelu">GELU</option><option value="none">ninguna (lineal)</option></select>
+  </div>
+  <svg id="net" viewBox="0 0 900 380" width="100%"></svg>
+  <div class="mono" id="netMsg">Presiona ▶ Reproducir, o haz clic en una neurona oculta.</div>
+</div>
+<p class="note">Fíjate: la activación <b>no mezcla</b> neuronas. La neurona 2 no sabe lo que pasa en la neurona 3. Cada una dobla su propio número. A eso se le dice <i>element-wise</i> (elemento por elemento).</p>
+
+<!-- ============ 2 ============ -->
+<h2><span class="n">2</span>Sin activación, las capas se colapsan en una</h2>
+<p>Esta es la razón matemática. Si no hay activación, dos capas seguidas son <b>solo una multiplicación de matrices encima de otra</b>, y eso es igual a <b>una sola</b> matriz:</p>
+$$\mathbf{W}_2\big(\mathbf{W}_1\mathbf{x}\big) \;=\; \big(\mathbf{W}_2\mathbf{W}_1\big)\mathbf{x} \;=\; \mathbf{W}'\mathbf{x}$$
+<div class="sym">
+  <div>$\mathbf{W}_1,\ \mathbf{W}_2$</div><div>las matrices de pesos de la capa 1 y de la capa 2</div>
+  <div>$\mathbf{W}_2\mathbf{W}_1$</div><div>multiplicar las dos matrices primero (se puede, porque la multiplicación de matrices es asociativa)</div>
+  <div>$\mathbf{W}'$</div><div>una matriz nueva que hace el trabajo de las dos capas juntas</div>
+</div>
+<div class="card">
+  <div class="mats" id="mats">
+    <div class="mat" id="m2"><small>capa 2: W₂</small>[1 0]<br>[1 1]</div>
+    <div id="mDot" style="font-size:1.6rem;transition:opacity .6s">·</div>
+    <div class="mat" id="m1"><small>capa 1: W₁</small>[1 2]<br>[0 1]</div>
+    <div class="mat" id="mOne" style="border-color:var(--a2)"><small>¡una sola capa! W′ = W₂·W₁</small>[1 2]<br>[1 3]</div>
+  </div>
+  <p style="text-align:center"><button id="mergeBtn">✨ Juntar las dos capas</button></p>
+  <h3>Pruébalo: ¿la activación rompe el colapso?</h3>
+  <div class="grid2">
+    <div>
+      <label>x₁ = <b id="cx1v"></b><input type="range" id="cx1" min="-3" max="3" step="0.5" value="1"></label>
+      <label>x₂ = <b id="cx2v"></b><input type="range" id="cx2" min="-3" max="3" step="0.5" value="-2"></label>
+    </div>
+    <div class="mono" id="collapseOut"></div>
+  </div>
+  <p class="note">Sin activación, el camino de 2 capas y la capa única $\mathbf{W}'$ <b>siempre</b> dan lo mismo. Con ReLU en medio, en cuanto aparece un número negativo, los resultados se separan: la red ya no es una sola matriz.</p>
+</div>
+
+<!-- ============ 3 ============ -->
+<h2><span class="n">3</span>La activación dobla el espacio: el problema XOR</h2>
+<p>El ejemplo clásico es XOR. Los puntos <span class="pill bad">rojos</span> están en dos esquinas opuestas, (0,0) y (1,1). Los <span class="pill ok">verdes</span> están en las otras dos, (1,0) y (0,1). <b>Ninguna línea recta</b> los separa. Un solo perceptrón no puede, y una red sin activación tampoco.</p>
+<p>La red que vamos a animar tiene 2 neuronas ocultas con ReLU (es el ejemplo del libro <i>Deep Learning</i> de Goodfellow, Bengio y Courville, §6.1):</p>
+$$\mathbf{h} = \mathrm{ReLU}\!\left(\begin{bmatrix}1&1\\1&1\end{bmatrix}\mathbf{x} + \begin{bmatrix}0\\-1\end{bmatrix}\right),\qquad y = h_1 - 2h_2$$
+<div class="sym">
+  <div>$\mathbf{x}=(x_1,x_2)$</div><div>la posición del punto en el plano</div>
+  <div>$\mathbf{h}=(h_1,h_2)$</div><div>a dónde se mueve el punto después de la capa oculta</div>
+  <div>$y$</div><div>la calificación final que da la neurona de salida (abajo se explica bien)</div>
+  <div>$y > 0.5$</div><div>la red dice "verde"; si no, "rojo"</div>
+</div>
+<div class="card" style="border:2px solid var(--accent)">
+  <h3 style="margin-top:0">🧩 Entendiendo la fórmula pieza por pieza</h3>
+  <p>Esa fórmula se ve rara, pero es solo una <b>red diminuta</b> escrita en una línea: <b>2 entradas → 2 neuronas ocultas → 1 neurona de salida</b>. Este es el dibujo de la misma red:</p>
+  <svg id="xnet" viewBox="0 0 860 300" width="100%"></svg>
+
+  <h3>1) La matriz es solo "dos neuronas escritas juntas"</h3>
+  <p>Cada <b>fila</b> de la matriz son los pesos de <b>una</b> neurona, y cada número del vector de sesgos es el sesgo de esa neurona. Si la escribes neurona por neurona, queda así:</p>
+  $$\begin{bmatrix}1&1\\1&1\end{bmatrix}\begin{bmatrix}x_1\\x_2\end{bmatrix} + \begin{bmatrix}0\\-1\end{bmatrix} = \begin{bmatrix}1\cdot x_1 + 1\cdot x_2 + 0\\ 1\cdot x_1 + 1\cdot x_2 - 1\end{bmatrix} = \begin{bmatrix} z_1 \\ z_2\end{bmatrix}$$
+  <div class="sym">
+    <div>fila 1: $[1\ \ 1]$, sesgo $0$</div><div>neurona 1: $z_1 = x_1 + x_2$</div>
+    <div>fila 2: $[1\ \ 1]$, sesgo $-1$</div><div>neurona 2: $z_2 = x_1 + x_2 - 1$</div>
+    <div>$h_1 = \mathrm{ReLU}(z_1)$</div><div>la salida de la neurona 1, después del doblez</div>
+    <div>$h_2 = \mathrm{ReLU}(z_2)$</div><div>la salida de la neurona 2, después del doblez</div>
+  </div>
+
+  <h3>2) ¿Y qué es la $y$? Es la neurona de salida</h3>
+  <p>La $y$ es la <b>calificación final</b> de la red. La calcula una tercera neurona, que recibe $h_1$ y $h_2$ y los combina con sus propios pesos, $+1$ y $-2$:</p>
+  $$y = (+1)\cdot h_1 + (-2)\cdot h_2 = h_1 - 2h_2$$
+  <div class="sym">
+    <div>$+1$</div><div>el peso de $h_1$: "lo que diga la neurona 1, súmalo tal cual"</div>
+    <div>$-2$</div><div>el peso de $h_2$: "lo que diga la neurona 2, réstalo dos veces"</div>
+    <div>sin activación</div><div>esta neurona no lleva ReLU: solo suma, porque queremos un número de calificación</div>
+    <div>$y > 0.5$</div><div>la <b>regla de decisión</b>: si la calificación pasa de 0.5, la red dice "verde"; si no, "rojo"</div>
+  </div>
+
+  <h3>3) La idea en palabras (por qué funciona)</h3>
+  <ul>
+    <li>$h_1 = \mathrm{ReLU}(x_1+x_2)$ <b>cuenta cuántos unos hay</b>: 0, 1 o 2.</li>
+    <li>$h_2 = \mathrm{ReLU}(x_1+x_2-1)$ solo se enciende cuando <b>hay dos unos</b>. Con uno o ninguno, $z_2 \le 0$ y ReLU lo deja en 0.</li>
+    <li>$y = h_1 - 2h_2$: si hay <b>un</b> uno, $y = 1 - 0 = 1$ → verde. Si hay <b>dos</b>, $y = 2 - 2 = 0$ → rojo. Si no hay ninguno, $y = 0$ → rojo.</li>
+  </ul>
+  <p>O sea, la red responde la pregunta "¿hay <b>exactamente un</b> uno?". Eso es XOR. Y fíjate quién hace el truco: <b>ReLU apagando a $h_2$</b> cuando hay un solo uno.</p>
+
+  <h3>4) Pruébalo: calcula un punto paso a paso</h3>
+  <p class="row">Elige un punto:
+    <button class="xpt" data-p="0,0">(0,0)</button><button class="xpt" data-p="0,1">(0,1)</button><button class="xpt" data-p="1,0">(1,0)</button><button class="xpt" data-p="1,1">(1,1)</button>
+    <button id="xcStep">Siguiente cálculo ▶</button><button id="xcAll">Llenar la tabla con los 4 puntos</button></p>
+  <div class="mono" id="xcOut" style="min-height:120px"></div>
+  <table id="xcTable" style="margin-top:10px">
+    <tr><th>$x_1$</th><th>$x_2$</th><th>$z_1$</th><th>$z_2$</th><th>$h_1$</th><th>$h_2$</th><th>$y$</th><th>¿$y>0.5$?</th></tr>
+  </table>
+
+  <h3>5) Los fundamentos que necesitas para leer esta fórmula</h3>
+  <table>
+    <tr><th>Pieza</th><th>Qué necesitas saber</th><th>Dónde aparece aquí</th></tr>
+    <tr><td><b>Vector</b></td><td>Una lista de números; un punto del plano es un vector de 2 números.</td><td>$\mathbf{x} = (x_1, x_2)$</td></tr>
+    <tr><td><b>Producto punto</b></td><td>Multiplicar posición por posición y sumar.</td><td>$[1\ 1]\cdot[x_1\ x_2] = x_1 + x_2$</td></tr>
+    <tr><td><b>Matriz por vector</b></td><td>Un producto punto por cada fila = una neurona por fila.</td><td>la matriz de $2\times2$</td></tr>
+    <tr><td><b>Sesgo</b></td><td>Un número extra que se suma; mueve el punto donde "se enciende" la neurona.</td><td>el $0$ y el $-1$</td></tr>
+    <tr><td><b>ReLU</b></td><td>$\max(0,z)$: deja pasar positivos, convierte negativos en 0.</td><td>$h_1, h_2$</td></tr>
+    <tr><td><b>Neurona de salida</b></td><td>Otra suma con pesos, que junta lo que dijeron las ocultas.</td><td>$y = h_1 - 2h_2$</td></tr>
+    <tr><td><b>Regla de decisión</b></td><td>Un corte (umbral) que convierte un número en una clase.</td><td>$y > 0.5$ → verde</td></tr>
+  </table>
+  <p class="note">Si alguna de estas piezas no está clara, repásala en <code>2026-10-13_foundations-1-2-3-es.html</code>: el paso 1 tiene vectores, el paso 2 el producto punto y la matriz por vector, y el paso 3 el sesgo y ReLU.</p>
+</div>
+
+
+<div class="card">
+  <div class="row" style="margin-bottom:8px">
+    <button id="xorPlay">▶ Reproducir todo</button>
+    <button id="xorPrev">◀ Paso anterior</button>
+    <button id="xorNext">Paso siguiente ▶</button>
+    <button id="xorReset">⏮ Reiniciar</button>
+    <label><input type="checkbox" id="xorAct" checked> usar ReLU</label>
+  </div>
+  <div class="row" id="xorDots" style="margin-bottom:10px"></div>
+  <div class="grid2">
+    <canvas id="xorC" width="460" height="460"></canvas>
+    <div>
+      <div class="mono" id="xorMsg" style="min-height:150px"></div>
+      <h3 style="margin-top:14px">Frontera final, vista en el plano original</h3>
+      <canvas id="xorB" width="260" height="260"></canvas>
+      <p class="note">Con ReLU, la red separa una <b>franja</b> diagonal: eso es imposible con una sola línea.</p>
+    </div>
+  </div>
+  <div class="legend"><span><i class="dot" style="background:var(--bad)"></i>rojo (0,0) y (1,1)</span><span><i class="dot" style="background:var(--ok)"></i>verde (1,0) y (0,1)</span></div>
+</div>
+
+<!-- ============ 3b WEIGHTS ============ -->
+<h2><span class="n">3b</span>¿De dónde salen los pesos? ¿Los doy yo?</h2>
+<div class="card big">
+  <p><b>En el ejemplo de arriba, los pesos los elegimos a mano</b> (vienen del libro de Goodfellow) para que la cuenta fuera fácil de seguir. <b>En la vida real nadie se los da a la red: los aprende sola</b>, a partir de ejemplos. A ese proceso se le llama <b>entrenamiento</b>.</p>
+</div>
+<table>
+  <tr><th>Tú decides (hiperparámetros)</th><th>La red aprende (parámetros)</th></tr>
+  <tr><td>
+    • los <b>datos</b> con su respuesta correcta (los 4 puntos y su color)<br>
+    • la <b>arquitectura</b>: cuántas capas, cuántas neuronas y qué activación<br>
+    • la <b>función de pérdida</b>: cómo se mide el error<br>
+    • la <b>tasa de aprendizaje</b> $\eta$: qué tan grandes son los pasos
+  </td><td>
+    • todos los <b>pesos</b> (los números de las matrices)<br>
+    • todos los <b>sesgos</b><br><br>
+    Al principio son <b>números al azar</b>. El entrenamiento los va ajustando poco a poco hasta que la red acierta.
+  </td></tr>
+</table>
+
+<h3>🎛️ Modo manual: ponlos tú</h3>
+<p>Esta es la misma red de arriba (2 entradas → 2 neuronas ReLU → 1 salida), con sus 9 números. Mueve los sliders e intenta que acierte los 4 puntos. Vas a ver que <b>a mano es difícil</b>; por eso se entrenan.</p>
+<div class="card">
+  <div class="grid2">
+    <div id="manSliders"></div>
+    <div>
+      <canvas id="manC" width="300" height="300"></canvas>
+      <div class="mono" id="manOut" style="margin-top:8px"></div>
+      <p><button id="manBook">📖 Cargar los pesos del libro</button> <button id="manRand">🎲 Pesos al azar</button></p>
+    </div>
+  </div>
+</div>
+
+<h3>🔁 Cómo los aprende la red: el ciclo de entrenamiento</h3>
+<ol>
+  <li><b>Empezar al azar:</b> todos los pesos y sesgos arrancan con números aleatorios pequeños.</li>
+  <li><b>Predecir</b> (<i>forward pass</i>): la red calcula su $\hat{y}$ para cada punto, con los pesos que tiene ahora.</li>
+  <li><b>Medir el error</b> (<i>loss</i>): compara cada $\hat{y}$ con la respuesta correcta $t$.</li>
+  <li><b>Calcular hacia dónde mover cada peso</b> (<i>backpropagation</i>): para cada peso, "si lo subo un poquito, ¿el error sube o baja?".</li>
+  <li><b>Mover un pasito</b> (<i>gradient descent</i>): ajustar cada peso en la dirección que baja el error.</li>
+  <li><b>Repetir</b> cientos o miles de veces.</li>
+</ol>
+<p>El error que usamos aquí es el promedio de los errores al cuadrado:</p>
+$$L = \frac{1}{4}\sum_{n=1}^{4}\big(\hat{y}_n - t_n\big)^2$$
+<div class="sym">
+  <div>$L$</div><div>la pérdida (<i>loss</i>): un solo número que dice qué tan mal va la red. Si es 0, acierta perfecto.</div>
+  <div>$\hat{y}_n$</div><div>lo que la red predice para el punto $n$ ("y gorrito" = predicción)</div>
+  <div>$t_n$</div><div>la respuesta correcta del punto $n$ (1 = verde, 0 = rojo)</div>
+  <div>$(\hat{y}_n - t_n)^2$</div><div>el error de ese punto, al cuadrado, para que siempre sea positivo</div>
+  <div>$\frac{1}{4}\sum$</div><div>el promedio de los 4 puntos</div>
+</div>
+<p>Y cada peso se actualiza con esta regla:</p>
+$$w \;\leftarrow\; w - \eta\,\frac{\partial L}{\partial w}$$
+<div class="sym">
+  <div>$\leftarrow$</div><div>"se reemplaza por": el peso nuevo es lo de la derecha</div>
+  <div>$\frac{\partial L}{\partial w}$</div><div>la <b>derivada parcial</b> (el gradiente): cuánto cambia el error si mueves solo este peso. Si es positiva, subir el peso empeora; si es negativa, mejora.</div>
+  <div>$-$</div><div>por eso se <b>resta</b>: vamos en contra del gradiente, cuesta abajo</div>
+  <div>$\eta$</div><div>la tasa de aprendizaje ("eta"): qué tan grande es el paso, por ejemplo 0.1</div>
+</div>
+
+<h3>🎬 Animación: mira a la red aprender XOR sola</h3>
+<p>Esta red tiene 4 neuronas ocultas con ReLU (con 4 aprende más fácil que con 2). Arranca con pesos al azar. Presiona <b>▶ Entrenar</b> y mira cómo baja el error y cómo la frontera se acomoda sola. Con <b>1 paso</b> ves una sola vuelta del ciclo, explicada.</p>
+<div class="card">
+  <div class="row" style="margin-bottom:8px">
+    <button id="trPlay">▶ Entrenar</button><button id="trStep">1 paso</button><button id="trRand">🎲 Nuevos pesos al azar</button>
+    <label style="min-width:230px">tasa de aprendizaje η = <b id="trLrV"></b><input type="range" id="trLr" min="0.01" max="0.3" step="0.01" value="0.1"></label>
+  </div>
+  <div class="grid2">
+    <div><canvas id="trB" width="300" height="300"></canvas><p class="note">Fondo = lo que la red diría en cada punto del plano (verde si ŷ > 0.5).</p></div>
+    <div><canvas id="trL" width="420" height="220"></canvas><div class="mono" id="trOut" style="margin-top:8px;min-height:150px"></div></div>
+  </div>
+  <p class="note">Si el error se queda atorado arriba, presiona 🎲 y vuelve a entrenar. A veces el azar arranca mal (por ejemplo, con neuronas que ReLU deja siempre apagadas). Eso también pasa con redes grandes de verdad.</p>
+</div>
+<p><b>Lo importante:</b> los pesos que encuentra la red casi nunca son los "bonitos" del libro (1, 1, −1, −2). Son otros números que <b>también funcionan</b>. Hay muchas soluciones, y el entrenamiento encuentra una.</p>
+
+<!-- ============ 4 ============ -->
+<h2><span class="n">4</span>Más neuronas = más dobleces = cualquier curva</h2>
+<p>Cada neurona ReLU agrega <b>un</b> doblez. Si sumas suficientes, puedes aproximar casi cualquier curva. Sin activación, cada neurona es una recta, y una suma de rectas es otra recta.</p>
+$$y(x) = a + s\,x + \sum_{k=1}^{N} c_k\,\mathrm{ReLU}(x - t_k)$$
+<div class="sym">
+  <div>$N$</div><div>cuántas neuronas ocultas hay</div>
+  <div>$t_k$</div><div>dónde se dobla la neurona $k$</div>
+  <div>$c_k$</div><div>qué tanto cuenta la neurona $k$ en la salida</div>
+</div>
+<div class="card">
+  <canvas id="hingeC" width="900" height="330" style="width:100%"></canvas>
+  <div class="row" style="margin-top:8px">
+    <button id="hPlay">▶ Agregar neuronas una por una</button>
+    <label style="flex:1;min-width:220px">neuronas N = <b id="hNv">0</b><input type="range" id="hN" min="0" max="12" value="0"></label>
+    <label><input type="checkbox" id="hAct" checked> usar ReLU</label>
+  </div>
+  <div class="mono" id="hMsg"></div>
+</div>
+
+<!-- ============ 5 ============ -->
+<h2><span class="n">5</span>¿Por neurona o por capa? Las dos, en niveles distintos</h2>
+<div class="grid2">
+  <div class="card">
+    <h3>🔹 Se <b>aplica</b> por neurona</h3>
+    <p>Cada neurona dobla <b>su propio</b> número $z$. Si una capa tiene 4 neuronas, la activación se aplica 4 veces, una a cada una:</p>
+    $$\sigma\!\begin{pmatrix} z_1\\ z_2\\ z_3\\ z_4\end{pmatrix} = \begin{pmatrix} \sigma(z_1)\\ \sigma(z_2)\\ \sigma(z_3)\\ \sigma(z_4)\end{pmatrix}$$
+  </div>
+  <div class="card">
+    <h3>🔸 Se <b>elige</b> por capa</h3>
+    <p>En el código eliges la activación una vez para toda la capa. En PyTorch:</p>
+    <div class="mono">nn.Sequential(
+    nn.Linear(3, 4),   # capa: z = W·x + b
+    nn.ReLU(),         # activación de TODA la capa
+    nn.Linear(4, 3),
+)</div>
+    <p class="note">Así, la capa completa se escribe $\mathbf{h} = \sigma(\mathbf{W}\mathbf{x} + \mathbf{b})$.</p>
+  </div>
+</div>
+
+<div class="card">
+  <h3>⚠️ La excepción: softmax mira toda la capa a la vez</h3>
+  <p>Softmax convierte los números de la capa de salida en <b>probabilidades que suman 1</b>. Para hacerlo necesita ver <b>todos</b> los valores juntos, así que no es "por neurona":</p>
+  $$\mathrm{softmax}(\mathbf{z})_i = \frac{e^{z_i}}{\sum_{j} e^{z_j}}$$
+  <div class="sym">
+    <div>$e^{z_i}$</div><div>"e elevado a $z_i$": convierte cualquier número en uno positivo</div>
+    <div>$\sum_j e^{z_j}$</div><div>la suma de todos esos números positivos de la capa</div>
+    <div>la división</div><div>reparte el 100% entre las neuronas</div>
+  </div>
+  <p>Mueve <b>solo</b> $z_1$ y mira cómo cambian <b>las tres</b> probabilidades:</p>
+  <label>z₁ (gato) = <b id="sz1v"></b><input type="range" id="sz1" min="-3" max="5" step="0.1" value="2"></label>
+  <div id="smBars"></div>
+</div>
+
+<h3>¿En qué capas va?</h3>
+<table>
+  <tr><th>Capa</th><th>¿Activación?</th><th>Cuál</th></tr>
+  <tr><td>Entrada</td><td><span class="pill bad">No</span></td><td>Solo recibe los datos</td></tr>
+  <tr><td>Ocultas</td><td><span class="pill ok">Sí, siempre</span></td><td>ReLU (la más común), GELU (en GPT), tanh</td></tr>
+  <tr><td>Salida</td><td><span class="pill mid">Depende</span></td><td><b>ninguna</b> si predices un número (precio, temperatura) · <b>sigmoide</b> para sí/no (¿spam?) · <b>softmax</b> para elegir entre varias clases, o la siguiente palabra en un LLM</td></tr>
+</table>
+
+<!-- ============ 6 ============ -->
+<h2><span class="n">6</span>Galería de activaciones</h2>
+<p class="note">Pasa el mouse sobre una tarjeta para redibujar la curva.</p>
+<div class="gal" id="gal"></div>
+
+<!-- ============ 7 ============ -->
+<h2><span class="n">7</span>Un poco de historia: del perceptrón al MLP</h2>
+<div class="card big">
+  <p>📅 <b>1958</b> — Frank Rosenblatt crea el <b>perceptrón</b>: <b>una sola neurona</b> con una activación de <b>escalón</b> (devuelve 1 si $z>0$ y 0 si no). Una sola neurona separa el plano con <b>una línea recta</b>.</p>
+  <p>📅 <b>1969</b> — Minsky y Papert muestran que un perceptrón <b>no puede</b> resolver XOR. El interés por las redes neuronales cae por años.</p>
+  <p>📅 <b>1986</b> — Rumelhart, Hinton y Williams popularizan <b>backpropagation</b> para entrenar varias capas con activaciones suaves (sigmoide). Nace el <b>MLP</b> moderno: muchos perceptrones en capas, con activación entre ellas.</p>
+  <p>📅 <b>2010s–hoy</b> — ReLU se vuelve el estándar porque entrena más rápido. GPT usa <b>GELU</b>, una versión suave de ReLU.</p>
+</div>
+
+<!-- ============ 8 ============ -->
+<h2><span class="n">8</span>Dónde la vas a ver</h2>
+<table>
+  <tr><th>Modelo</th><th>Dónde va la activación</th></tr>
+  <tr><td><b>MLP</b></td><td>Después de cada capa oculta: <code>Linear → ReLU → Linear → ReLU → …</code></td></tr>
+  <tr><td><b>CNN</b></td><td>Después de cada convolución: <code>Conv → ReLU → Pool → …</code></td></tr>
+  <tr><td><b>GPT</b> (libro de LLM, cap. 4)</td><td>Dentro de cada bloque transformer, en la red <i>feed-forward</i>: <code>Linear(768→3072) → GELU → Linear(3072→768)</code>. La atención usa <b>softmax</b> para repartir la atención entre palabras.</td></tr>
+</table>
+<p class="note">Páginas de tu wiki: <code>activation-function</code>, <code>relu</code>, <code>gelu</code>, <code>softmax</code>, <code>feed-forward-network</code>, <code>multilayer-perceptron</code>.</p>
+
+<!-- ============ quiz ============ -->
+<h2><span class="n">✓</span>Ponte a prueba</h2>
+<div class="quiz" id="quiz"></div>
+
+<div class="summary">
+  <h3 style="margin-top:0">En resumen</h3>
+  <ul>
+    <li><b>Por qué importa:</b> sin activación, todas las capas se colapsan en una sola matriz ($\mathbf{W}_2\mathbf{W}_1 = \mathbf{W}'$) y la red solo dibuja líneas rectas. La activación pone un doblez en cada neurona, y con suficientes dobleces se forma casi cualquier curva (por ejemplo, para resolver XOR).</li>
+    <li><b>Dónde se aplica:</b> a <b>cada neurona por separado</b> (elemento por elemento), pero se <b>elige una por capa</b>. Softmax es la excepción: mira toda la capa a la vez.</li>
+    <li><b>En qué capas:</b> en las ocultas, siempre. En la salida depende del problema: ninguna, sigmoide o softmax. En la entrada, nunca.</li>
+    <li><b>Perceptrón vs MLP:</b> un perceptrón es una sola línea recta. Muchos perceptrones en capas, con activación entre ellas, forman un MLP que puede aprender casi cualquier forma.</li>
+  </ul>
+</div>
+</main>
+
+<script>
+const $=id=>document.getElementById(id);
+const NS='http://www.w3.org/2000/svg';
+const el=(t,a,p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e};
+const fgc=()=>getComputedStyle(document.body).color;
+const cssv=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const ACT={
+  relu:z=>Math.max(0,z),
+  sigmoid:z=>1/(1+Math.exp(-z)),
+  tanh:z=>Math.tanh(z),
+  gelu:z=>0.5*z*(1+Math.tanh(Math.sqrt(2/Math.PI)*(z+0.044715*z**3))),
+  none:z=>z,
+  step:z=>z>0?1:0};
+const ACTNAME={relu:'ReLU',sigmoid:'sigmoide',tanh:'tanh',gelu:'GELU',none:'ninguna'};
+
+/* ---------- hero decoration: a small pulsing network ---------- */
+(function(){const s=$('heroSvg');const L=[[60,[60,150,240]],[210,[40,110,180,250]],[360,[100,200]]];
+  for(let a=0;a<2;a++)L[a][1].forEach(y1=>L[a+1][1].forEach(y2=>el('line',{x1:L[a][0],y1,x2:L[a+1][0],y2,stroke:'#fff','stroke-width':1.5},s)));
+  L.forEach(([x,ys])=>ys.forEach((y,i)=>{const c=el('circle',{cx:x,cy:y,r:14,fill:'#fff'},s);
+    const an=el('animate',{attributeName:'r',values:'12;17;12',dur:(2+i*.4)+'s',repeatCount:'indefinite'},c)}));})();
+
+/* ---------- 1. network animation ---------- */
+const X=[1.0,-0.5,2.0];
+const W1=[[0.8,-0.5,0.3],[-0.6,0.9,0.1],[0.2,0.4,-0.7],[-0.3,-0.8,0.5]],B1=[0.1,-0.2,0.3,0];
+const W2=[[1,-0.5,0.7,0.2],[-0.4,0.8,0.3,-0.6],[0.5,0.5,-1,0.4]];
+const OUTN=['gato','perro','pájaro'];
+const net=$('net');const P={in:[90,[90,190,290]],hid:[420,[50,140,230,320]],out:[760,[100,190,280]]};
+const edges1=[],edges2=[],nodes={in:[],hid:[],out:[]},labels={hid:[],out:[]};
+function buildNet(){net.innerHTML='';
+  el('text',{x:90,y:22,'text-anchor':'middle','font-size':14,fill:'currentColor','font-weight':700},net).textContent='entrada x';
+  el('text',{x:420,y:22,'text-anchor':'middle','font-size':14,fill:'currentColor','font-weight':700},net).textContent='capa oculta';
+  const badge=el('text',{x:420,y:372,'text-anchor':'middle','font-size':14,fill:cssv('--a2'),'font-weight':700},net);badge.id='badge';
+  el('text',{x:760,y:22,'text-anchor':'middle','font-size':14,fill:'currentColor','font-weight':700},net).textContent='salida (softmax)';
+  P.hid[1].forEach((y2,i)=>P.in[1].forEach((y1,j)=>edges1.push(el('line',{x1:110,y1,x2:395,y2,stroke:'currentColor','stroke-width':1,opacity:.25,'data-i':i},net))));
+  P.out[1].forEach((y2,i)=>P.hid[1].forEach((y1,j)=>edges2.push(el('line',{x1:445,y1,x2:738,y2,stroke:'currentColor','stroke-width':1,opacity:.25,'data-i':i},net))));
+  P.in[1].forEach((y,j)=>{nodes.in.push(el('circle',{cx:90,cy:y,r:22,fill:cssv('--soft'),stroke:cssv('--accent'),'stroke-width':2},net));
+    el('text',{x:90,y:y+5,'text-anchor':'middle','font-size':14,'font-weight':700,fill:'currentColor'},net).textContent=X[j]});
+  P.hid[1].forEach((y,i)=>{const c=el('circle',{cx:420,cy:y,r:24,fill:cssv('--card'),stroke:cssv('--accent'),'stroke-width':2,style:'cursor:pointer'},net);c.onclick=()=>explainHidden(i,true);nodes.hid.push(c);
+    el('text',{x:420,y:y+5,'text-anchor':'middle','font-size':13,'font-weight':700,fill:'currentColor','pointer-events':'none'},net).textContent='σ';
+    labels.hid.push(el('text',{x:452,y:y-14,'font-size':12.5,fill:'currentColor','font-family':'ui-monospace,Menlo,monospace'},net))});
+  P.out[1].forEach((y,i)=>{nodes.out.push(el('circle',{cx:760,cy:y,r:22,fill:cssv('--card'),stroke:cssv('--a2'),'stroke-width':2},net));
+    el('text',{x:795,y:y+5,'font-size':13,fill:'currentColor'},net).textContent=OUTN[i];
+    labels.out.push(el('text',{x:705,y:y-28,'font-size':12.5,fill:'currentColor','font-family':'ui-monospace,Menlo,monospace'},net))});}
+buildNet();
+function hiddenVals(){const a=$('netAct').value;return W1.map((r,i)=>{const z=r.reduce((s,w,j)=>s+w*X[j],0)+B1[i];return{z,h:ACT[a](z)}})}
+function explainHidden(i,select){const a=$('netAct').value,{z,h}=hiddenVals()[i];
+  const terms=W1[i].map((w,j)=>`${w}·${X[j]}`).join(' + ');
+  $('netMsg').textContent=`Neurona oculta ${i+1}:\n  1) z = ${terms} + ${B1[i]} = ${z.toFixed(2)}\n  2) h = ${ACTNAME[a]}(${z.toFixed(2)}) = ${h.toFixed(2)}`+(a==='relu'&&z<0?'   ← z era negativo, ReLU lo convierte en 0':'')+
+    `\n\nLas otras neuronas hacen lo mismo con SUS pesos, y usan la MISMA activación (${ACTNAME[a]}), porque se eligió para toda la capa.`;
+  if(select){nodes.hid.forEach((c,k)=>c.setAttribute('stroke-width',k===i?5:2))}}
+let netTimers=[];
+function resetNet(){netTimers.forEach(clearTimeout);netTimers=[];edges1.concat(edges2).forEach(e=>{e.setAttribute('opacity',.25);e.setAttribute('stroke','currentColor');e.setAttribute('stroke-width',1)});
+  nodes.hid.forEach(c=>{c.setAttribute('fill',cssv('--card'));c.setAttribute('stroke-width',2);c.classList.remove('glow')});nodes.out.forEach(c=>{c.setAttribute('fill',cssv('--card'));c.setAttribute('r',22)});
+  labels.hid.forEach(l=>l.textContent='');labels.out.forEach(l=>l.textContent='');$('badge').textContent='activación de toda la capa: '+ACTNAME[$('netAct').value]}
+function playNet(){resetNet();const hv=hiddenVals();let t=0;const T=(f,d)=>{t+=d;netTimers.push(setTimeout(f,t))};
+  hv.forEach(({z,h},i)=>{
+    T(()=>{edges1.filter(e=>+e.dataset.i===i).forEach(e=>{e.setAttribute('opacity',1);e.setAttribute('stroke',cssv('--accent'));e.setAttribute('stroke-width',3)});labels.hid[i].textContent=`z = ${z.toFixed(2)}`;
+      $('netMsg').textContent=`Neurona ${i+1}: calcula z = w·x + b = ${z.toFixed(2)} …`},350);
+    T(()=>{const c=nodes.hid[i];c.classList.add('glow');const k=Math.max(0,Math.min(1,Math.abs(h)/1.5));c.setAttribute('fill',`rgba(232,89,12,${0.15+0.7*k})`);
+      labels.hid[i].textContent=`z = ${z.toFixed(2)} → ${ACTNAME[$('netAct').value]} → h = ${h.toFixed(2)}`;explainHidden(i,false);
+      edges1.filter(e=>+e.dataset.i===i).forEach(e=>{e.setAttribute('opacity',.25);e.setAttribute('stroke','currentColor');e.setAttribute('stroke-width',1)})},900);
+  });
+  T(()=>{const zs=W2.map(r=>r.reduce((s,w,j)=>s+w*hv[j].h,0)),m=Math.max(...zs),ex=zs.map(z=>Math.exp(z-m)),S=ex.reduce((a,b)=>a+b,0),p=ex.map(e=>e/S);
+    edges2.forEach(e=>{e.setAttribute('opacity',.9);e.setAttribute('stroke',cssv('--a2'));e.setAttribute('stroke-width',2)});
+    p.forEach((q,i)=>{nodes.out[i].setAttribute('r',16+16*q);nodes.out[i].setAttribute('fill',`rgba(91,75,219,${0.15+0.8*q})`);labels.out[i].textContent=`${(q*100).toFixed(0)}%`});
+    $('netMsg').textContent=`Capa de salida: softmax mira las 3 neuronas JUNTAS y reparte el 100%:\n  `+p.map((q,i)=>`${OUTN[i]} ${(q*100).toFixed(1)}%`).join(' · ')+
+      `\n\nCambia la activación de la capa oculta y vuelve a reproducir: cambian todos los h, y con ellos la respuesta final.`},600);}
+$('netPlay').onclick=playNet;$('netAct').onchange=()=>{resetNet();$('netMsg').textContent='Activación cambiada para TODA la capa oculta. Presiona ▶ Reproducir.'};resetNet();
+
+/* ---------- 2. collapse ---------- */
+$('mergeBtn').onclick=()=>{const m=$('mats');m.classList.toggle('merged');$('mergeBtn').textContent=m.classList.contains('merged')?'↩ Separar otra vez':'✨ Juntar las dos capas'};
+const CW1=[[1,2],[0,1]],CW2=[[1,0],[1,1]],CWp=[[1,2],[1,3]];
+const mv=(M,v)=>M.map(r=>r[0]*v[0]+r[1]*v[1]);const f=v=>'['+v.map(x=>(+x.toFixed(2))).join(', ')+']';
+function collapse(){const x=[+$('cx1').value,+$('cx2').value];$('cx1v').textContent=x[0];$('cx2v').textContent=x[1];
+  const h=mv(CW1,x),lin=mv(CW2,h),one=mv(CWp,x),hr=h.map(v=>Math.max(0,v)),rel=mv(CW2,hr);const same=lin.every((v,i)=>Math.abs(v-one[i])<1e-9),diff=rel.some((v,i)=>Math.abs(v-one[i])>1e-9);
+  $('collapseOut').innerHTML=`x = ${f(x)}\n\n<b>Sin activación</b>\n  capa 1: W₁·x = ${f(h)}\n  capa 2: W₂·(…) = ${f(lin)}\n  una sola capa W′·x = ${f(one)}   ${same?'✅ igual':'❌'}\n\n<b>Con ReLU en medio</b>\n  capa 1: W₁·x = ${f(h)} → ReLU → ${f(hr)}\n  capa 2: W₂·(…) = ${f(rel)}   ${diff?'💥 ¡distinto de W′·x! Ya no es una sola capa':'(aquí no hubo negativos, así que coincide)'}`}
+['cx1','cx2'].forEach(k=>$(k).oninput=collapse);collapse();
+
+/* ---------- 3a. XOR formula explainer ---------- */
+const xn=$('xnet');const XN={x1:[90,90],x2:[90,210],h1:[430,90],h2:[430,210],y:[760,150]};
+function xnBuild(){xn.innerHTML='';
+  const E=[['x1','h1','1'],['x2','h1','1'],['x1','h2','1'],['x2','h2','1'],['h1','y','+1'],['h2','y','−2']];
+  E.forEach(([a,b,w],i)=>{const [x1,y1]=XN[a],[x2,y2]=XN[b];const ln=el('line',{x1:x1+26,y1,x2:x2-26,y2,stroke:'currentColor','stroke-width':2,opacity:.35,id:'xe-'+a+b},xn);
+    const mx=x1+(x2-x1)*(i<4?0.32:0.45),my=y1+(y2-y1)*(i<4?0.32:0.45)-8;const t=el('text',{x:mx,y:my,'font-size':15,'font-weight':700,fill:cssv('--a2'),'text-anchor':'middle'},xn);t.textContent='peso '+w});
+  const N=[['x1','x₁','entrada'],['x2','x₂','entrada'],['h1','h₁','ReLU(z₁)\nsesgo 0'],['h2','h₂','ReLU(z₂)\nsesgo −1'],['y','y','salida\n(sin ReLU)']];
+  N.forEach(([k,lab,sub])=>{const [x,y]=XN[k];el('circle',{cx:x,cy:y,r:28,fill:k[0]==='x'?cssv('--soft'):k==='y'?cssv('--warm'):cssv('--card'),stroke:k==='y'?cssv('--a2'):cssv('--accent'),'stroke-width':2.5,id:'xn-'+k},xn);
+    const t=el('text',{x,y:y+6,'text-anchor':'middle','font-size':18,'font-weight':700,fill:'currentColor'},xn);t.textContent=lab;
+    sub.split('\n').forEach((s,i)=>{const tt=el('text',{x,y:y+48+i*16,'text-anchor':'middle','font-size':12.5,fill:cssv('--muted')},xn);tt.textContent=s});
+    const v=el('text',{x:x+(k==='y'?40:0),y:y-36,'text-anchor':k==='y'?'start':'middle','font-size':14,'font-weight':700,fill:cssv('--accent'),id:'xv-'+k,'font-family':'ui-monospace,Menlo,monospace'},xn)});
+  el('text',{x:90,y:22,'text-anchor':'middle','font-size':14,'font-weight':700,fill:'currentColor'},xn).textContent='entradas';
+  el('text',{x:430,y:22,'text-anchor':'middle','font-size':14,'font-weight':700,fill:'currentColor'},xn).textContent='capa oculta (ReLU)';
+  el('text',{x:760,y:22,'text-anchor':'middle','font-size':14,'font-weight':700,fill:'currentColor'},xn).textContent='neurona de salida';}
+xnBuild();
+let xcP=[0,1],xcS=0;
+const xcCalc=([a,b])=>{const z1=a+b,z2=a+b-1,h1=Math.max(0,z1),h2=Math.max(0,z2),y=h1-2*h2;return{a,b,z1,z2,h1,h2,y,g:y>0.5}};
+function xnHi(keys,edges){xn.querySelectorAll('line').forEach(l=>{l.setAttribute('opacity',.35);l.setAttribute('stroke','currentColor');l.setAttribute('stroke-width',2)});
+  xn.querySelectorAll('circle').forEach(c=>c.classList.remove('glow'));
+  (edges||[]).forEach(e=>{const l=$('xe-'+e);if(l){l.setAttribute('opacity',1);l.setAttribute('stroke',cssv('--a2'));l.setAttribute('stroke-width',4)}});
+  (keys||[]).forEach(k=>$('xn-'+k).classList.add('glow'))}
+function xcRender(){const r=xcCalc(xcP);const V=(k,t)=>{$('xv-'+k).textContent=t};['x1','x2','h1','h2','y'].forEach(k=>V(k,''));
+  V('x1','= '+r.a);V('x2','= '+r.b);
+  const steps=[
+    ()=>{xnHi(['x1','x2'],[]);return `Punto elegido: x = (${r.a}, ${r.b}).\nPresiona "Siguiente cálculo ▶" para seguirlo por la red.`},
+    ()=>{xnHi(['h1'],['x1h1','x2h1']);V('h1','z₁ = '+r.z1);return `Neurona 1 (pesos 1 y 1, sesgo 0):\n  z₁ = 1·${r.a} + 1·${r.b} + 0 = ${r.z1}`},
+    ()=>{xnHi(['h2'],['x1h2','x2h2']);V('h1','z₁ = '+r.z1);V('h2','z₂ = '+r.z2);return `Neurona 2 (pesos 1 y 1, sesgo −1):\n  z₂ = 1·${r.a} + 1·${r.b} − 1 = ${r.z2}`},
+    ()=>{xnHi(['h1','h2'],[]);V('h1','h₁ = '+r.h1);V('h2','h₂ = '+r.h2);return `ReLU en cada neurona (el doblez):\n  h₁ = ReLU(${r.z1}) = ${r.h1}\n  h₂ = ReLU(${r.z2}) = ${r.h2}`+(r.z2<0?'   ← z₂ era negativo, así que ReLU lo apaga (0)':'')},
+    ()=>{xnHi(['y'],['h1y','h2y']);V('h1','h₁ = '+r.h1);V('h2','h₂ = '+r.h2);V('y','y = '+r.y);return `Neurona de salida (pesos +1 y −2):\n  y = (+1)·${r.h1} + (−2)·${r.h2} = ${r.y}`},
+    ()=>{xnHi(['y'],[]);V('h1','h₁ = '+r.h1);V('h2','h₂ = '+r.h2);V('y','y = '+r.y+(r.g?' → verde':' → rojo'));return `Regla de decisión: ¿y > 0.5?\n  ${r.y} > 0.5  →  ${r.g?'SÍ → la red dice VERDE ✅':'NO → la red dice ROJO ✅'}   (y XOR(${r.a},${r.b}) = ${r.g?1:0})`}];
+  $('xcOut').textContent=steps[xcS]();$('xcStep').textContent=xcS<5?'Siguiente cálculo ▶':'↺ Empezar otra vez';
+  document.querySelectorAll('.xpt').forEach(b=>b.classList.toggle('on',b.dataset.p===xcP.join(',')))}
+document.querySelectorAll('.xpt').forEach(b=>b.onclick=()=>{xcP=b.dataset.p.split(',').map(Number);xcS=0;xcRender()});
+$('xcStep').onclick=()=>{xcS=(xcS+1)%6;xcRender()};
+$('xcAll').onclick=()=>{const t=$('xcTable');t.querySelectorAll('tr.r').forEach(r=>r.remove());
+  [[0,0],[0,1],[1,0],[1,1]].forEach((p,i)=>setTimeout(()=>{const r=xcCalc(p),tr=document.createElement('tr');tr.className='r';tr.style.opacity=0;tr.style.transition='opacity .5s';
+    tr.innerHTML=[r.a,r.b,r.z1,r.z2,r.h1,r.h2,r.y].map(v=>`<td>${v}</td>`).join('')+`<td><span class="pill ${r.g?'ok':'bad'}">${r.g?'sí → verde':'no → rojo'}</span></td>`;
+    t.appendChild(tr);requestAnimationFrame(()=>tr.style.opacity=1)},i*500))};
+xcRender();
+
+/* ---------- 3. XOR fold ---------- */
+const xc=$('xorC'),xx=xc.getContext('2d');
+const PTS=[];const centers=[[0,0,0],[1,1,0],[1,0,1],[0,1,1]];
+let seed=7;const rnd=()=>{seed=(seed*16807)%2147483647;return seed/2147483647};
+centers.forEach(([cx,cy,c])=>{for(let k=0;k<26;k++){const a=rnd()*6.283,r=Math.sqrt(rnd())*0.09;PTS.push({x:cx+r*Math.cos(a),y:cy+r*Math.sin(a),c})}});
+const lin1=(x,y)=>[x+y,x+y-1];
+const lerp=(a,b,u)=>a+(b-a)*u, ease=u=>u<.5?2*u*u:1-Math.pow(-2*u+2,2)/2;
+// position of a point at "progress" p in [0,2]: 0 = input, 1 = after linear layer, 2 = after ReLU
+function posAt(x,y,p,useRelu){const z=lin1(x,y);
+  if(p<=1){const u=ease(p);return[lerp(x,z[0],u),lerp(y,z[1],u)]}
+  if(!useRelu)return z;const u=ease(p-1);return[lerp(z[0],Math.max(0,z[0]),u),lerp(z[1],Math.max(0,z[1]),u)]}
+function drawXor(p,lineAlpha){const W=xc.width,H=xc.height,S=110,ox=120,oy=330;const sx=v=>ox+v*S,sy=v=>oy-v*S;const useRelu=$('xorAct').checked;
+  xx.clearRect(0,0,W,H);xx.strokeStyle=fgc();
+  xx.globalAlpha=.35;xx.beginPath();xx.moveTo(0,sy(0));xx.lineTo(W,sy(0));xx.moveTo(sx(0),0);xx.lineTo(sx(0),H);xx.stroke();xx.globalAlpha=1;
+  xx.globalAlpha=.22;xx.strokeStyle=cssv('--accent');
+  for(let g=-1;g<=2.01;g+=0.25){
+    xx.beginPath();for(let u=-1;u<=2.01;u+=0.05){const q=posAt(g,u,p,useRelu);u===-1?xx.moveTo(sx(q[0]),sy(q[1])):xx.lineTo(sx(q[0]),sy(q[1]))}xx.stroke();
+    xx.beginPath();for(let u=-1;u<=2.01;u+=0.05){const q=posAt(u,g,p,useRelu);u===-1?xx.moveTo(sx(q[0]),sy(q[1])):xx.lineTo(sx(q[0]),sy(q[1]))}xx.stroke()}
+  xx.globalAlpha=1;
+  if(lineAlpha>0&&useRelu){xx.globalAlpha=lineAlpha;xx.strokeStyle=cssv('--a2');xx.lineWidth=3;xx.setLineDash([8,6]);xx.beginPath();
+    xx.moveTo(sx(-1),sy((-1-0.5)/2));xx.lineTo(sx(3),sy((3-0.5)/2));xx.stroke();xx.setLineDash([]);xx.lineWidth=1;xx.globalAlpha=1}
+  if(lineAlpha>0&&!useRelu){xx.globalAlpha=lineAlpha;xx.fillStyle=cssv('--bad');xx.font='bold 16px system-ui';xx.fillText('✗ ninguna línea sirve',sx(0.6),sy(1.9));xx.globalAlpha=1}
+  PTS.forEach(pt=>{const q=posAt(pt.x,pt.y,p,useRelu);xx.fillStyle=pt.c?cssv('--ok'):cssv('--bad');xx.beginPath();xx.arc(sx(q[0]),sy(q[1]),5,0,7);xx.fill()});
+  xx.fillStyle=fgc();xx.font='13px system-ui';xx.fillText(p===0?'espacio de entrada (x₁, x₂)':'espacio oculto (h₁, h₂)',10,18);}
+function drawBoundary(show){const c=$('xorB'),g=c.getContext('2d'),W=c.width,H=c.height,useRelu=$('xorAct').checked;g.clearRect(0,0,W,H);
+  if(!show){g.fillStyle=fgc();g.globalAlpha=.6;g.font='14px system-ui';g.fillText('aparece en el paso 3',70,135);g.globalAlpha=1;return}
+  const img=g.createImageData(W,H),red=[214,51,108],grn=[15,157,118];
+  for(let py=0;py<H;py++)for(let px=0;px<W;px++){const x=-0.5+2*px/W,y=1.5-2*py/H;const z=lin1(x,y);const h=useRelu?z.map(v=>Math.max(0,v)):z;const out=h[0]-2*h[1];
+    const col=useRelu?(out>0.5?grn:red):(out>1.0?grn:red);const i=(py*W+px)*4;img.data[i]=col[0];img.data[i+1]=col[1];img.data[i+2]=col[2];img.data[i+3]=useRelu?70:35}
+  g.putImageData(img,0,0);centers.forEach(([cx,cy,cl])=>{g.fillStyle=cl?'#0f9d76':'#d6336c';g.beginPath();g.arc((cx+0.5)/2*W,(1.5-cy)/2*H,9,0,7);g.fill()});
+  if(!useRelu){g.fillStyle=fgc();g.font='bold 13px system-ui';g.fillText('sin ReLU: una línea no basta',8,20)}}
+const STEPS=['Entrada','Capa lineal','ReLU (doblez)','Separar'];
+function xorText(step){const r=$('xorAct').checked;return[
+  'Paso 0 · Los 4 grupos en el plano original. Intenta imaginar UNA línea recta que deje los rojos de un lado y los verdes del otro: no existe.',
+  'Paso 1 · Capa lineal: z = W·x + b. Toda la cuadrícula se aplasta sobre una línea diagonal. Los verdes quedan EN MEDIO de los rojos: rojo · verde · rojo.',
+  r?'Paso 2 · ReLU: todo lo negativo se vuelve 0. La línea se DOBLA en forma de "L". El rojo de (0,0) se va a la esquina y el rojo de (1,1) se sube.':'Paso 2 · Sin activación no hay doblez: la línea sigue recta, con el verde atrapado en medio.',
+  r?'Paso 3 · ¡Ahora sí! Una sola línea punteada separa rojos y verdes. La red resolvió XOR gracias al doblez de ReLU.':'Paso 3 · Ninguna línea separa "rojo · verde · rojo" sobre una recta. Sin activación, la red NO puede resolver XOR.'][step]}
+let xStep=0,xBusy=null,xPlayTimer=null;
+const PROG=[0,1,2,2]; // progress value at each step
+function xorShow(step){xStep=step;drawXor(PROG[step],step===3?1:0);drawBoundary(step===3);$('xorMsg').textContent=xorText(step);renderDots()}
+function renderDots(){$('xorDots').innerHTML=STEPS.map((n,i)=>`<button data-s="${i}" class="${i===xStep?'on':''}" style="${i<xStep?'border-color:var(--accent)':''}">${i} · ${n}</button>`).join('<span style="opacity:.4">→</span>');
+  $('xorDots').querySelectorAll('button').forEach(b=>b.onclick=()=>{stopXor();xorShow(+b.dataset.s)});
+  $('xorPrev').disabled=xStep===0;$('xorNext').disabled=xStep===3}
+function animateStep(to,done){ // animate from xStep to xStep+1
+  const from=xStep,dur=1600;let t0=null;cancelAnimationFrame(xBusy);$('xorMsg').textContent='⏳ '+STEPS[to]+'…';
+  const tick=ts=>{if(t0===null)t0=ts;const u=Math.min(1,(ts-t0)/dur);
+    if(to===3)drawXor(2,u);else drawXor(lerp(PROG[from],PROG[to],u),0);
+    if(u<1)xBusy=requestAnimationFrame(tick);else{xorShow(to);done&&done()}};
+  xBusy=requestAnimationFrame(tick)}
+function stopXor(){cancelAnimationFrame(xBusy);clearTimeout(xPlayTimer)}
+$('xorNext').onclick=()=>{if(xStep<3){stopXor();animateStep(xStep+1)}};
+$('xorPrev').onclick=()=>{if(xStep>0){stopXor();xorShow(xStep-1)}};
+$('xorReset').onclick=()=>{stopXor();xorShow(0)};
+$('xorPlay').onclick=()=>{stopXor();xorShow(0);const next=()=>{if(xStep<3)xPlayTimer=setTimeout(()=>animateStep(xStep+1,next),1400)};next()};
+$('xorAct').onchange=()=>{stopXor();xorShow(xStep)};
+xorShow(0);
+
+/* ---------- 3b. weights: manual mode + live training ---------- */
+const XORD=[[0,0,0],[0,1,1],[1,0,1],[1,1,0]];
+function paintBoundary(cv,pred){const g=cv.getContext('2d'),W=cv.width,H=cv.height,img=g.createImageData(W,H),red=[214,51,108],grn=[15,157,118];
+  for(let py=0;py<H;py+=2)for(let px=0;px<W;px+=2){const x=-0.5+2*px/W,y=1.5-2*py/H,c=pred(x,y)>0.5?grn:red;
+    for(let dy=0;dy<2;dy++)for(let dx=0;dx<2;dx++){const i=((py+dy)*W+px+dx)*4;img.data[i]=c[0];img.data[i+1]=c[1];img.data[i+2]=c[2];img.data[i+3]=70}}
+  g.putImageData(img,0,0);XORD.forEach(([a,b,t])=>{const ok=(pred(a,b)>0.5)===(t===1);g.fillStyle=t?'#0f9d76':'#d6336c';g.beginPath();g.arc((a+0.5)/2*W,(1.5-b)/2*H,11,0,7);g.fill();
+    g.fillStyle='#fff';g.font='bold 13px system-ui';g.textAlign='center';g.fillText(ok?'✓':'✗',(a+0.5)/2*W,(1.5-b)/2*H+5);g.textAlign='start'})}
+// manual mode
+const MP=[['W₁₁ (x₁→h₁)',1],['W₁₂ (x₂→h₁)',1],['b₁ (sesgo h₁)',0],['W₂₁ (x₁→h₂)',1],['W₂₂ (x₂→h₂)',1],['b₂ (sesgo h₂)',-1],['v₁ (h₁→y)',1],['v₂ (h₂→y)',-2],['c (sesgo y)',0]];
+const BOOK=MP.map(m=>m[1]);
+$('manSliders').innerHTML=MP.map(([n,v],i)=>`<label style="display:block">${n} = <b id="mv${i}">${v}</b><input type="range" id="m${i}" min="-3" max="3" step="0.1" value="${v}"></label>`).join('');
+const mget=()=>MP.map((_,i)=>+$('m'+i).value);
+function manPred(p){return(x,y)=>{const h1=Math.max(0,p[0]*x+p[1]*y+p[2]),h2=Math.max(0,p[3]*x+p[4]*y+p[5]);return p[6]*h1+p[7]*h2+p[8]}}
+function manUpd(){const p=mget();p.forEach((v,i)=>$('mv'+i).textContent=v);const f=manPred(p);paintBoundary($('manC'),f);
+  const res=XORD.map(([a,b,t])=>{const y=f(a,b);return{a,b,t,y,ok:(y>0.5)===(t===1)}});const n=res.filter(r=>r.ok).length;
+  $('manOut').textContent=res.map(r=>`(${r.a},${r.b})  ŷ = ${r.y.toFixed(2).padStart(5)}  → ${r.y>0.5?'verde':'rojo '}  ${r.ok?'✓':'✗'}`).join('\n')+`\n\nAciertos: ${n} de 4 ${n===4?'🎉 ¡resolviste XOR!':''}`}
+MP.forEach((_,i)=>$('m'+i).oninput=manUpd);
+$('manBook').onclick=()=>{BOOK.forEach((v,i)=>$('m'+i).value=v);manUpd()};
+let mseed=3;$('manRand').onclick=()=>{MP.forEach((_,i)=>{mseed=(mseed*16807)%2147483647;$('m'+i).value=(((mseed/2147483647)*6)-3).toFixed(1)});manUpd()};
+manUpd();
+// live training: 2 -> HN ReLU -> 1 linear, MSE, full-batch gradient descent
+const HN=4;let tseed=11,TW,Tb,Tv,Tc,tEpoch=0,tLoss=[],tTimer=null;
+const trnd=()=>{tseed=(tseed*16807)%2147483647;return tseed/2147483647};
+function tInit(){TW=[...Array(HN)].map(()=>[trnd()*2-1,trnd()*2-1]);Tb=[...Array(HN)].map(()=>0.1);Tv=[...Array(HN)].map(()=>(trnd()*2-1)*0.7);Tc=0;tEpoch=0;tLoss=[];}
+function tForward(x,y){const z=TW.map((w,k)=>w[0]*x+w[1]*y+Tb[k]),h=z.map(v=>Math.max(0,v));return{z,h,yh:h.reduce((s,v,k)=>s+v*Tv[k],0)+Tc}}
+const tLossNow=()=>XORD.reduce((s,[a,b,t])=>s+(tForward(a,b).yh-t)**2,0)/4;
+function tStep(explain){const lr=+$('trLr').value;const gW=TW.map(()=>[0,0]),gb=Tb.map(()=>0),gv=Tv.map(()=>0);let gc=0;const L0=tLossNow();
+  XORD.forEach(([a,b,t])=>{const {z,h,yh}=tForward(a,b);const dy=2*(yh-t)/4;gc+=dy;
+    h.forEach((hv,k)=>{gv[k]+=dy*hv;const dz=dy*Tv[k]*(z[k]>0?1:0);gW[k][0]+=dz*a;gW[k][1]+=dz*b;gb[k]+=dz})});
+  const old=Tv[0];
+  TW.forEach((w,k)=>{w[0]-=lr*gW[k][0];w[1]-=lr*gW[k][1];Tb[k]-=lr*gb[k];Tv[k]-=lr*gv[k]});Tc-=lr*gc;tEpoch++;const L1=tLossNow();tLoss.push(L1);
+  if(explain)return `Una vuelta del ciclo (vuelta ${tEpoch}):\n 1) predecir los 4 puntos con los pesos actuales\n 2) error antes:  L = ${L0.toFixed(4)}\n 3) gradiente de un peso, v₁:  ∂L/∂v₁ = ${gv[0].toFixed(4)}\n 4) actualizar:  v₁ ← ${old.toFixed(3)} − ${lr} × ${gv[0].toFixed(4)} = ${Tv[0].toFixed(3)}\n    (y lo mismo con los otros ${HN*4} números)\n 5) error después:  L = ${L1.toFixed(4)}  ${L1<L0?'↓ bajó':'↑ subió (paso muy grande: baja η)'}`;
+  return null}
+function tDraw(msg){const f=(x,y)=>tForward(x,y).yh;paintBoundary($('trB'),f);
+  const c=$('trL'),g=c.getContext('2d'),W=c.width,H=c.height;g.clearRect(0,0,W,H);g.strokeStyle=fgc();g.globalAlpha=.3;g.strokeRect(30,10,W-40,H-40);g.globalAlpha=1;
+  g.fillStyle=fgc();g.font='12px system-ui';g.fillText('error L',2,22);g.fillText('vueltas de entrenamiento →',W-170,H-8);
+  const mx=Math.max(0.3,...tLoss.slice(0,5)),n=Math.max(50,tLoss.length);g.strokeStyle=cssv('--a2');g.lineWidth=2.5;g.beginPath();
+  tLoss.forEach((l,i)=>{const px=30+(W-40)*i/n,py=H-30-(H-40)*Math.min(1,l/mx);i?g.lineTo(px,py):g.moveTo(px,py)});g.stroke();g.lineWidth=1;
+  const res=XORD.map(([a,b,t])=>{const y=f(a,b);return `(${a},${b}) quiere ${t}  →  ŷ = ${y.toFixed(2)}  ${(y>0.5)===(t===1)?'✓':'✗'}`}).join('\n');
+  $('trOut').textContent=msg||(`vuelta ${tEpoch} · error L = ${(tLoss.length?tLoss[tLoss.length-1]:tLossNow()).toFixed(4)}\n`+res)}
+function tStop(){clearInterval(tTimer);tTimer=null;$('trPlay').textContent='▶ Entrenar'}
+$('trPlay').onclick=()=>{if(tTimer){tStop();return}$('trPlay').textContent='⏸ Pausa';tTimer=setInterval(()=>{for(let i=0;i<5;i++)tStep(false);tDraw();if(tEpoch>=2000||tLossNow()<1e-4)tStop()},40)};
+$('trStep').onclick=()=>{tStop();const m=tStep(true);tDraw(m)};
+$('trRand').onclick=()=>{tStop();tInit();tDraw()};
+$('trLr').oninput=()=>{$('trLrV').textContent=$('trLr').value};$('trLrV').textContent=$('trLr').value;
+tInit();tDraw();
+
+/* ---------- 4. hinge curve ---------- */
+const hc=$('hingeC'),hx=hc.getContext('2d');const target=x=>Math.sin(1.4*x)+0.25*x;const X0=-3,X1=3;
+function hingeNet(N){const kn=[...Array(N+2).keys()].map(i=>X0+(X1-X0)*i/(N+1)),ys=kn.map(target),sl=[];
+  for(let i=0;i<kn.length-1;i++)sl.push((ys[i+1]-ys[i])/(kn[i+1]-kn[i]));const s=sl[0],a=ys[0]-s*X0,neur=[];for(let k=1;k<=N;k++)neur.push({t:kn[k],c:sl[k]-sl[k-1]});return{a,s,neur}}
+const COL=['#6366f1','#10b981','#f59e0b','#ef4444','#06b6d4','#a855f7','#84cc16','#ec4899','#14b8a6','#f97316','#3b82f6','#eab308'];
+function hDraw(N,reluOn,reveal){const W=hc.width,H=hc.height,sx=x=>(x-X0)/(X1-X0)*(W-40)+20,sy=y=>H/2-y*H/5.2;
+  hx.clearRect(0,0,W,H);hx.strokeStyle=fgc();hx.globalAlpha=.25;hx.beginPath();hx.moveTo(0,sy(0));hx.lineTo(W,sy(0));hx.stroke();hx.globalAlpha=1;
+  const net=hingeNet(N),act=z=>reluOn?Math.max(0,z):z;
+  const plot=(fn,col,lw,dash)=>{hx.strokeStyle=col;hx.lineWidth=lw;hx.setLineDash(dash||[]);hx.beginPath();for(let x=X0;x<=X1+1e-9;x+=0.02){const p=[sx(x),sy(fn(x))];x===X0?hx.moveTo(...p):hx.lineTo(...p)}hx.stroke();hx.setLineDash([]);hx.lineWidth=1};
+  plot(target,fgc(),2,[7,6]);
+  net.neur.forEach((n,k)=>{if(k<reveal){hx.globalAlpha=.7;plot(x=>n.c*act(x-n.t),COL[k%12],1.6);hx.globalAlpha=1;if(reluOn){hx.fillStyle=COL[k%12];hx.beginPath();hx.arc(sx(n.t),sy(0),4,0,7);hx.fill()}}});
+  const out=x=>net.a+net.s*x+net.neur.slice(0,reveal).reduce((s,n)=>s+n.c*act(x-n.t),0);plot(out,cssv('--a2'),4);
+  $('hMsg').textContent=reluOn?`ReLU encendida · ${reveal} neurona(s) → ${reveal} doblez(es) en la línea gruesa.`+(reveal>=8?' Ya casi copia la curva.':'')
+    :`ReLU apagada · ${reveal} neurona(s), y la salida sigue siendo UNA línea recta. Más neuronas no ayudan.`}
+let hT=null;const hU=()=>{const N=+$('hN').value;$('hNv').textContent=N;hDraw(N,$('hAct').checked,N)};
+$('hN').oninput=()=>{clearInterval(hT);hU()};$('hAct').onchange=()=>{clearInterval(hT);hU()};
+$('hPlay').onclick=()=>{clearInterval(hT);let r=0;$('hN').value=12;$('hNv').textContent=12;hDraw(12,$('hAct').checked,0);hT=setInterval(()=>{r++;hDraw(12,$('hAct').checked,r);if(r>=12)clearInterval(hT)},600)};hU();
+
+/* ---------- 5. softmax bars ---------- */
+function sm(){const z=[+$('sz1').value,1.0,-0.5];$('sz1v').textContent=z[0];const m=Math.max(...z),e=z.map(v=>Math.exp(v-m)),S=e.reduce((a,b)=>a+b,0),p=e.map(v=>v/S);
+  $('smBars').innerHTML=p.map((q,i)=>`<div class="row" style="margin:6px 0"><span style="width:150px;font:600 .9rem system-ui">${['gato','perro','pájaro'][i]} (z=${z[i]})</span>
+    <div style="flex:1;background:var(--line);border-radius:6px;height:24px"><div style="width:${(q*100).toFixed(1)}%;height:24px;border-radius:6px;background:${i?'var(--accent)':'var(--a2)'};transition:width .25s"></div></div>
+    <b style="width:64px;text-align:right">${(q*100).toFixed(1)}%</b></div>`).join('')+`<p class="note">Suma: ${(p.reduce((a,b)=>a+b,0)*100).toFixed(0)}%. Solo moviste z₁, pero perro y pájaro también cambiaron: softmax trabaja con toda la capa.</p>`}
+$('sz1').oninput=sm;sm();
+
+/* ---------- 6. gallery ---------- */
+const G=[['step','Escalón (perceptrón, 1958)','1 si z > 0, si no 0. No tiene pendiente, así que no se puede entrenar con gradientes.'],
+ ['sigmoid','Sigmoide','Aplasta todo entre 0 y 1. Útil en la salida para sí/no. En capas profundas aprende lento.'],
+ ['tanh','tanh','Como la sigmoide, pero entre −1 y 1, centrada en 0.'],
+ ['relu','ReLU','max(0, z). Sencilla y rápida: el estándar en capas ocultas.'],
+ ['gelu','GELU','Una ReLU suave: deja pasar un poquito de los negativos. La usa GPT.'],
+ ['none','Ninguna (lineal)','h = z. No dobla nada: las capas se colapsan.']];
+$('gal').innerHTML=G.map(([k,n,d])=>{let p='';for(let z=-4;z<=4.001;z+=0.05){const y=Math.max(-1.6,Math.min(4,ACT[k](z)));p+=(p?'L':'M')+(10+(z+4)*22.5).toFixed(1)+','+(100-y*20).toFixed(1)}
+  return `<div class="card"><svg viewBox="0 0 200 130" width="100%"><line x1="0" y1="100" x2="200" y2="100" stroke="currentColor" opacity=".3"/><line x1="100" y1="0" x2="100" y2="130" stroke="currentColor" opacity=".3"/>
+  <path class="curve" d="${p}" fill="none" stroke="${k==='none'?'var(--muted)':k==='step'?'var(--bad)':'var(--accent)'}" stroke-width="3.5" stroke-linecap="round"/></svg><b>${n}</b><div class="note">${d}</div></div>`}).join('');
+document.querySelectorAll('.gal .card').forEach(c=>c.addEventListener('mouseenter',()=>{const p=c.querySelector('path.curve');p.style.animation='none';void p.getBoundingClientRect();p.style.animation=''}));
+
+/* ---------- quiz ---------- */
+const Q=[
+ {q:'Una red tiene 50 capas, pero NINGUNA activación. ¿A qué equivale?',a:['A una red muy poderosa','A una sola capa lineal (una sola matriz)','A nada: no funciona'],c:1,why:'W₅₀·…·W₂·W₁ es una sola matriz W′. Sin dobleces, la profundidad no agrega nada.'},
+ {q:'¿Dónde se APLICA la función de activación?',a:['A cada neurona por separado','Una sola vez a toda la red','Solo a la capa de entrada'],c:0,why:'Cada neurona dobla su propio número z (elemento por elemento).'},
+ {q:'¿Dónde se ELIGE normalmente la función de activación?',a:['Una distinta para cada neurona','Una por capa','Una para cada peso'],c:1,why:'En el código escribes, por ejemplo, nn.ReLU() después de una capa, y vale para todas sus neuronas.'},
+ {q:'¿Cuál activación NO trabaja neurona por neurona?',a:['ReLU','tanh','softmax'],c:2,why:'Softmax necesita todos los valores de la capa para repartir el 100%.'},
+ {q:'Quieres predecir el precio de una casa (un número cualquiera). ¿Qué activación pones en la salida?',a:['softmax','ninguna','sigmoide'],c:1,why:'El precio puede ser cualquier número, así que no lo limitas: la salida queda lineal. Las capas ocultas sí llevan activación.'},
+ {q:'¿Por qué un solo perceptrón no puede resolver XOR?',a:['Porque tiene pocos datos','Porque solo puede separar con una línea recta','Porque su activación es muy lenta'],c:1,why:'Una neurona separa el plano con una recta, y XOR necesita una frontera doblada (la franja de la sección 3).'}];
+const qz=$('quiz');Q.forEach((it,k)=>{const d=document.createElement('div');d.className='card';
+  d.innerHTML=`<b>${k+1}. ${it.q}</b>`+it.a.map((o,i)=>`<label><input type="radio" name="q${k}" value="${i}"> ${o}</label>`).join('')+`<div class="fb" id="fb${k}"></div>`;qz.appendChild(d);
+  d.querySelectorAll('input').forEach(r=>r.onchange=()=>{$('fb'+k).innerHTML=(+r.value===it.c?'✅ Correcto. ':'❌ No exactamente. ')+it.why})});
+</script>
+</body>
+</html>

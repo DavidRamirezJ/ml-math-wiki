@@ -1,0 +1,10 @@
+00:00 Intro
+00:45 Three faces of a vector
+02:10 Adding vectors
+03:22 Scaling
+04:21 Linear combinations & span
+05:40 What a vector really is
+07:01 Vectors in ML
+08:00 Try it yourself
+09:19 Python demo
+10:03 Summary

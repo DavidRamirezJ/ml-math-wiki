@@ -1,0 +1,267 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ML Math Atoms — 16 video lessons</title><style>
+:root{--bg:#f7f5ef;--fg:#1d1d1f;--muted:#62615c;--card:#fff;--line:#dedbd2;--accent:#4338ca;--cnn:#0f766e}
+@media (prefers-color-scheme:dark){:root{--bg:#15161a;--fg:#ecebe6;--muted:#a3a29b;--card:#1e2026;--line:#33353d;--accent:#a5b4fc;--cnn:#2dd4bf}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:17px/1.55 "Iowan Old Style",Georgia,serif}
+main{max-width:1100px;margin:0 auto;padding:36px 22px 80px}h1,h2,h3{font-family:"Avenir Next",system-ui,sans-serif}
+h1{font-size:2.3rem;margin:0}h2{border-bottom:2px solid var(--line);padding-bottom:6px;margin-top:40px}
+.hero,.card,.summary{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px;margin:16px 0}
+.summary{border:2px solid var(--accent)}a{color:var(--accent)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
+.vid{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}.vid img{width:100%;display:block}
+.vid.done{opacity:.6}.meta{padding:10px 14px;font-size:.9rem}.meta h3{margin:2px 0 4px;font-size:1.05rem}
+.num,.ax,.tl{color:var(--muted);font-family:system-ui,sans-serif;font-size:.8rem}.ax{color:var(--cnn);font-weight:600}
+.links{margin:6px 0;font-family:system-ui,sans-serif;font-size:.85rem}.w{font-family:system-ui,sans-serif;font-size:.85rem;cursor:pointer}
+.bar{height:10px;background:var(--line);border-radius:99px;overflow:hidden}.bar>div{height:100%;background:var(--cnn);width:0;transition:width .3s}
+table{border-collapse:collapse;width:100%;background:var(--card);font-size:.92rem}th,td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top}
+input[type=search]{width:100%;padding:9px 12px;font-size:1rem;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--fg);margin:8px 0}
+.note{color:var(--muted);font-size:.9rem}button{font:600 .9rem system-ui;border:1px solid var(--line);background:var(--card);color:var(--fg);padding:6px 12px;border-radius:8px;cursor:pointer}
+</style></head><body><main>
+<h1>⚛️ ML Math Atoms</h1><p class="note">16 narrated video lessons · 3.2 hours · made by David R. · <a href="https://davidramirezj.com">davidramirezj.com</a></p>
+<div class="hero"><p><b>The idea:</b> all the math of machine learning is built from 16 atoms. Each video teaches one atom with pictures, at least two worked examples, a "try it yourself" pause, and a real Python demo. Watch them in order — each one uses only the videos before it.</p>
+<p>Every atom comes from one of <b>5 axioms</b>: A linearity, B inner product, C local linearity, D probability rules, E learning = optimization. See the <a href="../2026-10-27_atoms-and-molecules.html">atoms → molecules map</a>.</p></div>
+<div class="bar"><div id="pb"></div></div><p class="note" id="pt"></p>
+<h2>Linear algebra</h2><div class="grid"><div class="vid" data-id="01-vector">
+  <a href="01-vector/final.mp4"><img src="01-vector/thumbnail.png" alt=""></a>
+  <div class="meta"><div class="num">Video 01 · 10:52</div>
+  <h3><a href="01-vector/final.mp4">Vector</a></h3>
+  <div class="ax">Axiom A · Linearity</div>
+  <div class="tl">New terms: component, vector, scalar, linear combination, span, vector space</div>
+  <div class="links"><a href="01-vector/final.mp4">▶ video</a> · <a href="01-vector/transcript.md">transcript</a> · <a href="01-vector/final.srt">subtitles</a></div>
+  <label class="w"><input type="checkbox" data-w="01-vector"> watched</label></div></div><div class="vid" data-id="02-matrix">
+  <a href="02-matrix/final.mp4"><img src="02-matrix/thumbnail.png" alt=""></a>
+  <div class="meta"><div class="num">Video 02 · 13:57</div>
+  <h3><a href="02-matrix/final.mp4">Matrix</a></h3>
+  <div class="ax">Axiom A · Linearity</div>
+  <div class="tl">New terms: matrix, matrix multiplication, transpose, identity matrix</div>
+  <div class="links"><a href="02-matrix/final.mp4">▶ video</a> · <a href="02-matrix/transcript.md">transcript</a> · <a href="02-matrix/final.srt">subtitles</a></div>
+  <label class="w"><input type="checkbox" data-w="02-matrix"> watched</label></div></div><div class="vid" data-id="03-basis-and-rank">
+  <a href="03-basis-and-rank/final.mp4"><img src="03-basis-and-rank/thumbnail.png" alt=""></a>
+  <div class="meta"><div class="num">Video 03 · 12:45</div>
+  <h3><a href="03-basis-and-rank/final.mp4">Basis &amp; rank</a></h3>
+  <div class="ax">Axiom A · Linearity</div>
+  <div class="tl">New terms: linear independence, basis, dimension, rank</div>
+  <div class="links"><a href="03-basis-and-rank/final.mp4">▶ video</a> · <a href="03-basis-and-rank/transcript.md">transcript</a> · <a href="03-basis-and-rank/final.srt">subtitles</a></div>
+  <label class="w"><input type="checkbox" data-w="03-basis-and-rank"> watched</label></div></div><div class="vid" data-id="04-linear-mapping">
+  <a href="04-linear-mapping/final.mp4"><img src="04-linear-mapping/thumbnail.png" alt=""></a>
+  <div class="meta"><div class="num">Video 04 · 12:18</div>
+  <h3><a href="04-linear-mapping/final.mp4">Linear mapping</a></h3>
+  <div class="ax">Axiom A · Linearity</div>
+  <div class="tl">New terms: linear mapping, kernel (null space), image (range)</div>
+  <div class="links"><a href="04-linear-mapping/final.mp4">▶ video</a> · <a href="04-linear-mapping/transcript.md">transcript</a> · <a href="04-linear-mapping/final.srt">subtitles</a></div>
+  <label class="w"><input type="checkbox" data-w="04-linear-mapping"> watched</label></div></div><div class="vid" data-id="05-inner-product">
+  <a href="05-inner-product/final.mp4"><img src="05-inner-product/thumbnail.png" alt=""></a>
+  <div class="meta"><div class="num">Video 05 · 11:01</div>
+  <h3><a href="05-inner-product/final.mp4">Inner product</a></h3>
+  <div class="ax">Axiom B · Inner product</div>
+  <div class="tl">New terms: dot product, orthogonal, cosine similarity, inner product</div>
+  <div class="links"><a href="05-inner-product/final.mp4">▶ video</a> · <a href="05-inner-product/transcript.md">transcript</a> · <a href="05-inner-product/final.srt">subtitles</a></div>
+  <label class="w"><input type="checkbox" data-w="05-inner-product"> watched</label></div></div><div class="vid" data-id="06-norm">
+  <a href="06-norm/final.mp4"><img src="06-norm/thumbnail.png" alt=""></a>
+  <div class="meta"><div class="num">Video 06 · 13:41</div>
+  <h3><a href="06-norm/final.mp4">Norm</a></h3>
+  <div class="ax">Axiom B · Inner product</div>
+  <div class="tl">New terms: norm, unit vector, distance</div>
+  <div class="links"><a href="06-norm/final.mp4">▶ video</a> · <a href="06-norm/transcript.md">transcript</a> · <a href="06-norm/final.srt">subtitles</a></div>
+  <label class="w"><input type="checkbox" data-w="06-norm"> watched</label></div></div></div><h2>Calculus</h2><div class="grid"><div class="vid" data-id="07-derivative">
+  <a href="07-derivative/final.mp4"><img src="07-derivative/thumbnail.png" alt=""></a>
+  <div class="meta"><div class="num">Video 07 · 12:18</div>
+  <h3><a href="07-derivative/final.mp4">Derivative</a></h3>
+  <div class="ax">Axiom C · Local linearity</div>
+  <div class="tl">New terms: limit, derivative, local linear approximation</div>
+  <div class="links"><a href="07-derivative/final.mp4">▶ video</a> · <a href="07-derivative/transcript.md">transcript</a> · <a href="07-derivative/final.srt">subtitles</a></div>
+  <label class="w"><input type="checkbox" data-w="07-derivative"> watched</label></div></div><div class="vid" data-id="08-gradient">
+  <a href="08-gradient/final.mp4"><img src="08-gradient/thumbnail.png" alt=""></a>
+  <div class="meta"><div class="num">Video 08 · 11:23</div>
+  <h3><a href="08-gradient/final.mp4">Gradient</a></h3>
+  <div class="ax">Axiom C · Local linearity</div>
+  <div class="tl">New terms: partial derivative, gradient</div>
+  <div class="links"><a href="08-gradient/final.mp4">▶ video</a> · <a href="08-gradient/transcript.md">transcript</a> · <a href="08-gradient/final.srt">subtitles</a></div>
+  <label class="w"><input type="checkbox" data-w="08-gradient"> watched</label></div></div><div class="vid" data-id="09-chain-rule">
+  <a href="09-chain-rule/final.mp4"><img src="09-chain-rule/thumbnail.png" alt=""></a>
+  <div class="meta"><div class="num">Video 09 · 11:06</div>
+  <h3><a href="09-chain-rule/final.mp4">Chain rule</a></h3>
+  <div class="ax">Axiom C · Local linearity</div>
+  <div class="tl">New terms: composition, chain rule, Jacobian</div>
+  <div class="links"><a href="09-chain-rule/final.mp4">▶ video</a> · <a href="09-chain-rule/transcript.md">transcript</a> · <a href="09-chain-rule/final.srt">subtitles</a></div>
+  <label class="w"><input type="checkbox" data-w="09-chain-rule"> watched</label></div></div></div><h2>exp & log</h2><div class="grid"><div class="vid" data-id="10-exp-and-log">
+  <a href="10-exp-and-log/final.mp4"><img src="10-exp-and-log/thumbnail.png" alt=""></a>
+  <div class="meta"><div class="num">Video 10 · 12:15</div>
+  <h3><a href="10-exp-and-log/final.mp4">exp &amp; log</a></h3>
+  <div class="ax">School-math floor</div>
+  <div class="tl">New terms: exponential, logarithm</div>
+  <div class="links"><a href="10-exp-and-log/final.mp4">▶ video</a> · <a href="10-exp-and-log/transcript.md">transcript</a> · <a href="10-exp-and-log/final.srt">subtitles</a></div>
+  <label class="w"><input type="checkbox" data-w="10-exp-and-log"> watched</label></div></div></div><h2>Probability</h2><div class="grid"><div class="vid" data-id="11-random-variable">
+  <a href="11-random-variable/final.mp4"><img src="11-random-variable/thumbnail.png" alt=""></a>
+  <div class="meta"><div class="num">Video 11 · 11:00</div>
+  <h3><a href="11-random-variable/final.mp4">Random variable</a></h3>
+  <div class="ax">Axiom D · Probability rules</div>
+  <div class="tl">New terms: outcome, random variable</div>
+  <div class="links"><a href="11-random-variable/final.mp4">▶ video</a> · <a href="11-random-variable/transcript.md">transcript</a> · <a href="11-random-variable/final.srt">subtitles</a></div>
+  <label class="w"><input type="checkbox" data-w="11-random-variable"> watched</label></div></div><div class="vid" data-id="12-distribution">
+  <a href="12-distribution/final.mp4"><img src="12-distribution/thumbnail.png" alt=""></a>
+  <div class="meta"><div class="num">Video 12 · 11:09</div>
+  <h3><a href="12-distribution/final.mp4">Probability distribution</a></h3>
+  <div class="ax">Axiom D · Probability rules</div>
+  <div class="tl">New terms: probability distribution, sum rule, conditional probability, product rule, independence</div>
+  <div class="links"><a href="12-distribution/final.mp4">▶ video</a> · <a href="12-distribution/transcript.md">transcript</a> · <a href="12-distribution/final.srt">subtitles</a></div>
+  <label class="w"><input type="checkbox" data-w="12-distribution"> watched</label></div></div><div class="vid" data-id="13-expected-value">
+  <a href="13-expected-value/final.mp4"><img src="13-expected-value/thumbnail.png" alt=""></a>
+  <div class="meta"><div class="num">Video 13 · 10:43</div>
+  <h3><a href="13-expected-value/final.mp4">Expected value</a></h3>
+  <div class="ax">Axiom D · Probability rules</div>
+  <div class="tl">New terms: expected value, mean</div>
+  <div class="links"><a href="13-expected-value/final.mp4">▶ video</a> · <a href="13-expected-value/transcript.md">transcript</a> · <a href="13-expected-value/final.srt">subtitles</a></div>
+  <label class="w"><input type="checkbox" data-w="13-expected-value"> watched</label></div></div><div class="vid" data-id="14-variance">
+  <a href="14-variance/final.mp4"><img src="14-variance/thumbnail.png" alt=""></a>
+  <div class="meta"><div class="num">Video 14 · 14:05</div>
+  <h3><a href="14-variance/final.mp4">Variance &amp; covariance</a></h3>
+  <div class="ax">Axiom D · Probability rules</div>
+  <div class="tl">New terms: variance, standard deviation, covariance</div>
+  <div class="links"><a href="14-variance/final.mp4">▶ video</a> · <a href="14-variance/transcript.md">transcript</a> · <a href="14-variance/final.srt">subtitles</a></div>
+  <label class="w"><input type="checkbox" data-w="14-variance"> watched</label></div></div></div><h2>Learning</h2><div class="grid"><div class="vid" data-id="15-loss-function">
+  <a href="15-loss-function/final.mp4"><img src="15-loss-function/thumbnail.png" alt=""></a>
+  <div class="meta"><div class="num">Video 15 · 12:02</div>
+  <h3><a href="15-loss-function/final.mp4">Loss function</a></h3>
+  <div class="ax">Axiom E · Learning = optimization</div>
+  <div class="tl">New terms: loss function, parameter, optimization</div>
+  <div class="links"><a href="15-loss-function/final.mp4">▶ video</a> · <a href="15-loss-function/transcript.md">transcript</a> · <a href="15-loss-function/final.srt">subtitles</a></div>
+  <label class="w"><input type="checkbox" data-w="15-loss-function"> watched</label></div></div><div class="vid" data-id="16-activation">
+  <a href="16-activation/final.mp4"><img src="16-activation/thumbnail.png" alt=""></a>
+  <div class="meta"><div class="num">Video 16 · 11:55</div>
+  <h3><a href="16-activation/final.mp4">Activation function</a></h3>
+  <div class="ax">Axiom A · Linearity</div>
+  <div class="tl">New terms: nonlinearity, activation function, ReLU</div>
+  <div class="links"><a href="16-activation/final.mp4">▶ video</a> · <a href="16-activation/transcript.md">transcript</a> · <a href="16-activation/final.srt">subtitles</a></div>
+  <label class="w"><input type="checkbox" data-w="16-activation"> watched</label></div></div></div>
+<h2>📖 Glossary — 52 terms</h2><p class="note">Every new term, with the video that teaches it.</p>
+<input type="search" id="q" placeholder="Search a term or a word in its meaning…">
+<table><thead><tr><th>Term</th><th>Meaning</th><th>Video</th></tr></thead><tbody id="gl"><tr><td>activation function</td><td>The nonlinearity applied to every output number of a layer, before the next layer.</td><td><a href="16-activation/final.mp4">16 Activation function</a></td></tr><tr><td>basis</td><td>A linearly independent set of vectors that spans the whole space.</td><td><a href="03-basis-and-rank/final.mp4">03 Basis &amp; rank</a></td></tr><tr><td>chain rule</td><td>The slope of a composition is the product of the slopes: dy/dx = dy/du · du/dx.</td><td><a href="09-chain-rule/final.mp4">09 Chain rule</a></td></tr><tr><td>component</td><td>One entry of a vector: the number in one position of the list.</td><td><a href="01-vector/final.mp4">01 Vector</a></td></tr><tr><td>composition</td><td>Putting one function after another: the output of f becomes the input of g, written g(f(x)).</td><td><a href="09-chain-rule/final.mp4">09 Chain rule</a></td></tr><tr><td>conditional probability</td><td>The probability of y when we already know x: p(y | x) = p(x, y) / p(x).</td><td><a href="12-distribution/final.mp4">12 Probability distribution</a></td></tr><tr><td>cosine similarity</td><td>The dot product divided by the two lengths: the cosine of the angle, from −1 to 1.</td><td><a href="05-inner-product/final.mp4">05 Inner product</a></td></tr><tr><td>covariance</td><td>The average product of the deviations of two variables. Its sign says if they move together.</td><td><a href="14-variance/final.mp4">14 Variance &amp; covariance</a></td></tr><tr><td>derivative</td><td>The slope of a function at one point: the limit of rise over run as the run shrinks to 0.</td><td><a href="07-derivative/final.mp4">07 Derivative</a></td></tr><tr><td>dimension</td><td>The number of vectors in any basis of a space.</td><td><a href="03-basis-and-rank/final.mp4">03 Basis &amp; rank</a></td></tr><tr><td>distance</td><td>How far apart two vectors are: the norm of their difference, x − y.</td><td><a href="06-norm/final.mp4">06 Norm</a></td></tr><tr><td>dot product</td><td>Multiply matching components and add: the result is one number.</td><td><a href="05-inner-product/final.mp4">05 Inner product</a></td></tr><tr><td>expected value</td><td>The probability-weighted average of the values: E[X] = Σ p(x)·x. The long-run average.</td><td><a href="13-expected-value/final.mp4">13 Expected value</a></td></tr><tr><td>exponential</td><td>The function e to the power x, with e ≈ 2.718: repeated growth that is always positive.</td><td><a href="10-exp-and-log/final.mp4">10 exp &amp; log</a></td></tr><tr><td>gradient</td><td>The vector of all partial derivatives. It points in the direction of steepest increase.</td><td><a href="08-gradient/final.mp4">08 Gradient</a></td></tr><tr><td>identity matrix</td><td>Ones on the diagonal, zeros everywhere else. It changes nothing: I x = x.</td><td><a href="02-matrix/final.mp4">02 Matrix</a></td></tr><tr><td>image (range)</td><td>All the outputs that the map can produce.</td><td><a href="04-linear-mapping/final.mp4">04 Linear mapping</a></td></tr><tr><td>independence</td><td>Knowing one variable tells nothing about the other: p(x, y) = p(x) p(y).</td><td><a href="12-distribution/final.mp4">12 Probability distribution</a></td></tr><tr><td>inner product</td><td>A rule ⟨x, y⟩ that turns two vectors into one number. It is symmetric, linear in each input, and positive.</td><td><a href="05-inner-product/final.mp4">05 Inner product</a></td></tr><tr><td>Jacobian</td><td>The matrix of all partial derivatives of a function with many outputs: row = output, column = input.</td><td><a href="09-chain-rule/final.mp4">09 Chain rule</a></td></tr><tr><td>kernel (null space)</td><td>All inputs that the map sends to the zero vector.</td><td><a href="04-linear-mapping/final.mp4">04 Linear mapping</a></td></tr><tr><td>limit</td><td>The value that an expression gets closer and closer to as h approaches a number (here 0).</td><td><a href="07-derivative/final.mp4">07 Derivative</a></td></tr><tr><td>linear combination</td><td>Scale some vectors, then add them: a·u + b·v.</td><td><a href="01-vector/final.mp4">01 Vector</a></td></tr><tr><td>linear independence</td><td>No vector in the set is a combination of the others. Only all-zero weights give the zero vector.</td><td><a href="03-basis-and-rank/final.mp4">03 Basis &amp; rank</a></td></tr><tr><td>linear mapping</td><td>A function f with f(a·u + b·v) = a·f(u) + b·f(v): it respects adding and scaling.</td><td><a href="04-linear-mapping/final.mp4">04 Linear mapping</a></td></tr><tr><td>local linear approximation</td><td>Near x, replace the curve by its tangent line: f(x+h) ≈ f(x) + f′(x)·h.</td><td><a href="07-derivative/final.mp4">07 Derivative</a></td></tr><tr><td>logarithm</td><td>The power you must put on e to get a number: ln y = x means e^x = y.</td><td><a href="10-exp-and-log/final.mp4">10 exp &amp; log</a></td></tr><tr><td>loss function</td><td>A rule that takes the label and the prediction and returns one number, never negative: how wrong the prediction is.</td><td><a href="15-loss-function/final.mp4">15 Loss function</a></td></tr><tr><td>matrix</td><td>A rectangular grid of numbers, arranged in rows and columns.</td><td><a href="02-matrix/final.mp4">02 Matrix</a></td></tr><tr><td>matrix multiplication</td><td>Doing one matrix after another. Entry (i, j) of AB: row i of A times column j of B, multiplied entry by entry and added.</td><td><a href="02-matrix/final.mp4">02 Matrix</a></td></tr><tr><td>mean</td><td>The average of values; for data: sum ÷ count. The expected value is the mean of a distribution.</td><td><a href="13-expected-value/final.mp4">13 Expected value</a></td></tr><tr><td>nonlinearity</td><td>A function that is not linear: it does not keep adding and scaling.</td><td><a href="16-activation/final.mp4">16 Activation function</a></td></tr><tr><td>norm</td><td>A rule that gives the size (length) of a vector as one number that is never negative.</td><td><a href="06-norm/final.mp4">06 Norm</a></td></tr><tr><td>optimization</td><td>Finding the input that makes a function as small (or as large) as possible.</td><td><a href="15-loss-function/final.mp4">15 Loss function</a></td></tr><tr><td>orthogonal</td><td>Two vectors are orthogonal when their inner product is zero: they meet at a right angle.</td><td><a href="05-inner-product/final.mp4">05 Inner product</a></td></tr><tr><td>outcome</td><td>One possible result of an experiment, like heads or a roll of blue 3, green 4.</td><td><a href="11-random-variable/final.mp4">11 Random variable</a></td></tr><tr><td>parameter</td><td>A number inside a model that we can change, like a knob. Learning means choosing its value.</td><td><a href="15-loss-function/final.mp4">15 Loss function</a></td></tr><tr><td>partial derivative</td><td>The slope of a function when only one input moves and all the other inputs are frozen.</td><td><a href="08-gradient/final.mp4">08 Gradient</a></td></tr><tr><td>probability distribution</td><td>The complete list of the values of a random variable with their probabilities (or a density).</td><td><a href="12-distribution/final.mp4">12 Probability distribution</a></td></tr><tr><td>product rule</td><td>Joint = conditional × marginal: p(x, y) = p(y | x) p(x).</td><td><a href="12-distribution/final.mp4">12 Probability distribution</a></td></tr><tr><td>random variable</td><td>A rule (a function) that gives each outcome of an experiment a number.</td><td><a href="11-random-variable/final.mp4">11 Random variable</a></td></tr><tr><td>rank</td><td>The number of linearly independent columns of a matrix (it equals the number of independent rows).</td><td><a href="03-basis-and-rank/final.mp4">03 Basis &amp; rank</a></td></tr><tr><td>ReLU</td><td>Rectified linear unit: ReLU(z) = max(0, z). Keeps positive numbers, turns negative numbers into 0.</td><td><a href="16-activation/final.mp4">16 Activation function</a></td></tr><tr><td>scalar</td><td>An ordinary single number, used to stretch, shrink or flip a vector.</td><td><a href="01-vector/final.mp4">01 Vector</a></td></tr><tr><td>span</td><td>All the vectors you can reach with linear combinations of a set of vectors.</td><td><a href="01-vector/final.mp4">01 Vector</a></td></tr><tr><td>standard deviation</td><td>The square root of the variance. It is in the original units: a typical distance from the mean.</td><td><a href="14-variance/final.mp4">14 Variance &amp; covariance</a></td></tr><tr><td>sum rule</td><td>To forget a variable, add over all its values. The result is a marginal, like p(rain).</td><td><a href="12-distribution/final.mp4">12 Probability distribution</a></td></tr><tr><td>transpose</td><td>Flip a matrix over its diagonal: its rows become its columns.</td><td><a href="02-matrix/final.mp4">02 Matrix</a></td></tr><tr><td>unit vector</td><td>A vector whose norm is exactly 1. It keeps only a direction.</td><td><a href="06-norm/final.mp4">06 Norm</a></td></tr><tr><td>variance</td><td>The expected squared distance from the mean: a number for how spread out the values are.</td><td><a href="14-variance/final.mp4">14 Variance &amp; covariance</a></td></tr><tr><td>vector</td><td>Anything you can add to another of its kind and scale by a number, and still get the same kind of thing.</td><td><a href="01-vector/final.mp4">01 Vector</a></td></tr><tr><td>vector space</td><td>A collection where adding and scaling never take you outside it, and the usual rules hold.</td><td><a href="01-vector/final.mp4">01 Vector</a></td></tr></tbody></table>
+<div class="summary"><h2 style="margin-top:0;border:0">In summary</h2><ul>
+<li><b>Bottom line:</b> 16 videos, one per atom, 3.2 hours in total — the full foundation for ML math.</li>
+<li>Order: linear algebra (01–06) → calculus (07–09) → exp &amp; log (10) → probability (11–14) → learning (15–16).</li>
+<li>Tick "watched" as you go; your progress is saved in this browser.</li>
+<li>Next: the <a href="../2026-10-27_atoms-and-molecules.html">molecules map</a> shows how these atoms combine into softmax, backprop, PCA, attention and more.</li></ul></div>
+</main>
+<script>
+const K='atoms-series-watched',S=JSON.parse(localStorage.getItem(K)||'{}');
+function upd(){const b=document.querySelectorAll('[data-w]'),n=[...b].filter(x=>x.checked).length;
+ pb.style.width=(100*n/b.length)+'%';pt.textContent=n+' of '+b.length+' watched'+(n===b.length?' — all atoms done 🎉':'');
+ b.forEach(x=>x.closest('.vid').classList.toggle('done',x.checked))}
+document.querySelectorAll('[data-w]').forEach(x=>{x.checked=!!S[x.dataset.w];x.onchange=()=>{S[x.dataset.w]=x.checked;localStorage.setItem(K,JSON.stringify(S));upd()}});upd();
+q.oninput=()=>{const s=q.value.toLowerCase();[...gl.rows].forEach(r=>r.style.display=r.textContent.toLowerCase().includes(s)?'':'none')};
+</script>
+<!-- ============ VOCAB HELPER ============ -->
+<style>
+  #vpop{position:absolute;z-index:50;max-width:320px;background:var(--card);color:var(--fg);border:1px solid var(--accent);
+    border-radius:10px;padding:10px 14px;box-shadow:0 8px 28px rgba(0,0,0,.18);font:15px/1.45 system-ui,sans-serif;display:none}
+  #vpop .w{font-weight:700;font-size:1.05rem} #vpop .es{color:var(--cnn);font-weight:600}
+  #vpop .ex{color:var(--muted);font-style:italic;margin-top:4px}
+  #vpop button{margin-top:8px;padding:4px 10px;font-size:.8rem}
+  .vbar{position:sticky;top:0;z-index:40;background:var(--bg);border-bottom:1px solid var(--line);padding:6px 0;font:600 .85rem system-ui,sans-serif;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+  #glossary table td:first-child{font-weight:700;white-space:nowrap}
+  #flash{font:1.3rem system-ui,sans-serif;text-align:center;padding:24px;min-height:110px}
+</style>
+<div id="vpop"></div>
+<script>
+const VOCAB = {
+  'atom':       [['atom','atoms'], 'smallest building block', 'Atom (noun): the smallest unit of something. Here: a basic math idea you cannot split into smaller ideas for study.'],
+  'molecule':   [['molecule','molecules'], 'small combination', 'Molecule (noun): a group of atoms joined together. Here: a formula built from 2–4 atoms.'],
+  'axiom':      [['axiom','axioms'], 'basic rule accepted as true', 'Axiom (noun): a starting rule you accept without proof; everything else is derived from it.'],
+  'transcript': [['transcript'], 'written copy of speech', 'Transcript (noun): the full text of what is said in a video or talk.'],
+  'subtitles':  [['subtitles'], 'on-screen text', 'Subtitles (noun): words shown at the bottom of a video that match what is spoken.'],
+  'glossary':   [['glossary'], 'word list', 'Glossary (noun): a list of special words with their meanings.'],
+  'floor':      [['floor'], 'lowest level', 'Floor (noun, figurative): the lowest level that everything stands on. Here: school math you already know.'],
+  'derive':     [['derive','derived'], 'work out from rules', 'Derive (verb): to get a result from basic rules, step by step.'],
+};
+const forms=[];for(const k in VOCAB)VOCAB[k][0].forEach(f=>forms.push([f,k]));
+forms.sort((a,b)=>b[0].length-a[0].length);
+const esc=s=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+const RE=new RegExp('\\b('+forms.map(f=>esc(f[0])).join('|')+')\\b','gi');
+const formToKey=Object.fromEntries(forms.map(([f,k])=>[f.toLowerCase(),k]));
+const pop=document.getElementById('vpop');
+document.addEventListener('click',e=>{if(!e.target.closest('#vpop')&&window.getSelection().isCollapsed)pop.style.display='none'});
+function renderGlossary(){
+  const g=document.getElementById('glossary');if(!g)return;
+  const used=usedKeys();
+  g.querySelector('tbody').innerHTML=used.sort().map(k=>`<tr><td>${k}</td><td>${VOCAB[k][1]}</td><td>${VOCAB[k][2]}</td></tr>`).join('')||'<tr><td colspan="3">No words.</td></tr>';
+  document.getElementById('gCount').textContent=`${used.length} words on this page`;
+}
+let deck=[],di=0,flipped=false;
+function flash(){const f=document.getElementById('flash');if(!deck.length){f.textContent='No words on this page.';return}
+  const k=deck[di%deck.length];f.innerHTML=flipped?`<b>${k}</b><br><span style="color:var(--cnn)">${VOCAB[k][1]}</span><br><small>${VOCAB[k][2]}</small>`:`<b>${k}</b><br><small class="note">What does it mean? Tap “Flip”.</small>`}
+function initVocab(){
+  const main=document.querySelector('main');
+  const bar=document.createElement('div');bar.className='vbar';
+  bar.innerHTML=`📖 Vocabulary helper: <b>select any word or phrase</b> to see its meaning. On a Mac: <b>Ctrl + ⌘ + D</b> over any word.`;
+  main.prepend(bar);
+  const sum=document.querySelector('.summary');
+  const sec=document.createElement('section');sec.id='glossary';
+  sec.innerHTML=`<h2>📚 Vocabulary from this page</h2><p class="note" id="gCount"></p>
+    <table style="margin-top:8px"><thead><tr><th>Word</th><th>Short synonym</th><th>Simple meaning</th></tr></thead><tbody></tbody></table>
+    <h3>Flashcards</h3><div class="card" id="flash"></div>
+    <p><button id="fFlip">Flip</button> <button id="fNext">Next ▶</button> <button id="fShuffle">Shuffle</button></p>`;
+  sum.before(sec);
+  document.getElementById('fFlip').onclick=()=>{flipped=!flipped;flash()};
+  document.getElementById('fNext').onclick=()=>{di++;flipped=false;flash()};
+  document.getElementById('fShuffle').onclick=()=>{deck.sort(()=>Math.random()-.5);di=0;flipped=false;flash()};
+  renderGlossary();deck=usedKeys();flash();
+}
+initVocab();
+</script>
+
+<!-- ============ SELECT-TO-LOOK-UP ============ -->
+<script>
+function usedKeys(){const t=[...document.querySelectorAll('main > :not(#glossary):not(script)')].map(e=>e.textContent).join(' ');
+  const ks=new Set();let m;RE.lastIndex=0;while((m=RE.exec(t)))ks.add(formToKey[m[0].toLowerCase()]);return [...ks]}
+const escH=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function sentenceAround(range){const blk=(range.startContainer.parentElement||document.body).closest('p,li,td,div')||document.body;
+  const t=blk.textContent.replace(/\s+/g,' '),q=range.toString().replace(/\s+/g,' ').trim(),i=t.indexOf(q);if(i<0)return '';
+  const a=t.lastIndexOf('.',i)+1,b=t.indexOf('.',i+q.length);return t.slice(a,b<0?undefined:b+1).trim()}
+function placePop(rect){pop.style.display='block';
+  pop.style.left=Math.min(window.scrollX+rect.left,window.scrollX+innerWidth-340)+'px';pop.style.top=(window.scrollY+rect.bottom+6)+'px'}
+function popButtons(term){
+  return `<div style="margin-top:8px"><button id="lsay">🔊 Listen</button>
+    <a href="https://dictionary.cambridge.org/search/english/direct/?q=${encodeURIComponent(term)}" target="_blank" style="font-size:.8rem;margin-left:6px">Cambridge ↗</a></div>`}
+function wireButtons(term){
+  document.getElementById('lsay').onclick=e=>{e.stopPropagation();const u=new SpeechSynthesisUtterance(term);u.lang='en-US';speechSynthesis.speak(u)};
+}
+async function lookUp(term,range){
+  const rect=range.getBoundingClientRect(),ctx=sentenceAround(range),k=term.toLowerCase();
+  const key=VOCAB[k]?k:formToKey[k];
+  if(key){const [,syn,def]=VOCAB[key];
+    pop.innerHTML=`<div class="w">${escH(term)}</div><div class="es">≈ ${escH(syn)}</div><div>${escH(def)}</div>${ctx?`<div class="ex">“${escH(ctx)}”</div>`:''}`+popButtons(term);
+    placePop(rect);wireButtons(term);return}
+  pop.innerHTML=`<div class="w">${escH(term)}</div><div class="note">Looking it up…</div>`;placePop(rect);
+  try{
+    const strip=h=>{const d=document.createElement('div');d.innerHTML=h;return d.textContent.replace(/\s+/g,' ').trim()};
+    let data=null;
+    for(const q of [k,term]){const r=await fetch('https://en.wiktionary.org/api/rest_v1/page/definition/'+encodeURIComponent(q.replace(/ /g,'_')));
+      if(r.ok){const j=await r.json();if(j.en&&j.en.length){data=j.en;break}}}
+    if(!data)throw 0;
+    const senses=[];
+    data.forEach(m=>m.definitions.forEach(d=>{const def=strip(d.definition);if(def&&senses.length<3)
+      senses.push({pos:m.partOfSpeech.toLowerCase(),def,ex:d.parsedExamples&&d.parsedExamples[0]?strip(d.parsedExamples[0].example):''})}));
+    if(!senses.length)throw 0;
+    pop.innerHTML=`<div class="w">${escH(term)}</div>`+
+      senses.map(x=>`<div style="margin-top:4px"><i>${escH(x.pos)}</i> — ${escH(x.def)}${x.ex?`<div class="note">e.g. “${escH(x.ex)}”</div>`:''}</div>`).join('')+
+      (ctx?`<div class="ex">On this page: “${escH(ctx)}”</div>`:'')+popButtons(term);
+    placePop(rect);wireButtons(term);
+  }catch(_){
+    pop.innerHTML=`<div class="w">${escH(term)}</div><div>No entry found here (phrases and idioms are often missing, or you are offline).</div>
+      <div class="note" style="margin-top:4px">Tip: open Cambridge below, or on a Mac press <b>Ctrl + ⌘ + D</b> over the word.</div>${ctx?`<div class="ex">“${escH(ctx)}”</div>`:''}`+popButtons(term);
+    placePop(rect);wireButtons(term);
+  }
+}
+function onSelect(){
+  const sel=window.getSelection();if(!sel||sel.isCollapsed||!sel.rangeCount)return;
+  const term=sel.toString().replace(/\s+/g,' ').trim().replace(/^[^A-Za-z]+|[^A-Za-z]+$/g,'');
+  const range=sel.getRangeAt(0),node=range.commonAncestorContainer,el=node.nodeType===1?node:node.parentElement;
+  if(!term||term.length>40||term.split(' ').length>5||!/^[A-Za-z][A-Za-z' \-]*$/.test(term))return;
+  if(el.closest('#vpop,mjx-container,input,button,textarea,.chip'))return;
+  lookUp(term,range);
+}
+document.addEventListener('mouseup',e=>{if(e.target.closest('#vpop'))return;setTimeout(onSelect,0)});
+document.addEventListener('touchend',e=>{if(e.target.closest('#vpop'))return;setTimeout(onSelect,350)});
+</script>
+</body></html>

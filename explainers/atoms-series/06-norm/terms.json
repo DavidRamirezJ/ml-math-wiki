@@ -1,0 +1,17 @@
+[
+ {
+  "term": "norm",
+  "definition": "A rule that gives the size (length) of a vector as one number that is never negative.",
+  "video": "06-norm"
+ },
+ {
+  "term": "unit vector",
+  "definition": "A vector whose norm is exactly 1. It keeps only a direction.",
+  "video": "06-norm"
+ },
+ {
+  "term": "distance",
+  "definition": "How far apart two vectors are: the norm of their difference, x − y.",
+  "video": "06-norm"
+ }
+]

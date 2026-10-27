@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fundamentos 1-2-3: números, producto punto, neuronas</title>
+<script>window.MathJax={tex:{inlineMath:[['$','$']],displayMath:[['$$','$$']]}};</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<style>
+  :root{--bg:#f7f5ef;--fg:#1d1d1f;--muted:#62615c;--card:#fff;--line:#dedbd2;--accent:#4338ca;--cnn:#0f766e;--mlp:#c2410c;--soft:#e0e7ff;--warm:#fde7d9}
+  @media (prefers-color-scheme:dark){:root{--bg:#15161a;--fg:#ecebe6;--muted:#a3a29b;--card:#1e2026;--line:#33353d;--accent:#a5b4fc;--cnn:#2dd4bf;--mlp:#fb923c;--soft:#25284a;--warm:#3a2418}}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);font:17px/1.65 "Iowan Old Style",Charter,Georgia,serif}
+  main{max-width:940px;margin:0 auto;padding:30px 22px 90px}
+  h1,h2,h3{font-family:"Avenir Next","Segoe UI",system-ui,sans-serif;line-height:1.2}
+  h1{font-size:2.2rem;margin:10px 0 4px} h2{font-size:1.5rem;margin:54px 0 10px;border-bottom:2px solid var(--line);padding-bottom:6px}
+  h3{margin:26px 0 8px}
+  .hero,.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin:14px 0}
+  .hero{font-size:1.1rem}
+  .note{color:var(--muted);font-size:.93rem}
+  .sym{display:grid;grid-template-columns:auto 1fr;gap:5px 14px;margin:10px 0;font-size:.95rem}
+  .sym div:nth-child(odd){text-align:right;font-weight:600}
+  .step{display:inline-block;background:var(--accent);color:#fff;font:700 .8rem system-ui,sans-serif;border-radius:20px;padding:2px 10px;margin-right:6px;vertical-align:middle}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media(max-width:760px){.grid2{grid-template-columns:1fr}}
+  button{font:600 .9rem system-ui,sans-serif;border:1px solid var(--line);background:var(--card);color:var(--fg);padding:6px 13px;border-radius:8px;cursor:pointer}
+  button:hover{border-color:var(--accent)}
+  input[type=range]{width:100%}
+  .row{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+  .px{display:grid;grid-template-columns:repeat(5,44px);gap:3px}
+  .px div{width:44px;height:44px;border-radius:4px;display:flex;align-items:center;justify-content:center;font:600 .8rem system-ui,sans-serif;cursor:pointer;user-select:none}
+  .mono{font:.95rem ui-monospace,Menlo,monospace;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 12px;white-space:pre;overflow:auto}
+  .vec{display:inline-flex;gap:4px}
+  .vec span{min-width:46px;padding:4px 6px;text-align:center;border-radius:6px;font:600 .95rem system-ui,sans-serif;background:var(--soft)}
+  .vec span.hl{outline:3px solid var(--accent)}
+  .prod span{background:var(--warm)}
+  table{border-collapse:collapse;font-size:.95rem}
+  td,th{border:1px solid var(--line);padding:6px 10px}
+  .quiz label{display:block;padding:5px 10px;border-radius:7px;cursor:pointer}.quiz label:hover{background:var(--line)}
+  .fb{font-size:.92rem;margin-top:4px}
+  .summary{background:var(--card);border-left:6px solid var(--accent);border-radius:10px;padding:16px 22px;margin-top:40px}
+  canvas{background:var(--card);border:1px solid var(--line);border-radius:10px;max-width:100%}
+</style>
+</head>
+<body>
+<main>
+<h1>Fundamentos 1 · 2 · 3</h1>
+<div class="note">Números → producto punto → una neurona · los primeros tres bloques para entender MLP vs CNN · 2026-10-13</div>
+
+<div class="hero">
+  Toda la historia en tres frases. <b>(1)</b> Una red neuronal solo ve listas y cuadrículas de números. <b>(2)</b> Su movimiento principal es el <b>producto punto</b> (<i>dot product</i>): multiplicar dos listas número por número y sumar todo. <b>(3)</b> Una <b>neurona</b> es solo un producto punto, más un número extra, pasado por una función sencilla que "aplasta" el resultado.
+</div>
+
+<!-- ======================= 1 ======================= -->
+<h2><span class="step">1</span>Los datos como números: vectores, matrices, tensores</h2>
+<p>Antes de que una red aprenda algo, todo tiene que convertirse en números. Solo necesitas conocer tres formas, y cada una es la anterior con una dirección más.</p>
+
+<div class="grid2">
+  <div class="card">
+    <h3>Vector — una lista</h3>
+    <p>Un <b>vector</b> es una lista ordenada de números. Por ejemplo, una casa descrita por su tamaño, sus cuartos y su antigüedad:</p>
+    $$\mathbf{x} = \begin{bmatrix} 120 \\ 3 \\ 15 \end{bmatrix} \in \mathbb{R}^{3}$$
+    <div class="sym">
+      <div>$\mathbf{x}$</div><div>letra minúscula en negritas = un vector</div>
+      <div>$x_1, x_2, x_3$</div><div>sus entradas: $x_1 = 120$, $x_2 = 3$, $x_3 = 15$. El numerito de abajo es la posición.</div>
+      <div>$\in$</div><div>"pertenece a" / "vive en"</div>
+      <div>$\mathbb{R}^{3}$</div><div>el conjunto de todas las listas de 3 números reales</div>
+    </div>
+    <p class="note">El orden importa: la posición 1 siempre es el tamaño, la 2 siempre son los cuartos. Si los cambias de lugar, es otra casa.</p>
+  </div>
+  <div class="card">
+    <h3>Matriz — una cuadrícula</h3>
+    <p>Una <b>matriz</b> es una cuadrícula de números con filas y columnas. Un ejemplo pequeño de 2×3:</p>
+    $$\mathbf{A} = \begin{bmatrix} 1 & 2 & 3 \\ 4 & 5 & 6 \end{bmatrix} \in \mathbb{R}^{2\times 3}$$
+    <div class="sym">
+      <div>$\mathbf{A}$</div><div>letra mayúscula en negritas = una matriz</div>
+      <div>$2\times 3$</div><div>2 filas, 3 columnas — siempre primero las filas</div>
+      <div>$A_{ij}$</div><div>la entrada en la fila $i$, columna $j$. Aquí $A_{23} = 6$ (fila 2, columna 3).</div>
+    </div>
+    <p class="note">Puedes ver una matriz como filas apiladas, o como columnas una al lado de la otra. Las dos vistas sirven más adelante.</p>
+  </div>
+</div>
+
+<h3>Pruébalo: una imagen en escala de grises <i>es</i> una matriz</h3>
+<p>Haz clic en los píxeles para cambiar su brillo (0 = negro, 9 = blanco). Mira cómo cambia la matriz de números de abajo. Esa matriz es exactamente lo que recibe la red.</p>
+<div class="row">
+  <div class="px" id="px"></div>
+  <div class="mono" id="pxm"></div>
+</div>
+<p class="note">Una imagen a color tiene 3 de estas cuadrículas apiladas: una para el rojo, una para el verde y una para el azul. Una pila de matrices es un <b>tensor</b>.</p>
+
+<div class="card">
+  <h3>Tensor — una pila de cuadrículas</h3>
+  <p>Un <b>tensor</b> es la palabra general para "una caja de números con cualquier cantidad de direcciones". Su <b>forma</b> (<i>shape</i>) te dice el tamaño en cada dirección.</p>
+  <table>
+    <tr><th>Objeto</th><th>Direcciones</th><th>Forma de ejemplo</th><th>Ejemplo</th></tr>
+    <tr><td>número (escalar)</td><td>0</td><td>$()$</td><td>una temperatura: 21</td></tr>
+    <tr><td>vector</td><td>1</td><td>$(3)$</td><td>la casa de arriba</td></tr>
+    <tr><td>matriz</td><td>2</td><td>$(28, 28)$</td><td>la imagen de un dígito en escala de grises</td></tr>
+    <tr><td>tensor 3-D</td><td>3</td><td>$(3, 224, 224)$</td><td>una foto a color: canales × alto × ancho</td></tr>
+    <tr><td>tensor 4-D</td><td>4</td><td>$(32, 3, 224, 224)$</td><td>un lote de 32 fotos a color</td></tr>
+  </table>
+  <p class="note">🔗 Por qué importa para MLP vs CNN: un MLP necesita un <b>vector</b>, así que aplana la imagen de $(28,28)$ en una lista de $(784)$ y pierde el acomodo. Una CNN conserva la forma de <b>matriz / tensor</b>, así que sabe qué píxeles son vecinos.</p>
+</div>
+
+<!-- ======================= 1b ======================= -->
+<h2><span class="step">1b</span>Más de cerca: ¿qué es exactamente un tensor?</h2>
+<div class="hero">Un tensor es solo <b>una caja de números acomodados en cierta cantidad de direcciones</b>. Cada dirección se llama <b>eje</b> (<i>axis</i>). La cantidad de ejes te dice cuántos índices necesitas para señalar un solo número.</div>
+
+<div class="card">
+  <h3>🎬 La analogía del cine</h3>
+  <p>Piensa cuánta información necesitas para encontrar <b>un asiento</b>:</p>
+  <table>
+    <tr><th>Ejes</th><th>Dónde estás</th><th>Para encontrar un asiento dices…</th><th>Nombre en ML</th></tr>
+    <tr><td>0</td><td>un solo asiento</td><td>"ese asiento"</td><td>número (escalar)</td></tr>
+    <tr><td>1</td><td>una fila de asientos</td><td>"asiento 3"</td><td>vector</td></tr>
+    <tr><td>2</td><td>una sala de cine</td><td>"fila 2, asiento 3"</td><td>matriz</td></tr>
+    <tr><td>3</td><td>un edificio lleno de salas</td><td>"piso 2, fila 1, asiento 4"</td><td>tensor 3-D</td></tr>
+    <tr><td>4</td><td>una calle de edificios</td><td>"edificio 5, piso 2, fila 1, asiento 4"</td><td>tensor 4-D</td></tr>
+  </table>
+</div>
+
+<h3>Pruébalo: construye un tensor</h3>
+<p>Elige cuántos ejes quieres y luego el tamaño de cada uno. Haz clic en cualquier número para ver los índices que lo señalan. Los números simplemente van contando 0, 1, 2, … para que puedas seguir el orden.</p>
+<div class="card">
+  <p><b>Cantidad de ejes:</b> <span id="tAxes"></span></p>
+  <div id="tSizes" class="row"></div>
+  <p style="font-size:1.1rem">forma = <b id="tShape"></b> &nbsp;·&nbsp; total de números = <b id="tCount"></b></p>
+  <div id="tView" style="overflow:auto;padding:6px 0"></div>
+  <div class="mono" id="tPick">Haz clic en un número.</div>
+</div>
+<p>La forma lista el tamaño de cada eje, en orden. El total de números es todos los tamaños multiplicados:</p>
+$$\text{forma } (d_1, d_2, \dots, d_k) \;\Rightarrow\; \text{total} = d_1 \times d_2 \times \dots \times d_k$$
+<div class="sym">
+  <div>$k$</div><div>la cantidad de ejes (también llamada número de dimensiones, <code>ndim</code> en PyTorch)</div>
+  <div>$d_1$</div><div>el tamaño del primer eje; $d_2$ el del segundo, y así</div>
+  <div>$X[i, j, k]$</div><div>un número, elegido con un índice por cada eje. En PyTorch los índices empiezan en 0.</div>
+</div>
+
+<div class="card">
+  <h3>🖼️ Por qué una foto a color es un tensor 3-D</h3>
+  <p>Una foto en escala de grises tiene un valor de brillo por píxel, así que es una cuadrícula: forma $(H, W)$. Una foto a color tiene <b>tres</b> valores por píxel (rojo, verde y azul), así que son tres cuadrículas apiladas: forma $(3, H, W)$. Para entrenar se usan muchas fotos a la vez, un <b>lote</b> (<i>batch</i>), y eso agrega un cuarto eje al principio: $(32, 3, 224, 224)$ ≈ 4.8 millones de números.</p>
+  <p class="note">Así que <code>X[0, 10, 20]</code> significa: canal 0 (rojo), fila 10, columna 20.</p>
+</div>
+
+<h3>Los mismos números, otra forma: reshape y flatten</h3>
+<p>Los mismos 12 números se pueden acomodar en muchas formas. Cambiar el acomodo se llama <b>reshape</b> (reacomodar). No se agrega ni se pierde nada; los números solo quedan en otro acomodo. <b>Flatten</b> (aplanar) significa reacomodar todo en una sola lista larga. Eso es exactamente lo que hace un MLP con una imagen.</p>
+<p id="rsBtns"></p>
+<div class="card"><div id="rsView" style="overflow:auto"></div><p class="note" id="rsNote"></p></div>
+
+<details class="card"><summary><b>Una advertencia: "tensor" en física vs en ML</b></summary>
+  <p>En física y en matemáticas puras, un tensor es algo más profundo: un objeto que cambia de una forma específica cuando cambias de coordenadas. En machine learning y en PyTorch, la palabra solo significa <b>un arreglo de números con varias dimensiones</b>. Para esta wiki y el libro de LLM, usa el significado de ML.</p>
+</details>
+
+<!-- ======================= 2 ======================= -->
+<h2><span class="step">2</span>La operación central: el producto punto</h2>
+<p>Si solo vas a recordar una cosa de esta página, que sea esta. El producto punto toma dos listas del mismo tamaño, las multiplica posición por posición y suma los resultados en un solo número.</p>
+$$\mathbf{w}\cdot\mathbf{x} \;=\; \sum_{i=1}^{n} w_i\,x_i \;=\; w_1x_1 + w_2x_2 + \dots + w_nx_n$$
+<div class="sym">
+  <div>$\mathbf{w}\cdot\mathbf{x}$</div><div>"w punto x" — el producto punto de los dos vectores</div>
+  <div>$\sum_{i=1}^{n}$</div><div>la S griega grande (sigma) significa "suma". El $i=1$ de abajo dice que empiezas en la posición 1; la $n$ de arriba dice que terminas en la posición $n$.</div>
+  <div>$w_i\,x_i$</div><div>multiplica la posición $i$ de $\mathbf{w}$ por la posición $i$ de $\mathbf{x}$</div>
+</div>
+
+<h3>Pruébalo: mueve los pesos</h3>
+<p>Piensa en $\mathbf{x}$ como los ingredientes de una receta y en $\mathbf{w}$ como cuánto te importa cada uno. El producto punto es la calificación total.</p>
+<div class="card">
+  <div class="grid2">
+    <div>
+      <div>$\mathbf{w}$ (pesos):</div>
+      <label>w₁ = <b id="w1v"></b><input type="range" id="w1" min="-2" max="2" step="0.25" value="1"></label>
+      <label>w₂ = <b id="w2v"></b><input type="range" id="w2" min="-2" max="2" step="0.25" value="0.5"></label>
+      <label>w₃ = <b id="w3v"></b><input type="range" id="w3" min="-2" max="2" step="0.25" value="-1"></label>
+    </div>
+    <div>
+      <p>$\mathbf{x}$ = <span class="vec" id="xv"></span></p>
+      <p>$\mathbf{w}$ = <span class="vec" id="wv"></span></p>
+      <p>productos = <span class="vec prod" id="pv"></span></p>
+      <p style="font-size:1.25rem">$\mathbf{w}\cdot\mathbf{x}$ = <b id="dot"></b></p>
+    </div>
+  </div>
+  <p class="note">Fíjate: un peso <b>negativo</b> hace que esa entrada baje la calificación. Un peso de <b>0</b> significa "ignora esta entrada".</p>
+</div>
+
+<details class="card"><summary><b>El significado geométrico (¿qué tan alineadas están dos flechas?)</b></summary>
+  <p>Hay una segunda forma de ver el mismo número:</p>
+  $$\mathbf{w}\cdot\mathbf{x} = \lVert\mathbf{w}\rVert\,\lVert\mathbf{x}\rVert\cos\theta$$
+  <div class="sym">
+    <div>$\lVert\mathbf{w}\rVert$</div><div>el largo de la flecha $\mathbf{w}$</div>
+    <div>$\theta$</div><div>el ángulo entre las dos flechas</div>
+    <div>$\cos\theta$</div><div>1 cuando apuntan hacia el mismo lado, 0 en ángulo recto, −1 cuando son opuestas</div>
+  </div>
+  <p>Así que el producto punto es grande cuando las dos flechas apuntan hacia el mismo lado. Por eso una neurona, o un filtro de una CNN, "se activa" cuando la entrada <b>se parece</b> a sus pesos: es un detector de patrones.</p>
+</details>
+
+<h3>Multiplicar matrices = muchos productos punto a la vez</h3>
+<p>Multiplicar una matriz por un vector hace un producto punto por cada fila. Cada fila de $\mathbf{W}$ es una "receta para calificar".</p>
+$$\mathbf{W}\mathbf{x} = \begin{bmatrix} 1 & 0 & 2 \\ -1 & 3 & 1 \end{bmatrix}\begin{bmatrix} 2 \\ 1 \\ 3 \end{bmatrix} = \begin{bmatrix} 1\cdot2 + 0\cdot1 + 2\cdot3 \\ -1\cdot2 + 3\cdot1 + 1\cdot3 \end{bmatrix} = \begin{bmatrix} 8 \\ 4 \end{bmatrix}$$
+<div class="sym">
+  <div>$(\mathbf{W}\mathbf{x})_i = \sum_j W_{ij}\,x_j$</div><div>la entrada $i$ del resultado = la fila $i$ de $\mathbf{W}$ por $\mathbf{x}$ (producto punto)</div>
+  <div>formas</div><div>$(2\times3)$ por $(3)$ da $(2)$. Los tamaños de adentro (3 y 3) deben coincidir; el de afuera (2) es lo que obtienes.</div>
+</div>
+<p><button id="mmStep">Resaltar la siguiente fila ▶</button></p>
+<div class="mono" id="mm"></div>
+
+<h3>Una matriz es una máquina que mueve el espacio (un mapeo lineal)</h3>
+<p>Esta es la vista más profunda. Una matriz de 2×2 toma cada punto del plano y lo manda a otro lugar. Puede estirar, aplastar, rotar o inclinar el plano, pero las líneas rectas siguen rectas y el origen no se mueve. Eso es lo que significa <b>lineal</b>.</p>
+<div class="grid2">
+  <div>
+    <canvas id="cv" width="360" height="360"></canvas>
+  </div>
+  <div>
+    $$\mathbf{W} = \begin{bmatrix} a & b \\ c & d \end{bmatrix}$$
+    <label>a = <b id="av"></b><input type="range" id="ma" min="-2" max="2" step="0.1" value="1"></label>
+    <label>b = <b id="bv"></b><input type="range" id="mb" min="-2" max="2" step="0.1" value="0"></label>
+    <label>c = <b id="cv2"></b><input type="range" id="mc" min="-2" max="2" step="0.1" value="0"></label>
+    <label>d = <b id="dv"></b><input type="range" id="md" min="-2" max="2" step="0.1" value="1"></label>
+    <p><button data-p="1,0,0,1">identidad</button> <button data-p="2,0,0,0.5">estirar</button> <button data-p="0,-1,1,0">rotar 90°</button> <button data-p="1,1,0,1">inclinar</button></p>
+    <p class="note">Cuadrícula tenue = antes. Figura de color = después. La flecha azul es a dónde llega $(1,0)$ (la primera columna); la flecha naranja es a dónde llega $(0,1)$ (la segunda columna).</p>
+  </div>
+</div>
+$$f(\mathbf{x}) = \mathbf{W}\mathbf{x}\qquad f(a\mathbf{u} + b\mathbf{v}) = a\,f(\mathbf{u}) + b\,f(\mathbf{v})$$
+<p class="note">La segunda regla se lee: "transformar una mezcla es lo mismo que mezclar las transformaciones". Esa es la definición de un mapeo lineal.</p>
+
+<!-- ======================= 3 ======================= -->
+<h2><span class="step">3</span>Una neurona, y luego una capa</h2>
+<p>Ahora sí podemos construir una neurona. Lo hace en tres pasos sencillos:</p>
+<ol>
+  <li><b>Pesar:</b> calcula el producto punto de las entradas con los pesos.</li>
+  <li><b>Desplazar:</b> suma un número extra, el <b>sesgo</b> (<i>bias</i>), que sube o baja el umbral.</li>
+  <li><b>Aplastar:</b> pasa el resultado por una <b>función de activación</b>, como ReLU.</li>
+</ol>
+$$z = \mathbf{w}\cdot\mathbf{x} + b \qquad\qquad h = \sigma(z)$$
+<div class="sym">
+  <div>$z$</div><div>la calificación "cruda" antes de la activación (se le dice "pre-activación")</div>
+  <div>$b$</div><div>el sesgo: un número por neurona, que se aprende igual que los pesos</div>
+  <div>$\sigma$</div><div>la función de activación (letra griega sigma, minúscula)</div>
+  <div>$h$</div><div>la salida de la neurona</div>
+  <div>$\mathrm{ReLU}(z)=\max(0,z)$</div><div>la activación más popular: deja pasar los positivos y convierte los negativos en 0</div>
+</div>
+
+<h3>Pruébalo: una neurona en vivo</h3>
+<div class="card">
+  <div class="grid2">
+    <div>
+      <label>x₁ = <b id="nx1v"></b><input type="range" id="nx1" min="-3" max="3" step="0.5" value="2"></label>
+      <label>x₂ = <b id="nx2v"></b><input type="range" id="nx2" min="-3" max="3" step="0.5" value="1"></label>
+      <label>x₃ = <b id="nx3v"></b><input type="range" id="nx3" min="-3" max="3" step="0.5" value="3"></label>
+      <label>sesgo b = <b id="nbv"></b><input type="range" id="nb" min="-3" max="3" step="0.1" value="0.1"></label>
+      <p class="note">Pesos fijos: $\mathbf{w} = [0.5,\ -1,\ 0.25]$</p>
+      <p><label><input type="radio" name="act" value="relu" checked> ReLU</label> <label><input type="radio" name="act" value="sig"> sigmoide</label> <label><input type="radio" name="act" value="none"> ninguna</label></p>
+    </div>
+    <div>
+      <div class="mono" id="neuron"></div>
+      <canvas id="actc" width="340" height="190"></canvas>
+    </div>
+  </div>
+</div>
+
+<h3>Una capa = muchas neuronas = una matriz</h3>
+<p>Pon $m$ neuronas una al lado de la otra. Cada una tiene su propia fila de pesos y su propio sesgo. Apila las filas en una matriz y obtienes la fórmula de la página de MLP:</p>
+$$\mathbf{h} = \sigma(\mathbf{W}\mathbf{x} + \mathbf{b})$$
+<div class="sym">
+  <div>fila $i$ de $\mathbf{W}$</div><div>los pesos de la neurona $i$</div>
+  <div>$\mathbf{b}$</div><div>todos los sesgos en un vector</div>
+  <div>$\sigma(\cdot)$</div><div>se aplica a cada entrada por separado</div>
+</div>
+
+<div class="card">
+  <h3>¿Para qué necesitamos la activación?</h3>
+  <p>Sin ella, apilar capas no sirve de nada. Dos capas lineales seguidas se juntan en una sola:</p>
+  $$\mathbf{W}_2(\mathbf{W}_1\mathbf{x}) = (\mathbf{W}_2\mathbf{W}_1)\,\mathbf{x} = \mathbf{W}'\mathbf{x}$$
+  <p>Cien capas lineales siguen siendo una sola matriz: un solo estiramiento y giro del espacio. Solo pueden dibujar líneas rectas. La activación dobla el espacio entre capas, y ese doblez es lo que permite que una red profunda aprenda patrones curvos y complicados.</p>
+</div>
+
+<h3>🎞️ Animación: mira cómo la activación construye una curva</h3>
+<p>Esta es la forma más clara de verlo. Queremos que una red pequeña dibuje la curva punteada. La red tiene <b>una capa oculta</b>. Cada neurona oculta calcula $\mathrm{ReLU}(x - t)$: se queda plana en 0, luego se dobla en su propio punto $t$ y sube. La salida suma las neuronas, cada una multiplicada por un peso de salida $c$:</p>
+$$y(x) = a + s\,x + \sum_{k=1}^{N} c_k\,\mathrm{ReLU}(x - t_k)$$
+<div class="sym">
+  <div>$N$</div><div>la cantidad de neuronas ocultas (usa el slider)</div>
+  <div>$t_k$</div><div>dónde se dobla la neurona $k$ (su sesgo, con signo menos)</div>
+  <div>$c_k$</div><div>qué tanto cuenta la neurona $k$ en la salida (su peso de salida)</div>
+  <div>$a + s\,x$</div><div>una línea recta sencilla a la que se le suman los dobleces</div>
+</div>
+<div class="card">
+  <canvas id="hingeC" width="820" height="360" style="width:100%"></canvas>
+  <div class="row" style="margin-top:8px">
+    <button id="hPlay">▶ Reproducir: agregar neuronas una por una</button>
+    <label style="flex:1;min-width:220px">neuronas N = <b id="hNv">0</b><input type="range" id="hN" min="0" max="12" step="1" value="0"></label>
+    <label><input type="checkbox" id="hAct" checked> usar ReLU (activación ENCENDIDA)</label>
+  </div>
+  <div class="mono" id="hMsg" style="white-space:pre-wrap"></div>
+  <p class="note">Leyenda: punteada = curva objetivo · delgadas de color = lo que aporta cada neurona · gruesa = la salida de la red.</p>
+</div>
+<p><b>Ahora desmarca "usar ReLU" y presiona Reproducir otra vez.</b> Sin la activación, cada neurona es solo $c_k(x - t_k)$: una línea recta. Y una suma de líneas rectas siempre es una sola línea recta, sin importar cuántas neuronas agregues. La red nunca se puede doblar. Con ReLU, cada neurona agrega un doblez en su propio lugar, y con suficientes dobleces puedes dibujar casi cualquier curva. Ese es el verdadero trabajo de una función de activación: <b>permitir que la red se doble</b>.</p>
+
+<p class="note">🔗 De vuelta a MLP vs CNN: una capa de MLP es exactamente $\sigma(\mathbf{W}\mathbf{x}+\mathbf{b})$, con cada entrada de $\mathbf{W}$ libre. Una capa de CNN es <i>la misma fórmula</i>, pero cada neurona solo hace el producto punto con un pedacito, y todas las neuronas comparten los mismos pocos pesos.</p>
+
+<!-- quiz -->
+<h2>Ponte a prueba</h2>
+<div class="quiz" id="quiz"></div>
+
+<div class="summary">
+  <h3 style="margin-top:0">En resumen</h3>
+  <ul>
+    <li><b>Paso 1:</b> las redes ven vectores (listas), matrices (cuadrículas) y tensores (pilas de cuadrículas). La <b>forma</b> te dice el tamaño en cada dirección.</li>
+    <li><b>Tensores:</b> un tensor es una caja de números con $k$ ejes. Necesitas un índice por eje para elegir un número; la forma lista el tamaño de cada eje, y su producto es el total. Reshape reacomoda los mismos números; flatten los convierte en una sola lista.</li>
+    <li><b>Paso 2:</b> el producto punto multiplica posición por posición y suma. Es grande cuando la entrada se parece a los pesos. Multiplicar matrices es un producto punto por fila, y mueve el espacio sin doblar las líneas.</li>
+    <li><b>Paso 3:</b> neurona = producto punto + sesgo + activación. Una capa son muchas neuronas, escritas $\sigma(\mathbf{W}\mathbf{x}+\mathbf{b})$. La activación es lo que permite que la red se <b>doble</b>: cada neurona ReLU agrega un doblez, y sin ella cualquier cantidad de neuronas sigue dibujando una línea recta.</li>
+  </ul>
+</div>
+</main>
+
+<script>
+const $=id=>document.getElementById(id);
+/* ---- pixel grid ---- */
+const P=[[0,0,9,0,0],[0,9,9,0,0],[0,0,9,0,0],[0,0,9,0,0],[0,9,9,9,0]];
+function drawPx(){const g=$('px');g.innerHTML='';P.forEach((r,i)=>r.forEach((v,j)=>{const d=document.createElement('div');const c=Math.round(v/9*255);
+  d.style.background=`rgb(${c},${c},${c})`;d.style.color=v>4?'#000':'#fff';d.textContent=v;d.onclick=()=>{P[i][j]=(P[i][j]+3)%12>9?0:(P[i][j]+3)%12;drawPx()};g.appendChild(d)}));
+  $('pxm').textContent='X = [\n'+P.map(r=>'  ['+r.join(', ')+']').join(',\n')+'\n]   forma (5, 5)\n\naplanada para un MLP:\n['+P.flat().join(', ')+']   forma (25)';}
+drawPx();
+/* ---- dot product ---- */
+const X=[2,1,3];
+function chip(arr,id,dec){$(id).innerHTML=arr.map(v=>`<span>${dec?(+v).toFixed(2).replace(/\.?0+$/,''):v}</span>`).join('')}
+function dot(){const w=[+$('w1').value,+$('w2').value,+$('w3').value];['w1','w2','w3'].forEach((k,i)=>$(k+'v').textContent=w[i]);
+  chip(X,'xv');chip(w,'wv',1);const p=w.map((v,i)=>v*X[i]);chip(p,'pv',1);$('dot').textContent=p.join(' + ').replace(/\+ -/g,'− ')+' = '+(+p.reduce((a,b)=>a+b,0).toFixed(2));}
+['w1','w2','w3'].forEach(k=>$(k).oninput=dot);dot();
+/* ---- matmul step ---- */
+const W=[[1,0,2],[-1,3,1]],XX=[2,1,3];let mr=-1;
+function mm(){const lines=W.map((r,i)=>{const s=r.map((v,j)=>`${v}·${XX[j]}`).join(' + ');const t=r.reduce((a,v,j)=>a+v*XX[j],0);
+  return (i===mr?'▶ ':'  ')+'fila '+(i+1)+': ['+r.join(', ')+'] · [2, 1, 3] = '+(i<=mr?s+' = '+t:'?')});$('mm').textContent=lines.join('\n');}
+$('mmStep').onclick=()=>{mr=(mr+1)%2;mm()};mm();
+/* ---- linear map canvas ---- */
+const cv=$('cv'),cx=cv.getContext('2d');
+function lm(){const a=+$('ma').value,b=+$('mb').value,c=+$('mc').value,d=+$('md').value;
+  $('av').textContent=a;$('bv').textContent=b;$('cv2').textContent=c;$('dv').textContent=d;
+  const S=40,O=180,T=(x,y)=>[O+(a*x+b*y)*S,O-(c*x+d*y)*S];const fg=getComputedStyle(document.body).color;
+  cx.clearRect(0,0,360,360);cx.globalAlpha=.18;cx.strokeStyle=fg;
+  for(let k=-4;k<=4;k++){cx.beginPath();cx.moveTo(O+k*S,0);cx.lineTo(O+k*S,360);cx.moveTo(0,O+k*S);cx.lineTo(360,O+k*S);cx.stroke()}
+  cx.globalAlpha=.55;cx.strokeStyle='#6366f1';
+  for(let k=-4;k<=4;k++){cx.beginPath();let p=T(k,-4);cx.moveTo(...p);p=T(k,4);cx.lineTo(...p);cx.stroke();cx.beginPath();p=T(-4,k);cx.moveTo(...p);p=T(4,k);cx.lineTo(...p);cx.stroke()}
+  cx.globalAlpha=1;cx.fillStyle='rgba(16,185,129,.35)';cx.beginPath();[[0,0],[1,0],[1,1],[0,1]].forEach((q,i)=>{const p=T(...q);i?cx.lineTo(...p):cx.moveTo(...p)});cx.closePath();cx.fill();
+  const arrow=(x,y,col)=>{cx.strokeStyle=col;cx.lineWidth=3;cx.beginPath();cx.moveTo(O,O);cx.lineTo(...T(x,y));cx.stroke();cx.lineWidth=1};
+  arrow(1,0,'#2563eb');arrow(0,1,'#ea580c');}
+['ma','mb','mc','md'].forEach(k=>$(k).oninput=lm);
+document.querySelectorAll('button[data-p]').forEach(bt=>bt.onclick=()=>{const v=bt.dataset.p.split(',');['ma','mb','mc','md'].forEach((k,i)=>$(k).value=v[i]);lm()});lm();
+/* ---- neuron ---- */
+const NW=[0.5,-1,0.25],ac=$('actc'),ax=ac.getContext('2d');
+const act=()=>document.querySelector('input[name=act]:checked').value;
+const f=(z,m)=>m==='relu'?Math.max(0,z):m==='sig'?1/(1+Math.exp(-z)):z;
+function neuron(){const x=[+$('nx1').value,+$('nx2').value,+$('nx3').value],b=+$('nb').value;['nx1','nx2','nx3'].forEach((k,i)=>$(k+'v').textContent=x[i]);$('nbv').textContent=b;
+  const terms=NW.map((w,i)=>`${w}·${x[i]}`),z=NW.reduce((s,w,i)=>s+w*x[i],0)+b,m=act(),h=f(z,m);
+  $('neuron').textContent=`1. pesar:      w·x = ${terms.join(' + ')}\n               = ${(z-b).toFixed(2)}\n2. desplazar:  z = ${(z-b).toFixed(2)} + ${b} = ${z.toFixed(2)}\n3. aplastar:   h = ${m==='relu'?'ReLU':m==='sig'?'sigmoide':'(ninguna)'}(${z.toFixed(2)}) = ${h.toFixed(3)}`;
+  const W2=340,H=190,sx=z0=>W2/2+z0*W2/12,sy=y=>H-20-(m==='sig'?y*120:y*H/9);const fg=getComputedStyle(document.body).color;
+  ax.clearRect(0,0,W2,H);ax.strokeStyle=fg;ax.globalAlpha=.3;ax.beginPath();ax.moveTo(0,sy(0));ax.lineTo(W2,sy(0));ax.moveTo(W2/2,0);ax.lineTo(W2/2,H);ax.stroke();ax.globalAlpha=1;
+  ax.strokeStyle='#4338ca';ax.lineWidth=2.5;ax.beginPath();for(let z0=-6;z0<=6;z0+=.05){const p=[sx(z0),sy(f(z0,m))];z0===-6?ax.moveTo(...p):ax.lineTo(...p)}ax.stroke();ax.lineWidth=1;
+  ax.fillStyle='#ea580c';ax.beginPath();ax.arc(sx(Math.max(-6,Math.min(6,z))),sy(h),6,0,7);ax.fill();
+  ax.fillStyle=fg;ax.font='12px system-ui';ax.fillText('z →',W2-30,sy(0)-6);ax.fillText('h',W2/2+6,12);}
+['nx1','nx2','nx3','nb'].forEach(k=>$(k).oninput=neuron);document.querySelectorAll('input[name=act]').forEach(r=>r.onchange=neuron);neuron();
+/* ---- tensor explorer ---- */
+let tK=3,tD=[3,4,4,2];
+function nestRender(shape,flat,onPick){const prod=a=>a.reduce((p,v)=>p*v,1);
+  function cell(idx,val){const d=document.createElement('div');d.textContent=val;d.title='['+idx.join(', ')+']';
+    d.style.cssText='width:34px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:5px;font:600 .8rem system-ui,sans-serif;background:var(--soft);cursor:pointer';
+    d.onclick=()=>{document.querySelectorAll('.tsel').forEach(x=>{x.classList.remove('tsel');x.style.outline=''});d.classList.add('tsel');d.style.outline='3px solid var(--mlp)';onPick&&onPick(idx,val)};return d}
+  function rec(sh,off,idx){
+    if(sh.length===0)return cell(idx,flat[off]);
+    const n=sh[0],rest=sh.slice(1),stride=prod(rest),box=document.createElement('div');
+    if(sh.length===1){box.style.cssText='display:flex;gap:3px';for(let i=0;i<n;i++)box.append(rec(rest,off+i*stride,idx.concat(i)));return box}
+    if(sh.length===2){box.style.cssText='display:flex;flex-direction:column;gap:3px';for(let i=0;i<n;i++)box.append(rec(rest,off+i*stride,idx.concat(i)));return box}
+    box.style.cssText='display:flex;gap:12px;flex-direction:'+(sh.length===3?'row':'column')+';flex-wrap:wrap';
+    for(let i=0;i<n;i++){const w=document.createElement('div');w.style.cssText='border:1px dashed var(--line);border-radius:8px;padding:6px';
+      const lab=document.createElement('div');lab.className='note';lab.style.margin='0 0 4px';lab.textContent=(sh.length===3?'axis-0 index ':'axis-0 index ')+i+(idx.length?'':'');
+      lab.textContent=`[${idx.concat(i).join(', ')}${', :'.repeat(rest.length)}]`;w.append(lab,rec(rest,off+i*stride,idx.concat(i)));box.append(w)}
+    return box}
+  return rec(shape,0,[])}
+const NAMES=['número (escalar)','vector','matriz','tensor 3-D','tensor 4-D'];
+function tRender(){const sh=tD.slice(0,tK),N=sh.reduce((p,v)=>p*v,1);
+  $('tAxes').innerHTML=[0,1,2,3,4].map(k=>`<button data-k="${k}" style="${k===tK?'border-color:var(--accent);background:var(--soft)':''}">${k} · ${NAMES[k]}</button>`).join(' ');
+  $('tAxes').querySelectorAll('button').forEach(b=>b.onclick=()=>{tK=+b.dataset.k;tRender()});
+  $('tSizes').innerHTML=sh.map((v,i)=>`<label>tamaño del eje ${i}: <b>${v}</b> <input type="range" min="1" max="5" value="${v}" data-i="${i}" style="width:120px"></label>`).join('')||'<span class="note">Un escalar no tiene ejes, así que no hay tamaños que ajustar.</span>';
+  $('tSizes').querySelectorAll('input').forEach(r=>r.oninput=()=>{tD[+r.dataset.i]=+r.value;tRender()});
+  $('tShape').textContent='('+sh.join(', ')+(sh.length===1?',':'')+')';
+  $('tCount').textContent=sh.length?sh.join(' × ')+' = '+N:'1';
+  const v=$('tView');v.innerHTML='';v.append(nestRender(sh,[...Array(N).keys()],(idx,val)=>{
+    $('tPick').textContent=idx.length?`X[${idx.join(', ')}] = ${val}\n`+idx.map((ix,i)=>`  eje ${i}: índice ${ix} (de 0…${sh[i]-1})`).join('\n'):`X = ${val}   (un escalar no necesita índice)`}));
+  $('tPick').textContent='Haz clic en un número.';}
+tRender();
+/* ---- reshape demo ---- */
+const RS=[[12],[3,4],[4,3],[2,6],[2,2,3]];let rsI=1;
+function rsRender(){$('rsBtns').innerHTML=RS.map((s,i)=>`<button data-i="${i}" style="${i===rsI?'border-color:var(--accent);background:var(--soft)':''}">${i===0?'aplanar → ':''}(${s.join(', ')}${s.length===1?',':''})</button>`).join(' ');
+  $('rsBtns').querySelectorAll('button').forEach(b=>b.onclick=()=>{rsI=+b.dataset.i;rsRender()});
+  const v=$('rsView');v.innerHTML='';v.append(nestRender(RS[rsI],[...Array(12).keys()].map(x=>x+1),(idx,val)=>{$('rsNote').textContent=`Hiciste clic en ${val}: en esta forma vive en [${idx.join(', ')}].`}));
+  $('rsNote').textContent=RS[rsI].length===1?'Aplanado: una sola lista larga. Los 12 números siguen aquí, pero se perdió "quién estaba arriba de quién".':`Los mismos 12 números, leídos de izquierda a derecha y de arriba a abajo, ahora acomodados como (${RS[rsI].join(', ')}). Haz clic en un número para ver sus nuevos índices.`}
+rsRender();
+/* ---- hinge animation (why activation) ---- */
+const hc=$('hingeC'),hx=hc.getContext('2d');
+const target=x=>Math.sin(1.4*x)+0.25*x;const X0=-3,X1=3;
+function hingeNet(N){ // piecewise-linear interpolation with N interior knots = a 1-hidden-layer ReLU net
+  const kn=[...Array(N+2).keys()].map(i=>X0+(X1-X0)*i/(N+1)),ys=kn.map(target),sl=[];
+  for(let i=0;i<kn.length-1;i++)sl.push((ys[i+1]-ys[i])/(kn[i+1]-kn[i]));
+  const s=sl[0],a=ys[0]-s*X0,neur=[];for(let k=1;k<=N;k++)neur.push({t:kn[k],c:sl[k]-sl[k-1]});return{a,s,neur}}
+const COL=['#6366f1','#10b981','#f59e0b','#ef4444','#06b6d4','#a855f7','#84cc16','#ec4899','#14b8a6','#f97316','#3b82f6','#eab308'];
+function hDraw(N,reluOn,reveal){const W=hc.width,H=hc.height,sx=x=>(x-X0)/(X1-X0)*(W-40)+20,sy=y=>H/2-y*H/5.2;const fg=getComputedStyle(document.body).color;
+  hx.clearRect(0,0,W,H);hx.globalAlpha=.25;hx.strokeStyle=fg;hx.beginPath();hx.moveTo(0,sy(0));hx.lineTo(W,sy(0));hx.stroke();hx.globalAlpha=1;
+  const net=hingeNet(N),act=z=>reluOn?Math.max(0,z):z;
+  const plot=(fn,col,lw,dash)=>{hx.strokeStyle=col;hx.lineWidth=lw;hx.setLineDash(dash||[]);hx.beginPath();for(let x=X0;x<=X1+1e-9;x+=0.02){const p=[sx(x),sy(fn(x))];x===X0?hx.moveTo(...p):hx.lineTo(...p)}hx.stroke();hx.setLineDash([]);hx.lineWidth=1};
+  plot(target,fg,2,[7,6]);
+  net.neur.forEach((n,k)=>{if(k<reveal){hx.globalAlpha=.75;plot(x=>n.c*act(x-n.t),COL[k%12],1.6);hx.globalAlpha=1;if(reluOn){hx.fillStyle=COL[k%12];hx.beginPath();hx.arc(sx(n.t),sy(0),4,0,7);hx.fill()}}});
+  const out=x=>net.a+net.s*x+net.neur.slice(0,reveal).reduce((s,n)=>s+n.c*act(x-n.t),0);
+  plot(out,'#c2410c',4);
+  let err=0;for(let x=X0;x<=X1;x+=0.05)err+=Math.abs(out(x)-target(x));err/=121;
+  $('hMsg').textContent=reluOn
+    ?`ReLU ENCENDIDA · ${reveal} neurona${reveal===1?'':'s'} → la salida tiene ${reveal} doblez${reveal===1?'':'es'} (uno por neurona). Error promedio: ${err.toFixed(3)}`+(reveal>=8?'\nCon suficientes dobleces, la línea gruesa se pega a la curva.':'')
+    :`ReLU APAGADA · ${reveal} neurona${reveal===1?'':'s'} → cada neurona es una línea recta, así que la suma sigue siendo UNA línea recta. Error promedio: ${err.toFixed(3)}\nAgregar más neuronas no la puede doblar.`;}
+let hTimer=null;
+function hUpdate(){const N=+$('hN').value;$('hNv').textContent=N;hDraw(N,$('hAct').checked,N)}
+$('hN').oninput=()=>{clearInterval(hTimer);hUpdate()};$('hAct').onchange=()=>{clearInterval(hTimer);hUpdate()};
+$('hPlay').onclick=()=>{clearInterval(hTimer);let r=0;$('hN').value=12;$('hNv').textContent=12;hDraw(12,$('hAct').checked,0);
+  hTimer=setInterval(()=>{r++;hDraw(12,$('hAct').checked,r);if(r>=12)clearInterval(hTimer)},650)};
+hUpdate();
+/* ---- quiz ---- */
+const Q=[
+ {q:'Un lote de 16 imágenes a color, cada una de 64×64 píxeles. ¿Qué forma tiene el tensor?',a:['(16, 64, 64)','(16, 3, 64, 64)','(3, 64)'],c:1,why:'Lote × canales × alto × ancho. A color significa 3 canales (rojo, verde, azul).'},
+ {q:'¿Cuánto es [1, 2, 3] · [4, 0, −1]?',a:['1','4','7'],c:0,why:'1·4 + 2·0 + 3·(−1) = 4 + 0 − 3 = 1.'},
+ {q:'W tiene forma (4 × 3) y x tiene forma (3). ¿Qué forma tiene Wx?',a:['(3)','(4)','(4 × 3)'],c:1,why:'Un producto punto por cada fila de W, y W tiene 4 filas.'},
+ {q:'Un tensor tiene forma (2, 3, 4). ¿Cuántos números tiene?',a:['9','24','234'],c:1,why:'Multiplica los tamaños: 2 × 3 × 4 = 24.'},
+ {q:'X tiene forma (3, 224, 224). ¿Cuántos índices necesitas para elegir UN número?',a:['1','3','224'],c:1,why:'Un índice por eje, y hay 3 ejes: canal, fila, columna.'},
+ {q:'Una neurona recibe z = −2.5. ¿Qué devuelve ReLU?',a:['−2.5','0','2.5'],c:1,why:'ReLU deja pasar los positivos y convierte cualquier negativo en 0.'},
+ {q:'En la animación, ReLU está APAGADA y usas 12 neuronas. ¿Cómo se ve la salida?',a:['Una curva con 12 dobleces','Una sola línea recta','Cero en todas partes'],c:1,why:'Sin la activación cada neurona es una línea recta, y sumar líneas rectas da una línea recta.'},
+ {q:'¿Por qué ponemos una activación entre capas?',a:['Para que entrene más rápido','Porque si no, las capas lineales apiladas se juntan en una sola matriz','Para tener menos pesos'],c:1,why:'W₂(W₁x) = (W₂W₁)x. Sin el doblez, la profundidad no agrega nada.'}];
+const qz=$('quiz');Q.forEach((it,k)=>{const d=document.createElement('div');d.className='card';
+  d.innerHTML=`<b>${k+1}. ${it.q}</b>`+it.a.map((o,i)=>`<label><input type="radio" name="q${k}" value="${i}"> ${o}</label>`).join('')+`<div class="fb" id="fb${k}"></div>`;qz.appendChild(d);
+  d.querySelectorAll('input').forEach(r=>r.onchange=()=>{$('fb'+k).innerHTML=(+r.value===it.c?'✅ Correcto. ':'❌ No exactamente. ')+it.why})});
+</script>
+</body>
+</html>

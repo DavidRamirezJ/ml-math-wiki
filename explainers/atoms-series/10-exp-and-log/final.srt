@@ -1,0 +1,711 @@
+1
+00:00:00,093 --> 00:00:03,297
+A language model reads a text with one thousand words.
+
+2
+00:00:03,776 --> 00:00:08,736
+For each word, it gives the correct word a probability, say one in a hundred.
+
+3
+00:00:09,148 --> 00:00:14,148
+To score the whole text, we multiply all one thousand probabilities.
+
+4
+00:00:14,561 --> 00:00:17,526
+Ask a computer to do that, and it answers zero.
+
+5
+00:00:17,952 --> 00:00:18,856
+Not a small number.
+
+6
+00:00:19,268 --> 00:00:20,292
+Exactly zero.
+
+7
+00:00:20,731 --> 00:00:24,055
+The model has learned something, but the computer cannot see it.
+
+8
+00:00:25,006 --> 00:00:29,620
+Two functions fix this problem: the exponential and the logarithm.
+
+9
+00:00:30,046 --> 00:00:30,697
+They are a pair.
+
+10
+00:00:31,136 --> 00:00:32,652
+One undoes the other.
+
+11
+00:00:33,078 --> 00:00:39,181
+In this video you will learn what they mean, their key rules, and why machine learning uses logs everywhere.
+
+12
+00:00:39,580 --> 00:00:41,655
+You need school arithmetic with powers.
+
+13
+00:00:42,120 --> 00:00:45,152
+For the slopes, you need the derivative from video seven.
+
+14
+00:00:46,859 --> 00:00:48,375
+Start with repeated growth.
+
+15
+00:00:48,774 --> 00:00:51,567
+A bacterium splits in two every hour.
+
+16
+00:00:52,006 --> 00:00:53,561
+After one hour you have two.
+
+17
+00:00:54,000 --> 00:00:55,463
+After two hours, four.
+
+18
+00:00:55,902 --> 00:00:57,404
+After three hours, eight.
+
+19
+00:00:57,830 --> 00:01:02,112
+That is two times two times two, written two to the power three.
+
+20
+00:01:02,551 --> 00:01:05,410
+The power counts how many times we multiply.
+
+21
+00:01:06,939 --> 00:01:08,189
+Now a special base.
+
+22
+00:01:08,615 --> 00:01:11,687
+Suppose money grows by one hundred percent per year.
+
+23
+00:01:12,139 --> 00:01:14,559
+Paid once, one euro becomes two.
+
+24
+00:01:14,984 --> 00:01:20,476
+Paid twelve times, in small monthly pieces, it becomes about two point six one.
+
+25
+00:01:20,902 --> 00:01:23,894
+Paid every day, about two point seven one.
+
+26
+00:01:24,333 --> 00:01:29,200
+Paid all the time, it approaches a fixed number: e, about two point seven one eight.
+
+27
+00:01:30,739 --> 00:01:34,237
+The function e to the power x is called the exponential.
+
+28
+00:01:34,649 --> 00:01:35,526
+Look at its graph.
+
+29
+00:01:35,952 --> 00:01:38,385
+At x equals zero, it is one.
+
+30
+00:01:38,798 --> 00:01:41,165
+At x equals one, it is e.
+
+31
+00:01:41,604 --> 00:01:44,675
+At x equals two, about seven point three nine.
+
+32
+00:01:45,088 --> 00:01:49,649
+To the left, it gets smaller and smaller, but it never reaches zero.
+
+33
+00:01:50,088 --> 00:01:52,574
+The exponential is always positive.
+
+34
+00:01:54,106 --> 00:01:56,420
+The exponential has one key rule.
+
+35
+00:01:56,819 --> 00:02:00,781
+e to the a plus b equals e to the a times e to the b.
+
+36
+00:02:01,207 --> 00:02:01,526
+Why?
+
+37
+00:02:01,952 --> 00:02:04,718
+e squared is two copies of e multiplied.
+
+38
+00:02:05,130 --> 00:02:07,098
+e cubed is three copies.
+
+39
+00:02:07,537 --> 00:02:09,412
+Together, that is five copies.
+
+40
+00:02:09,851 --> 00:02:19,119
+Check it: seven point three eight nine times twenty point zero eight six is one hundred forty eight point four one, which is e to the five.
+
+41
+00:02:20,826 --> 00:02:22,076
+Now turn the question around.
+
+42
+00:02:22,448 --> 00:02:25,959
+e to what power gives seven point three eight nine?
+
+43
+00:02:26,384 --> 00:02:27,249
+The answer is two.
+
+44
+00:02:27,688 --> 00:02:31,797
+This question, what power gives this number, is called the logarithm.
+
+45
+00:02:32,236 --> 00:02:35,201
+We write the natural logarithm as l n.
+
+46
+00:02:35,640 --> 00:02:39,935
+So l n of seven point three eight nine is two.
+
+47
+00:02:41,473 --> 00:02:44,159
+The logarithm undoes the exponential.
+
+48
+00:02:44,584 --> 00:02:49,837
+Put x into the exponential machine, then put the result into the logarithm machine.
+
+49
+00:02:50,262 --> 00:02:51,007
+You get x back.
+
+50
+00:02:51,446 --> 00:02:54,770
+So l n of e to the x equals x.
+
+51
+00:02:55,183 --> 00:03:02,749
+On the graph, the log curve is the mirror image of the exponential curve, reflected across the line y equals x.
+
+52
+00:03:03,673 --> 00:03:04,657
+Read some values.
+
+53
+00:03:05,069 --> 00:03:09,484
+l n of one is zero, because e to the zero is one.
+
+54
+00:03:09,923 --> 00:03:11,811
+l n of e is one.
+
+55
+00:03:12,276 --> 00:03:16,518
+For numbers between zero and one, the logarithm is negative.
+
+56
+00:03:16,931 --> 00:03:21,691
+And the logarithm of zero or of a negative number does not exist.
+
+57
+00:03:22,130 --> 00:03:27,782
+No power of e can give zero, because e to the x is always positive.
+
+58
+00:03:29,532 --> 00:03:32,179
+Here is the most useful rule of logs.
+
+59
+00:03:32,604 --> 00:03:36,115
+The log of a times b equals the log of a plus the log of b.
+
+60
+00:03:36,607 --> 00:03:38,070
+Products become sums.
+
+61
+00:03:38,495 --> 00:03:39,227
+Why is it true?
+
+62
+00:03:39,652 --> 00:03:43,868
+Write a as e to the p, and b as e to the q.
+
+63
+00:03:44,293 --> 00:03:47,471
+Then a times b is e to the p plus q.
+
+64
+00:03:47,897 --> 00:03:50,344
+Its logarithm is p plus q.
+
+65
+00:03:51,859 --> 00:03:52,936
+Let's check it with numbers.
+
+66
+00:03:53,375 --> 00:03:56,673
+l n of two is about zero point six nine three.
+
+67
+00:03:57,112 --> 00:04:00,476
+l n of three is about one point zero nine nine.
+
+68
+00:04:00,902 --> 00:04:03,309
+Add them: one point seven nine two.
+
+69
+00:04:03,734 --> 00:04:09,652
+And l n of six, computed directly, is also one point seven nine two.
+
+70
+00:04:10,077 --> 00:04:11,035
+The rule works.
+
+71
+00:04:12,573 --> 00:04:14,075
+Two more rules follow from it.
+
+72
+00:04:14,514 --> 00:04:22,971
+The log of a power: the log of a to the n equals n times the log of a, because a power is repeated multiplication.
+
+73
+00:04:23,384 --> 00:04:27,506
+And the log of a division is the log of the top minus the log of the bottom.
+
+74
+00:04:27,945 --> 00:04:31,309
+Multiply becomes add, divide becomes subtract.
+
+75
+00:04:32,839 --> 00:04:37,826
+Before computers, people used printed tables of logarithms for exactly this reason.
+
+76
+00:04:38,265 --> 00:04:45,140
+To multiply two long numbers, they looked up the two logs, added them, and looked up the answer.
+
+77
+00:04:45,565 --> 00:04:47,999
+Adding is much easier than multiplying.
+
+78
+00:04:48,438 --> 00:04:52,454
+Machine learning uses the same trick today, for a different reason.
+
+79
+00:04:54,173 --> 00:04:57,178
+A probability is a number between zero and one.
+
+80
+00:04:57,603 --> 00:05:00,556
+Its logarithm is zero or negative.
+
+81
+00:05:00,994 --> 00:05:03,149
+Probability one gives zero.
+
+82
+00:05:03,601 --> 00:05:06,513
+One half gives about minus zero point six nine.
+
+83
+00:05:06,952 --> 00:05:10,050
+One in a hundred gives minus four point six one.
+
+84
+00:05:10,489 --> 00:05:15,635
+And zero point zero zero zero one gives minus nine point two one.
+
+85
+00:05:16,061 --> 00:05:18,933
+Tiny numbers become friendly negative numbers.
+
+86
+00:05:19,873 --> 00:05:20,670
+Notice the pattern.
+
+87
+00:05:21,083 --> 00:05:28,676
+Every time the probability gets ten times smaller, the log goes down by the same step, about two point three.
+
+88
+00:05:29,115 --> 00:05:32,266
+The log measures how many factors of ten we lost.
+
+89
+00:05:32,678 --> 00:05:38,583
+It is like a ruler that counts zeros, so very small numbers stay easy to read and compare.
+
+90
+00:05:40,126 --> 00:05:41,243
+Now the computer problem.
+
+91
+00:05:41,668 --> 00:05:50,246
+A standard computer number, called float sixty four, cannot store positive numbers smaller than about ten to the minus three hundred twenty four.
+
+92
+00:05:50,658 --> 00:05:53,038
+Anything smaller is rounded to zero.
+
+93
+00:05:53,464 --> 00:05:54,661
+This is called underflow.
+
+94
+00:05:55,086 --> 00:06:02,746
+Multiply probabilities of one in a hundred, and the product hits zero after only one hundred sixty two factors.
+
+95
+00:06:04,286 --> 00:06:06,254
+With logs, there is no problem.
+
+96
+00:06:06,679 --> 00:06:09,273
+The log of the product is the sum of the logs.
+
+97
+00:06:09,711 --> 00:06:15,735
+One thousand times minus four point six one is about minus four thousand six hundred five.
+
+98
+00:06:16,174 --> 00:06:17,185
+That is a normal number.
+
+99
+00:06:17,624 --> 00:06:22,969
+Also, the log keeps the order: a bigger probability always has a bigger log.
+
+100
+00:06:23,408 --> 00:06:26,041
+So the best answer stays the best answer.
+
+101
+00:06:27,739 --> 00:06:28,643
+Now the slopes.
+
+102
+00:06:29,056 --> 00:06:33,218
+Remember the derivative from video seven: the slope of a curve at a point.
+
+103
+00:06:33,657 --> 00:06:36,157
+The exponential has a beautiful property.
+
+104
+00:06:36,582 --> 00:06:38,457
+Its derivative is itself.
+
+105
+00:06:38,896 --> 00:06:42,327
+The slope of e to the x equals e to the x.
+
+106
+00:06:42,606 --> 00:06:43,763
+Watch the tangent line.
+
+107
+00:06:44,202 --> 00:06:47,021
+At zero, height one and slope one.
+
+108
+00:06:47,447 --> 00:06:50,385
+At one, height and slope are both e.
+
+109
+00:06:51,906 --> 00:06:55,496
+The derivative of the logarithm is one over x.
+
+110
+00:06:55,909 --> 00:06:59,100
+At x equals one, the slope is one.
+
+111
+00:06:59,539 --> 00:07:02,903
+At x equals four, the slope is one quarter.
+
+112
+00:07:03,329 --> 00:07:05,948
+Near zero, the slope is huge.
+
+113
+00:07:06,387 --> 00:07:09,073
+At zero point zero one, it is one hundred.
+
+114
+00:07:09,512 --> 00:07:16,653
+In learning, this means a tiny probability on the right answer gives a big slope, so the model is pushed hard.
+
+115
+00:07:18,173 --> 00:07:20,965
+Where do exp and log come from in our series?
+
+116
+00:07:21,391 --> 00:07:23,266
+They are not one of the five axioms.
+
+117
+00:07:23,691 --> 00:07:27,042
+They are school math, the floor that the axioms stand on.
+
+118
+00:07:27,494 --> 00:07:35,566
+But together with the chain rule from video nine, these two slopes are enough to differentiate most loss functions in machine learning.
+
+119
+00:07:37,372 --> 00:07:39,779
+First use: making numbers positive.
+
+120
+00:07:40,205 --> 00:07:44,021
+A classifier produces scores, and scores can be negative.
+
+121
+00:07:44,434 --> 00:07:46,481
+But probabilities must be positive.
+
+122
+00:07:46,920 --> 00:07:49,806
+So we apply the exponential to every score.
+
+123
+00:07:50,245 --> 00:07:58,609
+Scores two, one, and minus one become seven point three nine, two point seven two, and zero point three seven.
+
+124
+00:07:59,035 --> 00:07:59,753
+All positive.
+
+125
+00:08:00,673 --> 00:08:03,651
+Then divide by the total, about ten point four eight.
+
+126
+00:08:04,064 --> 00:08:11,204
+We get zero point seven zero five, zero point two five nine, and zero point zero three five.
+
+127
+00:08:11,643 --> 00:08:12,375
+They add up to one.
+
+128
+00:08:12,800 --> 00:08:15,154
+This recipe is called softmax.
+
+129
+00:08:15,579 --> 00:08:20,407
+It is a molecule built from this atom, and we will meet it again later in the series.
+
+130
+00:08:21,939 --> 00:08:24,067
+Second use: the log-likelihood.
+
+131
+00:08:24,492 --> 00:08:29,240
+To score a whole data set, we multiply the probabilities of all examples.
+
+132
+00:08:29,679 --> 00:08:36,128
+Take three examples with probabilities zero point nine, zero point eight, and zero point five.
+
+133
+00:08:36,580 --> 00:08:39,133
+The product is zero point three six.
+
+134
+00:08:39,572 --> 00:08:47,285
+The sum of the logs is minus one point zero two two, which is exactly the log of zero point three six.
+
+135
+00:08:48,806 --> 00:08:53,114
+So training can maximize a sum of logs instead of a fragile product.
+
+136
+00:08:53,540 --> 00:08:58,700
+Deep learning code prefers to minimize, so it flips the sign and takes the average.
+
+137
+00:08:59,125 --> 00:09:03,194
+That is the cross-entropy loss, which we meet in video fifteen.
+
+138
+00:09:03,620 --> 00:09:13,859
+And libraries go one step further for numerical stability: they compute the log directly from the scores, without ever forming the tiny probability.
+
+139
+00:09:15,606 --> 00:09:16,151
+Your turn.
+
+140
+00:09:16,630 --> 00:09:18,505
+Pause the video and try this.
+
+141
+00:09:18,944 --> 00:09:26,789
+You know that l n of two is about zero point six nine three and l n of five is about one point six zero nine.
+
+142
+00:09:27,242 --> 00:09:30,313
+Without a calculator, what is l n of ten?
+
+143
+00:09:31,239 --> 00:09:33,287
+Ten is two times five.
+
+144
+00:09:33,686 --> 00:09:35,880
+A log of a product is a sum of logs.
+
+145
+00:09:36,319 --> 00:09:44,643
+So l n of ten is zero point six nine three plus one point six zero nine, which is about two point three zero.
+
+146
+00:09:45,082 --> 00:09:48,473
+That is also the step we saw for every factor of ten.
+
+147
+00:09:50,006 --> 00:09:50,817
+Second question.
+
+148
+00:09:51,216 --> 00:09:55,511
+A model gives four examples the probability one half each.
+
+149
+00:09:55,937 --> 00:09:58,397
+What is the product of the four probabilities?
+
+150
+00:09:58,836 --> 00:10:00,312
+And what is the sum of their logs?
+
+151
+00:10:00,737 --> 00:10:05,578
+Use l n of one half, about minus zero point six nine three.
+
+152
+00:10:06,003 --> 00:10:06,668
+Pause and try.
+
+153
+00:10:07,606 --> 00:10:14,734
+The product is one half to the power four, which is one sixteenth, or zero point zero six two five.
+
+154
+00:10:15,186 --> 00:10:21,662
+The sum of logs is four times minus zero point six nine three, about minus two point seven seven.
+
+155
+00:10:22,087 --> 00:10:28,603
+And l n of zero point zero six two five is indeed about minus two point seven seven.
+
+156
+00:10:30,306 --> 00:10:32,434
+Let's check it in Python with NumPy.
+
+157
+00:10:32,872 --> 00:10:35,771
+We test the exponential rule and the log rule.
+
+158
+00:10:36,197 --> 00:10:40,279
+Then we make one thousand probabilities of zero point zero one.
+
+159
+00:10:40,718 --> 00:10:46,011
+We multiply them with n p dot prod, and we add their logs with n p dot sum.
+
+160
+00:10:46,450 --> 00:10:49,309
+We also find when the product first becomes zero.
+
+161
+00:10:50,839 --> 00:10:54,709
+This output is real; the script ran while the video was made.
+
+162
+00:10:55,121 --> 00:10:58,486
+e squared times e cubed equals e to the five.
+
+163
+00:10:58,884 --> 00:11:01,930
+l n two plus l n three equals l n six.
+
+164
+00:11:02,355 --> 00:11:07,914
+The product of one thousand probabilities is zero point zero, exactly zero.
+
+165
+00:11:08,339 --> 00:11:11,850
+It became zero after one hundred sixty two factors.
+
+166
+00:11:12,289 --> 00:11:17,541
+But the sum of the logs is minus four thousand six hundred five point one seven.
+
+167
+00:11:17,967 --> 00:11:19,709
+The information is safe.
+
+168
+00:11:21,439 --> 00:11:22,091
+In summary.
+
+169
+00:11:22,530 --> 00:11:29,591
+The exponential, e to the x, is repeated growth with base e, about two point seven one eight.
+
+170
+00:11:30,030 --> 00:11:33,594
+It is always positive, and it turns sums into products.
+
+171
+00:11:34,019 --> 00:11:38,128
+The logarithm answers the question: what power gives this number?
+
+172
+00:11:38,540 --> 00:11:42,756
+It undoes the exponential, and it turns products into sums.
+
+173
+00:11:43,673 --> 00:11:49,603
+Logs turn tiny probabilities into friendly negative numbers and prevent underflow.
+
+174
+00:11:50,042 --> 00:11:57,263
+The slope of e to the x is e to the x, and the slope of l n x is one over x.
+
+175
+00:11:57,689 --> 00:12:04,896
+Next, in video eleven, we start probability: a random variable, a way to turn chance into numbers.
+
+176
+00:12:06,839 --> 00:12:08,661
+This video was made by David R.
+
+177
+00:12:09,100 --> 00:12:12,331
+You can find more lessons at David Ramirez J dot com.
+
+178
+00:12:12,890 --> 00:12:13,608
+Thanks for watching.

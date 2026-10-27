@@ -1,0 +1,10 @@
+00:00 Intro
+00:43 Experiments and outcomes
+01:43 A random variable is a rule
+03:09 Events
+04:28 Discrete and continuous
+05:26 Samples
+06:49 Random variables in ML
+08:20 Try it yourself
+09:21 Python demo
+10:11 Summary

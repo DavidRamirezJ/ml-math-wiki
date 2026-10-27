@@ -1,0 +1,679 @@
+1
+00:00:00,079 --> 00:00:03,138
+Every layer of a neural network starts with the same step.
+
+2
+00:00:03,563 --> 00:00:11,077
+It takes a vector in, and it gives a new vector out, in a very special way: it respects adding and scaling.
+
+3
+00:00:11,542 --> 00:00:14,321
+Functions like this are called linear mappings.
+
+4
+00:00:14,747 --> 00:00:20,398
+If you understand them, you know exactly what a layer can do, and also what it can never do on its own.
+
+5
+00:00:21,339 --> 00:00:32,430
+In this video you will learn the definition of a linear mapping, see what it does to a grid, test functions that are not linear, and find the matrix of any linear map from just two arrows.
+
+6
+00:00:32,868 --> 00:00:38,706
+You need video one on vectors, video two on matrices, and video three on bases.
+
+7
+00:00:40,439 --> 00:00:42,899
+A function takes an input and gives an output.
+
+8
+00:00:43,351 --> 00:00:47,008
+Here the input is a vector, and the output is a vector too.
+
+9
+00:00:47,447 --> 00:00:48,910
+We write f of x.
+
+10
+00:00:49,349 --> 00:00:55,293
+The function f is linear if it respects the two moves from video one: adding and scaling.
+
+11
+00:00:56,232 --> 00:00:57,709
+Here is the definition.
+
+12
+00:00:58,161 --> 00:01:07,589
+For all vectors u and v, and all numbers a and b, f of a u plus b v equals a times f of u plus b times f of v.
+
+13
+00:01:07,988 --> 00:01:14,185
+In words: combine first and then apply f, or apply f first and then combine.
+
+14
+00:01:14,623 --> 00:01:15,873
+You must get the same result.
+
+15
+00:01:16,793 --> 00:01:18,176
+Read it symbol by symbol.
+
+16
+00:01:18,614 --> 00:01:21,168
+The letters u and v are input vectors.
+
+17
+00:01:21,593 --> 00:01:24,878
+The letters a and b are scalars, the weights.
+
+18
+00:01:25,277 --> 00:01:28,894
+On the left, we apply f to the linear combination.
+
+19
+00:01:29,332 --> 00:01:35,370
+On the right, we combine the outputs, f of u and f of v, with the same weights.
+
+20
+00:01:36,906 --> 00:01:39,419
+It is the same as two simpler rules.
+
+21
+00:01:39,924 --> 00:01:44,858
+First, f of u plus v equals f of u plus f of v.
+
+22
+00:01:45,297 --> 00:01:49,645
+Second, f of c times u equals c times f of u.
+
+23
+00:01:50,097 --> 00:01:52,252
+Here is a tiny example with numbers.
+
+24
+00:01:52,677 --> 00:01:54,898
+Let f of x be three x.
+
+25
+00:01:55,323 --> 00:02:03,861
+Then f of two plus five is twenty-one, and f of two plus f of five is six plus fifteen, also twenty-one.
+
+26
+00:02:04,806 --> 00:02:07,080
+One consequence is very useful.
+
+27
+00:02:07,519 --> 00:02:10,577
+A linear map always sends zero to zero.
+
+28
+00:02:11,003 --> 00:02:11,335
+Why?
+
+29
+00:02:11,761 --> 00:02:12,931
+Take the scalar zero.
+
+30
+00:02:13,356 --> 00:02:19,314
+Then f of zero times u equals zero times f of u, which is the zero vector.
+
+31
+00:02:19,739 --> 00:02:23,197
+So if a function moves the origin, it cannot be linear.
+
+32
+00:02:24,939 --> 00:02:26,655
+What does a linear map look like?
+
+33
+00:02:27,080 --> 00:02:27,692
+Watch a grid.
+
+34
+00:02:28,104 --> 00:02:31,229
+After a linear map, the grid lines stay straight.
+
+35
+00:02:31,668 --> 00:02:33,995
+Parallel lines stay parallel.
+
+36
+00:02:34,421 --> 00:02:35,790
+The spacing stays even.
+
+37
+00:02:36,229 --> 00:02:38,051
+And the origin stays where it is.
+
+38
+00:02:38,476 --> 00:02:40,312
+That is the picture of linearity.
+
+39
+00:02:41,899 --> 00:02:43,149
+Here are four examples.
+
+40
+00:02:43,601 --> 00:02:49,758
+First, a stretch, which we met in video two: everything becomes twice as wide.
+
+41
+00:02:50,184 --> 00:02:53,322
+Second, a rotation by ninety degrees.
+
+42
+00:02:53,787 --> 00:02:54,652
+Third, a shear.
+
+43
+00:02:55,091 --> 00:03:02,830
+It slides each horizontal line sideways, more and more the higher it is, like pushing the top of a deck of cards.
+
+44
+00:03:03,826 --> 00:03:06,326
+Fourth, a projection onto a line.
+
+45
+00:03:06,751 --> 00:03:10,820
+It drops every point straight down onto the horizontal axis.
+
+46
+00:03:11,259 --> 00:03:13,360
+The whole plane collapses onto one line.
+
+47
+00:03:13,786 --> 00:03:24,318
+That may look extreme, but the rules still hold: the lines stay straight and evenly spaced, the origin does not move, and adding and scaling are respected.
+
+48
+00:03:26,026 --> 00:03:28,526
+Now some functions that are not linear.
+
+49
+00:03:29,018 --> 00:03:32,302
+First, f of x equals x plus one.
+
+50
+00:03:32,741 --> 00:03:35,574
+It shifts every number one step to the right.
+
+51
+00:03:36,013 --> 00:03:40,281
+Check the origin: f of zero is one, not zero.
+
+52
+00:03:40,720 --> 00:03:43,725
+The origin moved, so this function is not linear.
+
+53
+00:03:44,673 --> 00:03:45,763
+Check the rule as well.
+
+54
+00:03:46,188 --> 00:03:50,550
+f of two plus three is f of five, which is six.
+
+55
+00:03:50,989 --> 00:03:56,082
+But f of two plus f of three is three plus four, which is seven.
+
+56
+00:03:56,508 --> 00:03:57,798
+Six is not seven.
+
+57
+00:03:58,223 --> 00:04:03,396
+A shift like this is called an affine map: a linear map followed by a move.
+
+58
+00:04:03,821 --> 00:04:06,574
+It keeps lines straight, but it moves the origin.
+
+59
+00:04:08,119 --> 00:04:11,377
+Second, f of x equals x squared.
+
+60
+00:04:11,789 --> 00:04:15,819
+f of one plus one is f of two, which is four.
+
+61
+00:04:16,244 --> 00:04:20,726
+But f of one plus f of one is one plus one, which is two.
+
+62
+00:04:21,178 --> 00:04:21,976
+Four is not two.
+
+63
+00:04:22,401 --> 00:04:30,234
+Scaling fails too: f of two times three is thirty-six, but two times f of three is only eighteen.
+
+64
+00:04:31,726 --> 00:04:32,564
+Look at the graphs.
+
+65
+00:04:33,002 --> 00:04:37,896
+A linear function of one number is a straight line through the origin, like two x.
+
+66
+00:04:38,335 --> 00:04:42,790
+The shift, x plus one, is straight but misses the origin.
+
+67
+00:04:43,229 --> 00:04:45,596
+The square, x squared, is curved.
+
+68
+00:04:46,008 --> 00:04:47,936
+Only the first one is linear.
+
+69
+00:04:49,659 --> 00:04:51,787
+Now the key theorem of this video.
+
+70
+00:04:52,212 --> 00:04:57,013
+Every linear map between spaces like these can be written as a matrix.
+
+71
+00:04:57,438 --> 00:05:02,824
+And the matrix is easy to find: its columns are where the basis vectors land.
+
+72
+00:05:03,263 --> 00:05:05,457
+The first column is f of e one.
+
+73
+00:05:05,896 --> 00:05:08,329
+The second column is f of e two.
+
+74
+00:05:09,273 --> 00:05:10,110
+Why is this true?
+
+75
+00:05:10,536 --> 00:05:16,360
+Any vector x is x one times e one plus x two times e two.
+
+76
+00:05:16,786 --> 00:05:25,363
+Because f is linear, f of x equals x one times f of e one plus x two times f of e two.
+
+77
+00:05:25,788 --> 00:05:33,315
+That is a linear combination of two fixed vectors, and from video two we know: that is a matrix times x.
+
+78
+00:05:34,873 --> 00:05:35,511
+Let's use it.
+
+79
+00:05:35,950 --> 00:05:42,851
+Suppose a linear map sends e one to two, one, and sends e two to minus one, one.
+
+80
+00:05:43,290 --> 00:05:49,141
+Then its matrix A has the first column two, one, and the second column minus one, one.
+
+81
+00:05:49,580 --> 00:05:51,801
+Two arrows were enough to know the whole map.
+
+82
+00:05:52,706 --> 00:05:54,953
+Where does the vector three, two go?
+
+83
+00:05:55,365 --> 00:06:00,871
+Use the columns: three times two, one plus two times minus one, one.
+
+84
+00:06:01,283 --> 00:06:06,709
+That is six minus two, which is four, and three plus two, which is five.
+
+85
+00:06:07,134 --> 00:06:09,820
+So f of three, two is four, five.
+
+86
+00:06:10,259 --> 00:06:12,054
+The row view gives the same answer.
+
+87
+00:06:13,573 --> 00:06:17,123
+A second example: the rotation by ninety degrees.
+
+88
+00:06:17,535 --> 00:06:23,373
+It sends e one to zero, one, and e two to minus one, zero.
+
+89
+00:06:23,799 --> 00:06:28,573
+So its matrix has the columns zero, one and minus one, zero.
+
+90
+00:06:29,011 --> 00:06:31,977
+That is exactly the rotation matrix from video two.
+
+91
+00:06:32,416 --> 00:06:33,626
+Now you know where it came from.
+
+92
+00:06:35,326 --> 00:06:38,770
+What if we apply two linear maps, one after the other?
+
+93
+00:06:39,209 --> 00:06:44,727
+The result is linear too, and its matrix is the product of the two matrices.
+
+94
+00:06:45,220 --> 00:06:47,972
+First the shear S, then the projection P.
+
+95
+00:06:48,398 --> 00:06:55,339
+The combined map has the matrix P times S, with rows one, one and zero, zero.
+
+96
+00:06:56,273 --> 00:06:58,187
+Check it with the vector one, two.
+
+97
+00:06:58,626 --> 00:07:00,315
+The shear sends it to three, two.
+
+98
+00:07:00,741 --> 00:07:03,932
+The projection then sends that to three, zero.
+
+99
+00:07:04,358 --> 00:07:09,291
+And P times S applied to one, two also gives three, zero.
+
+100
+00:07:09,730 --> 00:07:11,565
+One matrix does both steps.
+
+101
+00:07:13,106 --> 00:07:13,957
+Two more words.
+
+102
+00:07:14,382 --> 00:07:18,917
+The kernel of a linear map is the set of all inputs that it sends to zero.
+
+103
+00:07:19,356 --> 00:07:21,444
+Another name is the null space.
+
+104
+00:07:21,909 --> 00:07:27,906
+For the projection, every point on the vertical axis, like zero, five, drops onto the origin.
+
+105
+00:07:28,305 --> 00:07:31,484
+So the kernel of the projection is the vertical axis.
+
+106
+00:07:32,439 --> 00:07:35,272
+The image of a map is the set of all its outputs.
+
+107
+00:07:35,710 --> 00:07:37,479
+Another name is the range.
+
+108
+00:07:37,905 --> 00:07:44,314
+The projection only produces points on the horizontal axis, so its image is that axis.
+
+109
+00:07:44,753 --> 00:07:48,915
+The dimension of the image is the rank of the matrix, from video three.
+
+110
+00:07:49,367 --> 00:07:50,923
+Here the rank is one.
+
+111
+00:07:51,873 --> 00:07:53,229
+There is a simple balance.
+
+112
+00:07:53,654 --> 00:07:59,333
+The dimension of the kernel plus the dimension of the image equals the dimension of the input space.
+
+113
+00:07:59,758 --> 00:08:02,843
+For the projection, one plus one equals two.
+
+114
+00:08:03,242 --> 00:08:06,873
+What the map destroys, plus what it keeps, adds up to everything.
+
+115
+00:08:08,606 --> 00:08:10,029
+Now, machine learning.
+
+116
+00:08:10,428 --> 00:08:16,039
+A linear layer in PyTorch computes, in our notation, W times x plus b.
+
+117
+00:08:16,704 --> 00:08:23,021
+W is the weight matrix, and b is the bias vector, a fixed vector that is added at the end.
+
+118
+00:08:23,446 --> 00:08:25,734
+W times x is a linear map.
+
+119
+00:08:26,172 --> 00:08:31,518
+Adding b moves the origin, so the whole layer is affine, not strictly linear.
+
+120
+00:08:33,099 --> 00:08:34,987
+Here is the big consequence.
+
+121
+00:08:35,426 --> 00:08:38,724
+Two linear maps in a row are just one linear map.
+
+122
+00:08:39,163 --> 00:08:42,408
+Take two toy layers, W one and W two.
+
+123
+00:08:42,846 --> 00:08:50,479
+W two times W one times x equals the single matrix W two times W one, times x.
+
+124
+00:08:50,905 --> 00:08:55,732
+A stack of ten linear layers can still only do what one matrix can do.
+
+125
+00:08:57,273 --> 00:09:08,536
+GPT-2, for example, has a block that expands each vector of seven hundred sixty-eight numbers to three thousand seventy-two numbers, and then brings it back.
+
+126
+00:09:09,001 --> 00:09:13,695
+Without something in between, those two maps would collapse into one single map.
+
+127
+00:09:14,121 --> 00:09:18,602
+That is why networks put a nonlinear activation function between the layers.
+
+128
+00:09:19,041 --> 00:09:21,701
+It gets its own video, video sixteen.
+
+129
+00:09:23,206 --> 00:09:24,230
+Where does all this come from?
+
+130
+00:09:24,669 --> 00:09:30,865
+The definition of a linear map is exactly axiom A: it respects adding and scaling.
+
+131
+00:09:31,291 --> 00:09:36,490
+Matrices, composition, kernel and image all follow from that one rule.
+
+132
+00:09:38,206 --> 00:09:38,685
+Your turn.
+
+133
+00:09:39,123 --> 00:09:40,905
+Pause the video and try this.
+
+134
+00:09:41,331 --> 00:09:45,041
+The map f sends x, y to two x, x plus y.
+
+135
+00:09:45,453 --> 00:09:46,118
+Is it linear?
+
+136
+00:09:46,530 --> 00:09:48,206
+If yes, find its matrix.
+
+137
+00:09:48,645 --> 00:09:51,650
+Hint: look at where e one and e two go.
+
+138
+00:09:52,573 --> 00:09:53,317
+It is linear.
+
+139
+00:09:53,743 --> 00:09:57,586
+f of e one is f of one, zero, which is two, one.
+
+140
+00:09:58,025 --> 00:10:02,971
+f of e two is f of zero, one, which is zero, one.
+
+141
+00:10:03,410 --> 00:10:07,373
+So the matrix has the columns two, one and zero, one.
+
+142
+00:10:07,799 --> 00:10:14,554
+Check with three, one: six, four from the formula, and also six, four from the matrix.
+
+143
+00:10:16,106 --> 00:10:16,904
+Second question.
+
+144
+00:10:17,329 --> 00:10:22,675
+Is the function g of x equals five x minus three linear?
+
+145
+00:10:23,114 --> 00:10:25,361
+Pause and use the fastest test you know.
+
+146
+00:10:26,273 --> 00:10:28,640
+The fastest test is the origin.
+
+147
+00:10:29,065 --> 00:10:32,310
+g of zero is minus three, not zero.
+
+148
+00:10:32,749 --> 00:10:34,504
+So g is not linear.
+
+149
+00:10:34,929 --> 00:10:40,102
+It is affine: the linear map five x, followed by a shift of minus three.
+
+150
+00:10:40,528 --> 00:10:44,890
+Its graph is a straight line, but the line does not pass through the origin.
+
+151
+00:10:46,606 --> 00:10:47,936
+Let's check it in NumPy.
+
+152
+00:10:48,348 --> 00:10:55,888
+We build the matrix from where e one and e two go, apply it, and test the linear rule with two vectors.
+
+153
+00:10:56,313 --> 00:11:04,279
+We test the shift and the square, compose the shear and the projection, and collapse two toy layers into one matrix.
+
+154
+00:11:05,806 --> 00:11:09,835
+This output is real; the script ran while the video was made.
+
+155
+00:11:10,247 --> 00:11:12,574
+A times three, two is four, five.
+
+156
+00:11:13,000 --> 00:11:16,005
+Both sides of the rule give twenty-one, twelve.
+
+157
+00:11:16,444 --> 00:11:21,191
+The shift gives six versus seven, and the square gives four versus two.
+
+158
+00:11:21,617 --> 00:11:26,511
+The two orders of composition agree, and the two layers equal one matrix.
+
+159
+00:11:28,239 --> 00:11:28,904
+In summary.
+
+160
+00:11:29,343 --> 00:11:37,109
+A linear mapping respects adding and scaling: f of a u plus b v equals a f of u plus b f of v.
+
+161
+00:11:37,548 --> 00:11:43,838
+It keeps grid lines straight, parallel and evenly spaced, and it keeps the origin fixed.
+
+162
+00:11:44,276 --> 00:11:48,053
+A shift is affine, and a square is not linear at all.
+
+163
+00:11:48,959 --> 00:11:54,119
+Every linear map is a matrix whose columns are the images of the basis vectors.
+
+164
+00:11:54,531 --> 00:11:56,885
+Composition is the matrix product.
+
+165
+00:11:57,337 --> 00:12:01,233
+The kernel goes to zero, and the image is all outputs.
+
+166
+00:12:01,672 --> 00:12:07,111
+Next, in video five: the inner product, one number that measures similarity.
+
+167
+00:12:07,536 --> 00:12:08,095
+See you there.
+
+168
+00:12:10,006 --> 00:12:11,828
+This video was made by David R.
+
+169
+00:12:12,267 --> 00:12:15,498
+You can find more lessons at David Ramirez J dot com.
+
+170
+00:12:16,056 --> 00:12:16,774
+Thanks for watching.

@@ -1,0 +1,843 @@
+1
+00:00:00,106 --> 00:00:01,116
+How big is an error?
+
+2
+00:00:01,542 --> 00:00:04,827
+How far apart are two words inside a language model?
+
+3
+00:00:05,252 --> 00:00:07,300
+Is one training step too large?
+
+4
+00:00:07,699 --> 00:00:10,811
+Machine learning asks questions like these all the time.
+
+5
+00:00:11,236 --> 00:00:15,066
+Each answer is a single number that measures the size of a vector.
+
+6
+00:00:15,492 --> 00:00:19,095
+That number is called the norm, and it is the topic of this video.
+
+7
+00:00:20,039 --> 00:00:26,914
+You will learn to compute the length of any vector, in two dimensions, in three, or in a million.
+
+8
+00:00:27,353 --> 00:00:35,066
+You will meet three different ways to measure size, the rules that every norm must follow, and how distance comes from length.
+
+9
+00:00:35,491 --> 00:00:40,026
+You need video one, on vectors, and video five, on the inner product.
+
+10
+00:00:41,726 --> 00:00:43,534
+Let's start with the simplest question.
+
+11
+00:00:43,973 --> 00:00:46,101
+How long is this blue arrow?
+
+12
+00:00:46,540 --> 00:00:49,412
+It goes three steps to the right and four steps up.
+
+13
+00:00:49,864 --> 00:00:53,202
+The two steps and the arrow make a right triangle.
+
+14
+00:00:53,627 --> 00:00:56,513
+The arrow is the long side of that triangle.
+
+15
+00:00:57,452 --> 00:00:59,434
+Pythagoras tells us the answer.
+
+16
+00:00:59,873 --> 00:01:03,769
+The long side squared equals three squared plus four squared.
+
+17
+00:01:04,248 --> 00:01:05,458
+Three squared is nine.
+
+18
+00:01:05,937 --> 00:01:07,599
+Four squared is sixteen.
+
+19
+00:01:08,011 --> 00:01:10,378
+Nine plus sixteen is twenty five.
+
+20
+00:01:10,817 --> 00:01:13,769
+The square root of twenty five is five.
+
+21
+00:01:14,208 --> 00:01:15,990
+So the arrow has length five.
+
+22
+00:01:16,926 --> 00:01:21,753
+Now look at the sum we computed: three times three, plus four times four.
+
+23
+00:01:22,192 --> 00:01:26,288
+That is the dot product of the vector with itself, from video five.
+
+24
+00:01:26,713 --> 00:01:30,264
+So the length is the square root of x dot x.
+
+25
+00:01:30,689 --> 00:01:33,043
+This length is called the norm of x.
+
+26
+00:01:33,482 --> 00:01:35,609
+We write it with double bars around x.
+
+27
+00:01:37,139 --> 00:01:39,254
+Let's read the formula symbol by symbol.
+
+28
+00:01:39,679 --> 00:01:41,740
+The double bars mean the norm of x.
+
+29
+00:01:42,073 --> 00:01:46,421
+Inside the square root, we square each component and add them all.
+
+30
+00:01:46,860 --> 00:01:50,597
+The small letter i counts the components, from one up to n.
+
+31
+00:01:51,022 --> 00:01:54,932
+In two dimensions this is exactly Pythagoras.
+
+32
+00:01:55,371 --> 00:01:58,668
+But the same recipe works in any number of dimensions.
+
+33
+00:02:00,206 --> 00:02:02,028
+Let's try three dimensions.
+
+34
+00:02:02,467 --> 00:02:05,711
+Take x equal to two, three, six.
+
+35
+00:02:06,150 --> 00:02:10,445
+Square each component: four, nine, and thirty six.
+
+36
+00:02:10,871 --> 00:02:12,254
+Add them: forty nine.
+
+37
+00:02:12,679 --> 00:02:15,392
+The square root of forty nine is seven.
+
+38
+00:02:15,831 --> 00:02:18,424
+So this arrow in space has length seven.
+
+39
+00:02:18,849 --> 00:02:23,530
+With a million components, a computer does exactly the same steps.
+
+40
+00:02:25,046 --> 00:02:26,176
+Where does the norm come from?
+
+41
+00:02:26,588 --> 00:02:30,498
+It comes from the inner product, which is axiom B in this series.
+
+42
+00:02:30,924 --> 00:02:34,780
+The inner product gives a vector space lengths and angles.
+
+43
+00:02:35,232 --> 00:02:36,934
+The norm is the length part.
+
+44
+00:02:37,360 --> 00:02:42,785
+This standard norm has two more names: the L two norm, and the Euclidean norm.
+
+45
+00:02:44,506 --> 00:02:48,362
+But is the straight line the only sensible way to measure size?
+
+46
+00:02:48,788 --> 00:02:52,259
+Imagine a taxi in a city with a grid of streets.
+
+47
+00:02:52,697 --> 00:02:54,679
+It cannot drive through the buildings.
+
+48
+00:02:55,091 --> 00:02:59,665
+To reach the point three, four, it drives three blocks right and four blocks up.
+
+49
+00:03:00,078 --> 00:03:02,139
+That is seven blocks, not five.
+
+50
+00:03:03,073 --> 00:03:06,596
+This gives the L one norm, also called the Manhattan norm.
+
+51
+00:03:07,035 --> 00:03:09,469
+Add the absolute values of the components.
+
+52
+00:03:09,908 --> 00:03:14,815
+The absolute value removes the minus sign, so minus three counts as three.
+
+53
+00:03:15,253 --> 00:03:20,839
+For the vector three, four, the L one norm is three plus four, which is seven.
+
+54
+00:03:21,759 --> 00:03:24,605
+A third way is to keep only the biggest component.
+
+55
+00:03:25,031 --> 00:03:28,661
+This is the L infinity norm, also called the max norm.
+
+56
+00:03:29,086 --> 00:03:31,493
+It takes the largest absolute value.
+
+57
+00:03:31,985 --> 00:03:34,312
+For three, four, that is four.
+
+58
+00:03:34,725 --> 00:03:39,671
+So the same vector has three sizes: seven, five, and four.
+
+59
+00:03:40,097 --> 00:03:44,366
+They measure different things, and all three are real norms.
+
+60
+00:03:45,932 --> 00:03:49,057
+Here is a beautiful way to see the difference.
+
+61
+00:03:49,456 --> 00:03:52,967
+Draw every vector whose norm is exactly one.
+
+62
+00:03:53,419 --> 00:03:56,544
+For the L two norm, you get the familiar circle.
+
+63
+00:03:56,983 --> 00:03:58,991
+For the L one norm, you get a diamond.
+
+64
+00:03:59,443 --> 00:04:01,877
+For the L infinity norm, you get a square.
+
+65
+00:04:02,302 --> 00:04:04,483
+Each norm has its own unit circle.
+
+66
+00:04:05,406 --> 00:04:06,137
+One honest note.
+
+67
+00:04:06,576 --> 00:04:12,241
+Only the L two norm comes from an inner product, as the square root of x dot x.
+
+68
+00:04:12,680 --> 00:04:18,690
+The L one and L infinity norms are real norms, but no inner product gives them.
+
+69
+00:04:19,116 --> 00:04:23,145
+This is a known fact, proved with a test called the parallelogram law.
+
+70
+00:04:23,557 --> 00:04:26,363
+So these norms give sizes, but no angles.
+
+71
+00:04:28,106 --> 00:04:29,263
+What makes a rule a norm?
+
+72
+00:04:29,688 --> 00:04:31,922
+Every norm must follow three rules.
+
+73
+00:04:32,348 --> 00:04:34,981
+Rule one: the norm is never negative.
+
+74
+00:04:35,420 --> 00:04:37,853
+And it is zero only for the zero vector.
+
+75
+00:04:38,279 --> 00:04:41,537
+Any arrow that really goes somewhere has a positive length.
+
+76
+00:04:43,059 --> 00:04:44,881
+Rule two is about scaling.
+
+77
+00:04:45,307 --> 00:04:51,370
+Multiply a vector by a number c, and its norm is multiplied by the absolute value of c.
+
+78
+00:04:51,995 --> 00:04:55,134
+Watch: two times the vector doubles the length.
+
+79
+00:04:55,546 --> 00:05:00,918
+Minus two times the vector flips the arrow, but the length is still doubled.
+
+80
+00:05:01,331 --> 00:05:06,663
+Minus two times three, four is minus six, minus eight, with norm ten.
+
+81
+00:05:08,206 --> 00:05:10,759
+Rule three is the triangle inequality.
+
+82
+00:05:11,185 --> 00:05:13,512
+Walk along u, and then along v.
+
+83
+00:05:13,937 --> 00:05:15,626
+Or walk straight to u plus v.
+
+84
+00:05:16,052 --> 00:05:19,084
+The straight route is never longer than the detour.
+
+85
+00:05:19,496 --> 00:05:24,788
+In symbols, the norm of u plus v is at most the norm of u plus the norm of v.
+
+86
+00:05:25,739 --> 00:05:26,843
+Let's check it with numbers.
+
+87
+00:05:27,268 --> 00:05:32,601
+Take u equal to three, four, and v equal to four, minus three.
+
+88
+00:05:33,013 --> 00:05:36,457
+Each has norm five, so the detour is ten.
+
+89
+00:05:36,909 --> 00:05:38,372
+Their sum is seven, one.
+
+90
+00:05:38,798 --> 00:05:44,356
+Its norm is the square root of fifty, about seven point zero seven.
+
+91
+00:05:44,782 --> 00:05:46,803
+That is less than ten, as promised.
+
+92
+00:05:48,539 --> 00:05:51,824
+Sometimes we care only about direction, not about length.
+
+93
+00:05:52,263 --> 00:05:56,877
+Then we use a unit vector: a vector whose norm is exactly one.
+
+94
+00:05:57,302 --> 00:06:02,076
+Every unit vector in the plane has its tip on the unit circle that we drew before.
+
+95
+00:06:04,006 --> 00:06:08,487
+To turn any vector into a unit vector, divide it by its own norm.
+
+96
+00:06:08,913 --> 00:06:10,642
+This is called normalizing.
+
+97
+00:06:11,067 --> 00:06:13,554
+Take x equal to three, four.
+
+98
+00:06:13,993 --> 00:06:15,056
+Its norm is five.
+
+99
+00:06:15,469 --> 00:06:20,455
+Divide each component by five: zero point six and zero point eight.
+
+100
+00:06:20,894 --> 00:06:22,862
+The direction stays the same.
+
+101
+00:06:23,274 --> 00:06:24,724
+Only the length changes.
+
+102
+00:06:25,639 --> 00:06:27,833
+Let's check that the new length is one.
+
+103
+00:06:28,272 --> 00:06:31,956
+Zero point six squared is zero point three six.
+
+104
+00:06:32,381 --> 00:06:35,812
+Zero point eight squared is zero point six four.
+
+105
+00:06:36,238 --> 00:06:40,586
+The sum is exactly one, and the square root of one is one.
+
+106
+00:06:41,012 --> 00:06:46,238
+It works because of rule two: dividing by five divides the length by five.
+
+107
+00:06:47,773 --> 00:06:49,302
+Be careful with one case.
+
+108
+00:06:49,741 --> 00:06:54,315
+The zero vector has norm zero, and we cannot divide by zero.
+
+109
+00:06:54,754 --> 00:06:58,983
+So the zero vector has no direction, and it cannot be normalized.
+
+110
+00:06:59,408 --> 00:07:02,719
+Normalizing is everywhere in machine learning.
+
+111
+00:07:03,198 --> 00:07:09,913
+For example, cosine similarity from video five is the dot product of two normalized vectors.
+
+112
+00:07:11,639 --> 00:07:13,780
+Now, how far apart are two points?
+
+113
+00:07:14,219 --> 00:07:19,086
+Take p equal to one, one, and q equal to four, five.
+
+114
+00:07:19,512 --> 00:07:24,379
+The arrow from p to q is q minus p, which is three, four.
+
+115
+00:07:24,804 --> 00:07:27,770
+The distance is the length of that arrow: five.
+
+116
+00:07:28,222 --> 00:07:31,426
+So distance is simply the norm of the difference.
+
+117
+00:07:32,352 --> 00:07:33,935
+Here is the formula.
+
+118
+00:07:34,360 --> 00:07:38,443
+The distance d between x and y is the norm of x minus y.
+
+119
+00:07:38,855 --> 00:07:47,206
+In three dimensions, take x equal to one, two, three, and y equal to minus one, minus one, zero.
+
+120
+00:07:47,632 --> 00:07:50,092
+The difference is two, three, three.
+
+121
+00:07:50,531 --> 00:07:53,230
+The squares are four, nine, and nine.
+
+122
+00:07:53,656 --> 00:07:58,350
+The distance is the square root of twenty two, about four point six nine.
+
+123
+00:07:59,906 --> 00:08:02,619
+A distance rule like this is called a metric.
+
+124
+00:08:03,031 --> 00:08:05,252
+Every metric follows three rules.
+
+125
+00:08:05,690 --> 00:08:11,049
+The distance is never negative, and it is zero only when the two points are the same.
+
+126
+00:08:11,488 --> 00:08:15,571
+The distance from x to y equals the distance from y to x.
+
+127
+00:08:15,996 --> 00:08:19,268
+And a detour through a third point is never shorter.
+
+128
+00:08:20,806 --> 00:08:23,479
+These rules come straight from the three norm rules.
+
+129
+00:08:23,904 --> 00:08:24,915
+Notice one more thing.
+
+130
+00:08:25,327 --> 00:08:29,875
+Distance and the inner product move in opposite directions.
+
+131
+00:08:30,314 --> 00:08:34,622
+Two very similar vectors have a large inner product, but a small distance.
+
+132
+00:08:35,061 --> 00:08:38,000
+Keep this in mind when you read about similarity search.
+
+133
+00:08:39,739 --> 00:08:42,000
+Now let's see norms at work in machine learning.
+
+134
+00:08:42,465 --> 00:08:44,234
+First, regularization.
+
+135
+00:08:44,659 --> 00:08:49,234
+Very large weights often make a model fit the noise in its training data.
+
+136
+00:08:49,659 --> 00:08:54,673
+So we add a penalty to the loss, the error score that we study in video fifteen.
+
+137
+00:08:55,098 --> 00:09:00,231
+The penalty is lambda times the squared L two norm of the weights.
+
+138
+00:09:00,670 --> 00:09:02,997
+Now the model prefers small weights.
+
+139
+00:09:04,526 --> 00:09:08,954
+If we use the L one norm instead, something special happens.
+
+140
+00:09:09,393 --> 00:09:16,840
+The L one penalty pushes many weights to exactly zero, so the model uses only a few inputs.
+
+141
+00:09:17,265 --> 00:09:18,529
+This is called sparsity.
+
+142
+00:09:18,941 --> 00:09:24,792
+Look at the diamond: its sharp corners sit on the axes, where one weight is zero.
+
+143
+00:09:25,204 --> 00:09:31,068
+Ridge regression uses the L two penalty, and lasso uses the L one penalty.
+
+144
+00:09:32,619 --> 00:09:34,321
+Second, gradient clipping.
+
+145
+00:09:34,760 --> 00:09:39,069
+During training, the gradient tells the model how to change its weights.
+
+146
+00:09:39,481 --> 00:09:41,196
+We will study it in video eight.
+
+147
+00:09:41,635 --> 00:09:46,768
+Sometimes the gradient becomes huge, and one bad step can ruin the training.
+
+148
+00:09:47,207 --> 00:09:49,055
+So we measure its L two norm.
+
+149
+00:09:49,468 --> 00:09:53,430
+If the norm is larger than a maximum, we scale the gradient down.
+
+150
+00:09:54,373 --> 00:09:55,702
+Here is a toy example.
+
+151
+00:09:56,141 --> 00:10:02,205
+Say the gradient is six, eight, with norm ten, and the maximum norm is five.
+
+152
+00:10:02,644 --> 00:10:06,846
+We multiply by five divided by ten, which is one half.
+
+153
+00:10:07,285 --> 00:10:12,418
+The new gradient is three, four, and its norm is exactly five.
+
+154
+00:10:12,843 --> 00:10:14,133
+The direction is kept.
+
+155
+00:10:14,572 --> 00:10:16,367
+Only the length is capped.
+
+156
+00:10:16,779 --> 00:10:20,131
+This is a standard trick when training large language models.
+
+157
+00:10:21,712 --> 00:10:23,641
+Third, nearest neighbour search.
+
+158
+00:10:24,093 --> 00:10:27,484
+Here are three toy data points and a new query point.
+
+159
+00:10:27,923 --> 00:10:28,920
+Which one is closest?
+
+160
+00:10:29,332 --> 00:10:31,008
+Compute the distance to each.
+
+161
+00:10:31,433 --> 00:10:33,534
+A is about three point one six away.
+
+162
+00:10:33,960 --> 00:10:35,742
+B is about two point two four.
+
+163
+00:10:36,181 --> 00:10:37,803
+C is about two point eight three.
+
+164
+00:10:38,255 --> 00:10:40,024
+So B is the nearest neighbour.
+
+165
+00:10:40,449 --> 00:10:44,731
+Search over word vectors works the same way, with millions of points.
+
+166
+00:10:46,439 --> 00:10:47,304
+Now it is your turn.
+
+167
+00:10:47,742 --> 00:10:49,577
+Pause the video and try this.
+
+168
+00:10:50,016 --> 00:10:52,503
+Take the vector minus five, twelve.
+
+169
+00:10:52,942 --> 00:10:54,059
+What is its L two norm?
+
+170
+00:10:54,484 --> 00:10:55,694
+And what is its L one norm?
+
+171
+00:10:56,120 --> 00:11:01,320
+Remember: for L two, square, add, and take the square root.
+
+172
+00:11:01,798 --> 00:11:04,445
+For L one, add the absolute values.
+
+173
+00:11:05,386 --> 00:11:06,370
+Here are the answers.
+
+174
+00:11:06,795 --> 00:11:08,936
+Minus five squared is twenty five.
+
+175
+00:11:09,375 --> 00:11:11,662
+Twelve squared is one hundred forty four.
+
+176
+00:11:12,088 --> 00:11:16,769
+The sum is one hundred sixty nine, and its square root is thirteen.
+
+177
+00:11:17,274 --> 00:11:20,825
+For L one, five plus twelve is seventeen.
+
+178
+00:11:21,250 --> 00:11:24,415
+The taxi route is never shorter than the straight line.
+
+179
+00:11:25,939 --> 00:11:26,750
+One more question.
+
+180
+00:11:27,163 --> 00:11:31,378
+What is the distance between the points two, seven and five, three?
+
+181
+00:11:31,804 --> 00:11:36,338
+Then, normalize the difference vector, so that its length is one.
+
+182
+00:11:36,764 --> 00:11:37,615
+Pause and think.
+
+183
+00:11:38,592 --> 00:11:39,404
+First subtract.
+
+184
+00:11:39,842 --> 00:11:44,816
+Two minus five is minus three, and seven minus three is four.
+
+185
+00:11:45,241 --> 00:11:49,696
+The norm of minus three, four is five, so the distance is five.
+
+186
+00:11:50,135 --> 00:11:52,209
+To normalize, divide by five.
+
+187
+00:11:52,635 --> 00:11:56,039
+You get minus zero point six, and zero point eight.
+
+188
+00:11:56,465 --> 00:11:57,954
+Its length is one.
+
+189
+00:11:59,673 --> 00:12:02,359
+Let's check everything in Python with NumPy.
+
+190
+00:12:02,798 --> 00:12:07,970
+The function norm, from the linear algebra part of NumPy, computes norms.
+
+191
+00:12:08,396 --> 00:12:13,609
+The argument ord chooses which one: one, two, or infinity.
+
+192
+00:12:14,048 --> 00:12:20,298
+We also normalize a vector, compute a distance, clip a gradient, and find a nearest neighbour.
+
+193
+00:12:21,839 --> 00:12:25,669
+This output is real; the script ran while the video was made.
+
+194
+00:12:26,148 --> 00:12:29,765
+Three, four has norms seven, five, and four.
+
+195
+00:12:30,190 --> 00:12:32,970
+Two, three, six has norm seven.
+
+196
+00:12:33,395 --> 00:12:37,185
+The unit vector is zero point six, zero point eight.
+
+197
+00:12:37,624 --> 00:12:39,884
+The distance is four point six nine.
+
+198
+00:12:40,323 --> 00:12:45,031
+The clipped gradient is three, four, and the nearest neighbour is B.
+
+199
+00:12:46,773 --> 00:12:47,384
+In summary.
+
+200
+00:12:47,823 --> 00:12:50,882
+The norm measures the size of a vector as one number.
+
+201
+00:12:51,320 --> 00:12:58,076
+The standard L two norm is the square root of x dot x: Pythagoras in any dimension.
+
+202
+00:12:58,501 --> 00:13:04,618
+The L one norm adds absolute values, and the L infinity norm takes the largest one.
+
+203
+00:13:05,031 --> 00:13:11,719
+Every norm is positive, scales with the absolute value of c, and obeys the triangle inequality.
+
+204
+00:13:12,639 --> 00:13:15,033
+Divide by the norm to get a unit vector.
+
+205
+00:13:15,472 --> 00:13:17,626
+The norm of a difference is a distance.
+
+206
+00:13:18,025 --> 00:13:23,530
+In machine learning, norms keep weights small, cap gradients, and find nearest neighbours.
+
+207
+00:13:23,942 --> 00:13:29,793
+Next, in video seven, we meet the derivative: the slope of a curve right here, at one point.
+
+208
+00:13:30,219 --> 00:13:30,764
+See you there.
+
+209
+00:13:32,706 --> 00:13:34,528
+This video was made by David R.
+
+210
+00:13:34,967 --> 00:13:38,198
+You can find more lessons at David Ramirez J dot com.
+
+211
+00:13:38,756 --> 00:13:39,474
+Thanks for watching.

@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Atoms, Molecules, Compounds — the building blocks of ML math</title>
+<script>
+  window.MathJax = { tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']] } };
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<style>
+  :root{
+    --bg:#f7f5ef; --fg:#1d1d1f; --muted:#62615c; --card:#ffffff; --line:#dedbd2;
+    --la:#4338ca; --ca:#c2410c; --pr:#0f766e; --op:#a21caf; --nl:#b45309;
+    --mol:#0369a1; --cmp:#15803d; --accent:#4338ca; --cnn:#0f766e;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#15161a; --fg:#ecebe6; --muted:#a3a29b; --card:#1e2026; --line:#33353d;
+      --la:#a5b4fc; --ca:#fb923c; --pr:#2dd4bf; --op:#f0abfc; --nl:#fcd34d;
+      --mol:#7dd3fc; --cmp:#86efac; --accent:#a5b4fc; --cnn:#2dd4bf; }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);font:17px/1.6 "Iowan Old Style","Charter",Georgia,serif}
+  main{max-width:1100px;margin:0 auto;padding:40px 22px 80px}
+  h1,h2,h3{font-family:"Avenir Next","Segoe UI",system-ui,sans-serif;line-height:1.2}
+  h1{font-size:2.3rem;margin:0 0 6px}
+  h2{font-size:1.45rem;margin:48px 0 12px;border-bottom:2px solid var(--line);padding-bottom:6px}
+  .hero{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 26px;margin:18px 0}
+  .hero p{font-size:1.15rem;margin:.3em 0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:12px 0}
+  .note{color:var(--muted);font-size:.9rem}
+  table{border-collapse:collapse;width:100%;font-size:.95rem;background:var(--card)}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{font-family:system-ui,sans-serif;font-size:.85rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+  .sym{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin:10px 0;font-size:.95rem}
+  .sym > div:nth-child(odd){text-align:right;font-weight:600}
+  details{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 16px;margin:12px 0}
+  summary{cursor:pointer;font-family:system-ui,sans-serif;font-weight:600}
+  button{font:600 .9rem system-ui,sans-serif;border:1px solid var(--line);background:var(--card);color:var(--fg);
+    padding:7px 14px;border-radius:8px;cursor:pointer}
+  button:hover{border-color:var(--accent)}
+
+  /* ---- the 3-layer board ---- */
+  #board{position:relative;display:grid;grid-template-columns:1fr 1.15fr 1fr;gap:56px;margin-top:14px}
+  #board h3{margin:0 0 8px;font-size:1rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+  .col{display:flex;flex-direction:column;gap:7px;position:relative;z-index:2}
+  .chip{font:600 .86rem system-ui,sans-serif;background:var(--card);border:1.5px solid var(--line);border-left:6px solid var(--c,var(--line));
+    border-radius:9px;padding:6px 10px;cursor:pointer;transition:opacity .25s,transform .25s,box-shadow .25s,border-color .25s}
+  .chip small{display:block;font-weight:500;color:var(--muted);font-size:.74rem}
+  .chip:hover{transform:translateX(2px)}
+  .dim .chip{opacity:.22}
+  .dim .chip.on{opacity:1}
+  .chip.on{box-shadow:0 0 0 3px color-mix(in srgb,var(--c) 35%,transparent)}
+  .chip.sel{transform:scale(1.04);border-color:var(--c)}
+  .chip.pop{animation:pop .5s ease}
+  @keyframes pop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.07)}100%{transform:scale(1);opacity:1}}
+  #wires{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1;overflow:visible}
+  #wires path{fill:none;stroke-width:2;opacity:.75;stroke-dasharray:600;stroke-dashoffset:600;animation:draw .7s ease forwards}
+  @keyframes draw{to{stroke-dashoffset:0}}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;font:600 .8rem system-ui,sans-serif;margin:8px 0}
+  .legend span::before{content:"";display:inline-block;width:12px;height:12px;border-radius:3px;background:var(--c);margin-right:5px;vertical-align:-1px}
+  #detail{min-height:120px}
+  #detail h3{margin:0 0 4px}
+  .tag{display:inline-block;font:600 .72rem system-ui,sans-serif;padding:2px 8px;border-radius:99px;background:var(--line);margin-right:6px}
+  .controls{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}
+  @media (max-width:820px){#board{grid-template-columns:1fr;gap:18px} #wires{display:none}}
+
+  .check label{display:block;font-family:system-ui,sans-serif;font-size:.92rem;padding:2px 0;cursor:pointer}
+  .checkgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px 20px}
+  @media (max-width:760px){.checkgrid{grid-template-columns:1fr}}
+  .bar{height:10px;background:var(--line);border-radius:99px;overflow:hidden}
+  .bar > div{height:100%;background:var(--cmp);transition:width .3s}
+  .q label{display:block;margin:4px 0;cursor:pointer}
+  .fb{margin-top:6px;font-size:.95rem}
+  .summary{background:var(--card);border:2px solid var(--accent);border-radius:14px;padding:18px 24px;margin-top:40px}
+</style>
+</head>
+<body>
+<main>
+
+<h1>⚛️ Atoms → 🧪 Molecules → 🏗️ Compounds</h1>
+<p class="note">The building blocks of all the math in this wiki · built from the prerequisite links of 278 concept pages</p>
+
+<div class="hero">
+  <p><b>The bottom line:</b> about <b>15 atoms</b> combine into about <b>16 molecules</b>, and every big ML method — PCA, SVM, Gaussian mixtures, regression, even GPT — is just a <b>compound</b> of those molecules.</p>
+  <p>So you don't need to learn 278 pages. Learn the atoms well, learn how they bond, and the rest is assembly.</p>
+  <p><b>Most important of all:</b> the <b>8 principles</b> in section 4 — and under them, the <b>5 axioms</b> in section 3. If you forget a formula, you can derive it again from them.</p>
+</div>
+
+<h2>1. The map — click anything</h2>
+<p>Click a box. Its ingredients light up on the left, and the things it helps to build light up on the right. Press <b>▶ Build it</b> to watch the whole thing assemble, layer by layer.</p>
+<div class="controls">
+  <button id="play">▶ Build it</button>
+  <button id="clear">Clear</button>
+</div>
+<div class="legend">
+  <span style="--c:var(--la)">Linear algebra</span>
+  <span style="--c:var(--ca)">Calculus</span>
+  <span style="--c:var(--pr)">Probability</span>
+  <span style="--c:var(--op)">Optimization</span>
+  <span style="--c:var(--nl)">Nonlinearity</span>
+  <span style="--c:var(--mol)">Molecule</span>
+  <span style="--c:var(--cmp)">Compound</span>
+</div>
+<div id="board">
+  <svg id="wires"></svg>
+  <div><h3>⚛️ Atoms</h3><div class="col" id="cA"></div></div>
+  <div><h3>🧪 Molecules</h3><div class="col" id="cM"></div></div>
+  <div><h3>🏗️ Compounds</h3><div class="col" id="cC"></div></div>
+</div>
+<div class="card" id="detail"><p class="note">Click a box above to see what it is, its formula, and how to read every symbol.</p></div>
+
+<h2>2. Why this split? (how the layers were found)</h2>
+<p>Every concept page in the wiki has a line called <b>“Builds on”</b>, which lists its prerequisites. I followed those links across all 278 pages. For each page, I counted how many other pages depend on it, directly or through a chain. I call that number the page's <b>reach</b>.</p>
+<table>
+  <thead><tr><th>Page</th><th>Reach (out of 277)</th><th>Layer</th></tr></thead>
+  <tbody>
+    <tr><td>vector</td><td>276</td><td>atom — the only math page with no prerequisite</td></tr>
+    <tr><td>vector space</td><td>264</td><td>atom</td></tr>
+    <tr><td>matrix</td><td>255</td><td>atom</td></tr>
+    <tr><td>linear mapping</td><td>241</td><td>atom</td></tr>
+    <tr><td>norm</td><td>223</td><td>atom</td></tr>
+    <tr><td>inner product</td><td>218</td><td>atom</td></tr>
+    <tr><td>derivative</td><td>198</td><td>atom</td></tr>
+    <tr><td>gradient · random variable</td><td>191 · 191</td><td>atoms</td></tr>
+    <tr><td>probability distribution</td><td>189</td><td>atom</td></tr>
+    <tr><td>chain rule</td><td>167</td><td>atom</td></tr>
+    <tr><td>loss function</td><td>165</td><td>atom</td></tr>
+    <tr><td>softmax · attention weights</td><td>107 · 107</td><td>molecules</td></tr>
+  </tbody>
+</table>
+<p>The rule I used:</p>
+<ul>
+  <li>An <b>atom</b> has a very high reach, and it needs only other atoms (or nothing).</li>
+  <li>A <b>molecule</b> joins 2 to 4 atoms into one named idea with one formula, and many methods reuse it.</li>
+  <li>A <b>compound</b> is a complete ML method or model, built from several molecules.</li>
+</ul>
+<details><summary>A caution about the numbers</summary>
+<p>The reach numbers come from the links the wiki pages declare. They are a good guide, not a law of nature. For example, “loss function” lists only “vector” as a prerequisite, so it looks more basic than it is. The atom list also uses judgment: exp/log and activation functions are atoms here because softmax, cross-entropy and every neural network need them, even though their pages sit lower in the graph.</p>
+</details>
+
+<h2>3. Validation — is this the most elemental?</h2>
+<div class="hero" style="border-color:var(--ca)">
+  <p><b>Short answer: no, not quite.</b> The 8 principles below are good <i>working</i> rules, but 4 of them can be derived from the others. The real bottom is <b>5 axioms</b>.</p>
+  <p class="note">The test: a principle is elemental only if you <b>cannot</b> derive it from the others.</p>
+</div>
+<table>
+  <thead><tr><th>Axiom</th><th>Statement</th><th>Why nothing else gives it</th></tr></thead>
+  <tbody>
+    <tr><td><b>A. Linearity</b></td><td>Vectors can be added and scaled. A linear map keeps that: $f(ax+by)=af(x)+bf(y)$</td><td>The base structure. Everything is built on it.</td></tr>
+    <tr><td><b>B. Inner product</b></td><td>$\langle x,y\rangle$ is symmetric, linear, and $\langle x,x\rangle&gt;0$ when $x\neq 0$</td><td>A vector space has no length or angle until you add this.</td></tr>
+    <tr><td><b>C. Local linearity</b></td><td>$f(x+h)\approx f(x)+\nabla f(x)^{\top}h$ for small $h$</td><td>It needs limits, which A and B do not give.</td></tr>
+    <tr><td><b>D. Probability rules</b></td><td>$p\ge 0$, total $=1$; <b>sum rule</b> $p(x)=\sum_y p(x,y)$; <b>product rule</b> $p(x,y)=p(y\mid x)\,p(x)$</td><td>These are the axioms of probability.</td></tr>
+    <tr><td><b>E. Learning = optimization</b></td><td>Choose the parameters $\theta$ that make a loss on the data as small as possible</td><td>A <i>choice</i> that ML makes, not a theorem.</td></tr>
+  </tbody>
+</table>
+<div class="sym">
+  <div>$\langle x,y\rangle$</div><div>the inner product of $x$ and $y$ (for lists of numbers: $x^\top y=\sum_i x_i y_i$)</div>
+  <div>$\approx$</div><div>“is approximately equal to”</div>
+  <div>$\nabla f(x)^{\top}h$</div><div>the gradient of $f$ at $x$, dotted with the small step $h$: the predicted change in $f$</div>
+  <div>$\sum_y p(x,y)$</div><div>add the joint probability over every value of $y$ — this “forgets” $y$</div>
+  <div>$p(y\mid x)$</div><div>the probability of $y$ when you already know $x$</div>
+</div>
+<p>Below the 5 axioms is the <b>floor</b> of school math, which I assume you have: numbers, functions, the $\sum$ sign, limits, and exp/log.</p>
+<h3>Which of the 8 principles are derived?</h3>
+<table>
+  <thead><tr><th>Principle</th><th>Status</th><th>How to derive it</th></tr></thead>
+  <tbody>
+    <tr><td>1. Add and scale</td><td>✅ elemental (= A)</td><td>—</td></tr>
+    <tr><td>2. Inner product</td><td>✅ elemental (= B)</td><td>—</td></tr>
+    <tr><td>3. Chain rule</td><td>❌ derived from C</td><td>Linearize twice: $g(f(x+h))\approx g(f(x)+f'h)\approx g(f(x))+g'\,f'\,h$. The slopes multiply.</td></tr>
+    <tr><td>4. Step downhill</td><td>❌ derived from C + B</td><td>$f$ changes by about $\nabla f^{\top}h$. For a step of fixed length, the inner product is most negative when $h$ points along $-\nabla f$. At a minimum no step helps, so $\nabla f=0$.</td></tr>
+    <tr><td>5. Probability rules</td><td>✅ elemental (= D), <b>but the sum rule was missing</b></td><td>The sum rule gives the bottom of Bayes' theorem, $p(x)$, and every mixture model.</td></tr>
+    <tr><td>6. log: products → sums</td><td>⚪ floor (a math fact)</td><td>It explains <i>why</i> we take logs: independent data give a product of probabilities (D).</td></tr>
+    <tr><td>7. Center and spread</td><td>❌ derived from A + B + D</td><td>The mean is a probability-weighted sum $\sum_x p(x)\,x$; the variance is the expected squared length $\mathbb E\,\lVert x-\mu\rVert^2$.</td></tr>
+    <tr><td>8. Stretch directions</td><td>❌ derived from A + B + C</td><td>Maximize $w^{\top}Sw$ with $\lVert w\rVert=1$. A Lagrange multiplier gives $Sw=\lambda w$.</td></tr>
+  </tbody>
+</table>
+<details><summary>Are the 15 atoms elemental?</summary>
+<p>They are the right units to <b>study</b>, but not all of them are irreducible.</p>
+<ul>
+  <li><b>Irreducible:</b> vector / vector space (A), linear mapping (A), inner product (B), derivative (C), probability distribution (D), loss function (E).</li>
+  <li><b>Derived, but kept as atoms for study:</b> matrix (the numbers that describe a linear map), norm ($\sqrt{\langle x,x\rangle}$), basis &amp; rank, gradient, chain rule, random variable, expected value, variance &amp; covariance.</li>
+  <li><b>Activation function:</b> the <i>need</i> for one is derived — a stack of linear maps is still one linear map (A) — but the exact choice (ReLU, GELU) is a design decision.</li>
+</ul></details>
+<details><summary>Flaws I found in the wiki's links</summary>
+<ul>
+  <li>“activation function” and “neural network” listed each other as prerequisites (a loop). <b>Fixed.</b></li>
+  <li>The “log-probability” page is written for LLMs and depends on 47 pages, so exp/log has no clean basic page yet. (To do.)</li>
+  <li>“loss function” lists only “vector” as a prerequisite, so it looks more basic than it is.</li>
+</ul></details>
+<p><b>What this means for you:</b> keep the 5 axioms as your “last line” — anything can be rebuilt from them. Use the 8 principles below as shortcuts, because they are faster in practice.</p>
+
+<h2>4. The 8 working principles — rebuild anything you forget</h2>
+<p>You don't need to remember formulas. You need to remember <b>8 principles</b>. If you forget a formula, start from its principle and derive it again in a few lines. These are the most important ideas on the whole page.</p>
+<table>
+  <thead><tr><th>#</th><th>Principle (remember this)</th><th>What you can derive from it</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td><b>Add and scale.</b> Data are vectors; mix them with weights: $\sum_i w_i x_i$.</td><td>matrix, matrix multiplication, linear layer, embedding lookup</td></tr>
+    <tr><td>2</td><td><b>Inner product = similarity.</b> $x^\top y$ is big when $x$ and $y$ point the same way.</td><td>length (norm), angle, cosine similarity, projection, attention scores</td></tr>
+    <tr><td>3</td><td><b>Slopes multiply along a chain.</b> $\frac{dL}{dx}=\frac{dL}{dy}\cdot\frac{dy}{dx}$</td><td>gradient, Jacobian, backpropagation</td></tr>
+    <tr><td>4</td><td><b>Step downhill.</b> At a minimum the slope is 0; to get there, step against the gradient.</td><td>gradient descent, SGD, Adam, closed-form least squares</td></tr>
+    <tr><td>5</td><td><b>Probabilities are ≥ 0 and add up to 1</b>, and $p(a,b)=p(a\mid b)\,p(b)$.</td><td>softmax, Bayes' theorem, marginals, mixtures</td></tr>
+    <tr><td>6</td><td><b>log turns products into sums.</b> $\log(ab)=\log a+\log b$</td><td>log-likelihood, MLE, cross-entropy, perplexity</td></tr>
+    <tr><td>7</td><td><b>Center and spread.</b> mean $\mu$, variance $\sigma^2$; standardize with $(x-\mu)/\sigma$.</td><td>covariance matrix, z-score, layer norm, batch norm, Gaussian</td></tr>
+    <tr><td>8</td><td><b>Find the directions a matrix only stretches.</b> $Av=\lambda v$</td><td>eigendecomposition, SVD, PCA, low-rank (LoRA)</td></tr>
+  </tbody>
+</table>
+<h3>Practice: re-derive from the principles</h3>
+<p>Each box shows how to rebuild a formula you might forget. Try it yourself first, then open the box.</p>
+<details><summary>Forgot <b>softmax</b>? → principles 5 + 6</summary>
+<ol><li>You have raw scores $z_i$ (any sign). You want probabilities.</li>
+<li>Probabilities must be ≥ 0, so make every score positive: $e^{z_i}$.</li>
+<li>Probabilities must add up to 1, so divide by the total: $$p_i=\frac{e^{z_i}}{\sum_j e^{z_j}}$$</li></ol></details>
+<details><summary>Forgot <b>cross-entropy</b>? → principles 5 + 6 + 4</summary>
+<ol><li>Good model = gives high probability to the data: maximize $\prod_n p(y_n)$ (maximum likelihood).</li>
+<li>A product of tiny numbers is hard. Take the log (principle 6): maximize $\sum_n \log p(y_n)$.</li>
+<li>We like to <i>minimize</i> a loss, so flip the sign: $$L=-\sum_n \log p(y_n)$$ For one example, that is $-\log p_y$.</li></ol></details>
+<details><summary>Forgot <b>Bayes' theorem</b>? → principle 5</summary>
+<ol><li>Write the joint probability two ways: $p(\theta,x)=p(\theta\mid x)\,p(x)=p(x\mid\theta)\,p(\theta)$.</li>
+<li>Divide both sides by $p(x)$: $$p(\theta\mid x)=\frac{p(x\mid\theta)\,p(\theta)}{p(x)}$$</li></ol></details>
+<details><summary>Forgot <b>backpropagation</b>? → principle 3</summary>
+<ol><li>A network is a chain: $x\to h=\sigma(Wx)\to L$.</li>
+<li>Multiply the slopes along the chain: $\frac{\partial L}{\partial W}=\frac{\partial L}{\partial h}\cdot\frac{\partial h}{\partial W}$.</li>
+<li>Compute $\frac{\partial L}{\partial h}$ once at the top, and reuse it for every layer below. That reuse <i>is</i> backpropagation.</li></ol></details>
+<details><summary>Forgot the <b>least-squares solution</b> of linear regression? → principles 1 + 4</summary>
+<ol><li>Predictions are $X\theta$ (principle 1). Loss: $L=\|y-X\theta\|^2$.</li>
+<li>At the minimum the gradient is 0 (principle 4): $\nabla_\theta L=-2X^\top(y-X\theta)=0$.</li>
+<li>Rearrange: $$X^\top X\,\theta=X^\top y\quad\Rightarrow\quad \theta=(X^\top X)^{-1}X^\top y$$</li></ol></details>
+<details><summary>Forgot <b>PCA</b>? → principles 7 + 8 (+ 4)</summary>
+<ol><li>Center the data and make the covariance matrix $S$ (principle 7).</li>
+<li>We want the direction $w$ (length 1) where the projected data spreads the most: maximize $w^\top S w$ with $\|w\|=1$.</li>
+<li>Set the gradient of $w^\top S w-\lambda(w^\top w-1)$ to 0 (a Lagrange multiplier): $2Sw-2\lambda w=0$, so $$Sw=\lambda w$$ The best direction is the top eigenvector (principle 8), and its variance is $\lambda$.</li></ol></details>
+<details><summary>Forgot <b>attention</b>? → principles 2 + 5 + 1</summary>
+<ol><li>Score how much token $i$ matches token $j$ with an inner product: $q_i^\top k_j$ (principle 2).</li>
+<li>Turn the scores into weights that are ≥ 0 and add up to 1 with softmax (principle 5). Divide by $\sqrt{d_k}$ first so the scores do not get too big.</li>
+<li>Mix the values with those weights (principle 1): $$\mathrm{softmax}\!\left(\frac{QK^\top}{\sqrt{d_k}}\right)V$$</li></ol></details>
+<details><summary>Forgot <b>layer normalization</b>? → principle 7</summary>
+<ol><li>It is just a z-score on each token's vector: $\hat x=(x-\mu)/\sqrt{\sigma^2+\epsilon}$.</li>
+<li>Then let the model re-scale and shift it with 2 learned vectors: $y=\gamma\odot\hat x+\beta$.</li></ol></details>
+
+<h2>5. The molecules, with every symbol read out</h2>
+<p>Here are the 16 molecules in study order. Each one uses only atoms and the molecules above it. Open any of them.</p>
+<div id="molList"></div>
+
+<h2>6. Your progress</h2>
+<p>Tick a box when you can explain that item to a friend, with no notes. Your ticks are saved in this browser.</p>
+<div class="card check"><b>The 5 axioms</b><div class="checkgrid" id="chkX"></div></div>
+<div class="card check"><b>The 8 principles</b><div class="checkgrid" id="chkP"></div></div>
+<div class="bar"><div id="pbar" style="width:0"></div></div>
+<p class="note" id="ptext"></p>
+<div class="card check"><b>Atoms</b><div class="checkgrid" id="chkA"></div></div>
+<div class="card check"><b>Molecules</b><div class="checkgrid" id="chkM"></div></div>
+
+<h2>7. Quick check</h2>
+<div id="quiz"></div>
+
+<div class="summary">
+  <h2 style="margin-top:0;border:0">In summary</h2>
+  <ul>
+    <li><b>Bottom line:</b> about 15 atoms → about 16 molecules → every ML method. Nothing else is needed.</li>
+    <li><b>Atoms</b> come from 4 pillars + nonlinearity: vectors and matrices, derivatives and the chain rule, random variables and distributions, the loss function, and exp/log plus activation functions.</li>
+    <li><b>Molecules</b> are the reusable formulas: matrix multiplication, the linear layer, softmax, cross-entropy, gradient descent, backpropagation, eigen/SVD, Gaussian, Bayes, MLE, attention…</li>
+    <li><b>Validated bottom:</b> 5 axioms — linearity, inner product, local linearity, the probability rules (sum + product), and learning = optimization. Chain rule, gradient descent, mean/variance and eigenvectors are derived from them.</li>
+    <li><b>The 8 principles</b> are what to keep in your head: add &amp; scale, inner product = similarity, slopes multiply, step downhill, probabilities sum to 1, log turns products into sums, center &amp; spread, directions a matrix only stretches.</li>
+    <li><b>Next step:</b> learn the atoms first, then the molecules in the order above. Before you read a big method, try to take it apart into molecules yourself.</li>
+  </ul>
+  <p class="note">Wiki page: <code>wiki/maps/atoms-and-molecules.md</code> · the atoms shortlist: <code>wiki/maps/learning-path.md</code></p>
+</div>
+
+</main>
+
+<script>
+// ---------------- DATA ----------------
+const P={la:'--la',ca:'--ca',pr:'--pr',op:'--op',nl:'--nl'};
+const ATOMS=[
+ {id:'vec',n:'Vector',p:'la',d:'A list of numbers you can add and scale. Every piece of data becomes one.'},
+ {id:'mat',n:'Matrix',p:'la',d:'A grid of numbers. It stores data, and it also acts as a function on vectors.'},
+ {id:'lin',n:'Linear mapping',p:'la',d:'A function that respects adding and scaling. Every one of them is a matrix.'},
+ {id:'inn',n:'Inner product',p:'la',d:'Multiply two vectors into one number that says how much they point the same way.'},
+ {id:'nrm',n:'Norm',p:'la',d:'The length (size) of a vector.'},
+ {id:'bas',n:'Basis & rank',p:'la',d:'The smallest set of directions that builds a space; rank = how many real directions a matrix has.'},
+ {id:'der',n:'Derivative',p:'ca',d:'How fast a function changes at a point — its slope.'},
+ {id:'grd',n:'Gradient',p:'ca',d:'All the partial slopes in one vector. It points uphill.'},
+ {id:'chn',n:'Chain rule',p:'ca',d:'Slope of a function inside a function = outer slope × inner slope.'},
+ {id:'rv', n:'Random variable',p:'pr',d:'A rule that turns a random outcome into a number.'},
+ {id:'dst',n:'Probability distribution',p:'pr',d:'How likely each value is. All the chances add up to 1.'},
+ {id:'exp',n:'Expected value',p:'pr',d:'The long-run average outcome.'},
+ {id:'var',n:'Variance & covariance',p:'pr',d:'How spread out a value is, and whether two values move together.'},
+ {id:'los',n:'Loss function',p:'op',d:'One number that says how wrong the model is. Training makes it small.'},
+ {id:'log',n:'exp & log',p:'nl',d:'exp makes any number positive; log turns products into sums and tiny probabilities into friendly numbers.'},
+ {id:'act',n:'Activation function',p:'nl',d:'A small bend (like ReLU) after each layer, so stacked layers can learn curves.'},
+];
+const MOLS=[
+ {id:'mm',n:'Matrix multiplication',u:['inn','mat','vec'],
+  f:'C_{ij}=\\sum_{k} A_{ik}\\,B_{kj}',
+  s:[['$C_{ij}$','the number in row $i$, column $j$ of the result'],['$\\sum_k$','add up over every position $k$'],['$A_{ik}B_{kj}$','row $i$ of $A$ times column $j$ of $B$, one pair at a time']],
+  t:'Every entry of the result is one inner product: a row of A “dotted” with a column of B.'},
+ {id:'ll',n:'Linear layer',u:['mm','lin','vec'],
+  f:'y = Wx + b',
+  s:[['$x$','the input vector'],['$W$','the weight matrix (learned)'],['$b$','the bias vector (learned offset)'],['$y$','the output vector']],
+  t:'A linear mapping plus a shift. This is the basic brick of every neural network.'},
+ {id:'mlp',n:'MLP (neural network)',u:['ll','act'],
+  f:'h = \\sigma(Wx + b)',
+  s:[['$\\sigma$','the activation function, e.g. ReLU: $\\max(0,z)$'],['$h$','the layer output, which goes into the next layer']],
+  t:'Stack “linear layer → bend” many times and you get a network that can learn curvy patterns.'},
+ {id:'smx',n:'Softmax',u:['log','dst','vec'],
+  f:'p_i=\\dfrac{e^{z_i}}{\\sum_{j} e^{z_j}}',
+  s:[['$z_i$','raw score number $i$ (a logit)'],['$e^{z_i}$','exp makes it positive'],['$\\sum_j e^{z_j}$','the total of all of them'],['$p_i$','a probability; all $p_i$ add up to 1']],
+  t:'Turns any list of scores into a probability distribution.'},
+ {id:'ce',n:'Cross-entropy loss',u:['smx','log','los','dst'],
+  f:'L = -\\log p_{y}',
+  s:[['$p_y$','the probability the model gave to the correct answer $y$'],['$-\\log$','big when $p_y$ is small, 0 when $p_y=1$']],
+  t:'“How surprised was the model by the right answer?” The loss behind classifiers and LLMs.'},
+ {id:'gd',n:'Gradient descent',u:['grd','los'],
+  f:'\\theta \\leftarrow \\theta - \\eta\\,\\nabla_{\\theta} L',
+  s:[['$\\theta$','all the model parameters'],['$\\leftarrow$','“replace with”'],['$\\eta$','the learning rate (step size)'],['$\\nabla_\\theta L$','the gradient of the loss: the uphill direction']],
+  t:'Take a small step downhill on the loss, and repeat. This is how every model learns.'},
+ {id:'bp',n:'Backpropagation',u:['chn','grd','mlp'],
+  f:'\\frac{\\partial L}{\\partial w}=\\frac{\\partial L}{\\partial h}\\cdot\\frac{\\partial h}{\\partial w}',
+  s:[['$\\partial L/\\partial w$','how much the loss changes when weight $w$ changes'],['$\\partial L/\\partial h$','the blame that arrives from the layer above'],['$\\partial h/\\partial w$','the local slope of this layer']],
+  t:'The chain rule run backward through the network. It gives every gradient for about the cost of one extra pass.'},
+ {id:'eig',n:'Eigenvalues & eigenvectors',u:['mat','vec','lin'],
+  f:'A v = \\lambda v',
+  s:[['$A$','a square matrix'],['$v$','an eigenvector: a direction $A$ only stretches'],['$\\lambda$','the eigenvalue: the stretch factor']],
+  t:'The special directions of a matrix. The key to PCA and to understanding what a matrix does.'},
+ {id:'svd',n:'SVD',u:['eig','bas','nrm'],
+  f:'A = U\\,\\Sigma\\,V^{\\top}',
+  s:[['$V^\\top$','a rotation'],['$\\Sigma$','stretch each axis (the singular values)'],['$U$','another rotation']],
+  t:'Any matrix = rotate, stretch, rotate. Keep the biggest stretches and you get the best compression (low rank).'},
+ {id:'prj',n:'Orthogonal projection',u:['inn','bas'],
+  f:'\\pi(x) = B\\,(B^{\\top}B)^{-1}B^{\\top}x',
+  s:[['$B$','a matrix whose columns are a basis of the subspace'],['$\\pi(x)$','the closest point to $x$ inside that subspace']],
+  t:'Drop a vector straight down onto a flat subspace. The math behind least squares and PCA.'},
+ {id:'gau',n:'Gaussian distribution',u:['dst','exp','var'],
+  f:'\\mathcal{N}(x \\mid \\mu, \\Sigma)',
+  s:[['$\\mathcal N$','the normal (bell-curve) distribution'],['$\\mu$','the mean (center)'],['$\\Sigma$','the covariance matrix (spread and tilt)']],
+  t:'The default distribution: it appears whenever many small random effects add up.'},
+ {id:'bay',n:'Bayes’ theorem',u:['dst','rv'],
+  f:'p(\\theta\\mid x)=\\dfrac{p(x\\mid\\theta)\\,p(\\theta)}{p(x)}',
+  s:[['$p(\\theta)$','the prior: belief before the data'],['$p(x\\mid\\theta)$','the likelihood: how well $\\theta$ explains the data'],['$p(\\theta\\mid x)$','the posterior: belief after the data'],['$p(x)$','the evidence: a normalizer']],
+  t:'The rule for updating beliefs with evidence.'},
+ {id:'mle',n:'Maximum likelihood',u:['dst','log','gd'],
+  f:'\\theta^{*}=\\arg\\max_{\\theta}\\sum_{i}\\log p(x_i\\mid\\theta)',
+  s:[['$\\theta^*$','the best parameters'],['$\\arg\\max_\\theta$','“the $\\theta$ that makes this biggest”'],['$\\log p(x_i\\mid\\theta)$','log-probability of data point $i$']],
+  t:'Pick the parameters that make your data least surprising. Minimizing cross-entropy is exactly this.'},
+ {id:'ln',n:'Layer normalization',u:['exp','var','vec'],
+  f:'\\hat{x}=\\dfrac{x-\\mu}{\\sqrt{\\sigma^{2}+\\epsilon}}',
+  s:[['$\\mu$','the mean of the vector’s entries'],['$\\sigma^2$','their variance'],['$\\epsilon$','a tiny number so we never divide by 0']],
+  t:'Re-center each vector to mean 0 and spread 1, so deep networks stay numerically steady.'},
+ {id:'emb',n:'Embedding layer',u:['mat','vec','bas'],
+  f:'e = W^{\\top}\\mathbf{1}_{id}',
+  s:[['$\\mathbf 1_{id}$','a one-hot vector: all zeros, a 1 at the token ID'],['$W$','the embedding table, one row per token'],['$e$','that token’s row: its vector']],
+  t:'A matrix times a one-hot vector = just look up one row. This is how words become vectors.'},
+ {id:'att',n:'Attention',u:['mm','smx','inn'],
+  f:'\\mathrm{softmax}\\!\\left(\\dfrac{QK^{\\top}}{\\sqrt{d_k}}\\right)V',
+  s:[['$Q,K,V$','queries, keys, values: three linear layers of the input'],['$QK^\\top$','inner products: how well each query matches each key'],['$\\sqrt{d_k}$','a scale so the scores do not get too big'],['$\\cdot\\,V$','a weighted average of the values']],
+  t:'Each token asks a question, scores every other token, and becomes a weighted blend of them. The heart of the transformer.'},
+];
+const CMPS=[
+ {id:'lr', n:'Linear regression',u:['ll','prj','mle','gau'],d:'Fit the best line: a linear layer, trained by least squares (= MLE with Gaussian noise).'},
+ {id:'lgr',n:'Logistic regression',u:['ll','ce','gd'],d:'A linear layer + a sigmoid squash, trained with cross-entropy.'},
+ {id:'pca',n:'PCA',u:['eig','svd','prj','gau'],d:'Find the directions of biggest spread (eigenvectors of the covariance) and project onto them.'},
+ {id:'gmm',n:'Gaussian mixture',u:['gau','bay','mle'],d:'Several bell curves; Bayes assigns each point to them; EM does MLE.'},
+ {id:'svm',n:'SVM',u:['ll','prj','gd'],d:'The widest dividing wall between two classes; inner products + Lagrange multipliers + the kernel trick.'},
+ {id:'blr',n:'Bayesian regression',u:['ll','gau','bay'],d:'Keep every plausible line, weighted by Bayes, instead of one best line.'},
+ {id:'gpt',n:'Transformer / GPT',u:['emb','att','ln','mlp','smx','ce','bp','gd'],d:'Embeddings → (attention + layer norm + MLP) × N → softmax; trained with cross-entropy, backprop and AdamW.'},
+ {id:'lora',n:'LoRA',u:['ll','svd','gd'],d:'Freeze a big weight matrix and learn a small low-rank correction to it.'},
+];
+// ---------------- BOARD ----------------
+const ALL={};ATOMS.forEach(a=>ALL[a.id]={...a,k:'A'});MOLS.forEach(m=>ALL[m.id]={...m,k:'M'});CMPS.forEach(c=>ALL[c.id]={...c,k:'C'});
+const col=x=>x.k==='A'?`var(${P[x.p]})`:x.k==='M'?'var(--mol)':'var(--cmp)';
+function mk(x,host){const e=document.createElement('div');e.className='chip';e.id='n_'+x.id;e.style.setProperty('--c',col(x));
+  e.innerHTML=x.n+(x.k==='A'?`<small>${{la:'linear algebra',ca:'calculus',pr:'probability',op:'optimization',nl:'nonlinearity'}[x.p]}</small>`:x.k==='M'?`<small>${x.u.map(i=>ALL[i].n).join(' + ')}</small>`:'');
+  e.onclick=()=>select(x.id);host.appendChild(e)}
+ATOMS.forEach(a=>mk(ALL[a.id],cA));MOLS.forEach(m=>mk(ALL[m.id],cM));CMPS.forEach(c=>mk(ALL[c.id],cC));
+const users=id=>Object.values(ALL).filter(x=>x.u&&x.u.includes(id)).map(x=>x.id);
+function closure(id,dir){const out=new Set([id]),st=[id];while(st.length){const x=st.pop();
+  for(const y of (dir==='down'?(ALL[x].u||[]):users(x)))if(!out.has(y)){out.add(y);st.push(y)}}return out}
+const board=document.getElementById('board'),svg=document.getElementById('wires');
+function wire(a,b,color){const r=board.getBoundingClientRect(),A=document.getElementById('n_'+a).getBoundingClientRect(),B=document.getElementById('n_'+b).getBoundingClientRect();
+  const x1=A.right-r.left,y1=A.top+A.height/2-r.top,x2=B.left-r.left,y2=B.top+B.height/2-r.top,m=(x1+x2)/2;
+  // molecule→molecule links sit in the same column: route them around the right side
+  let d=`M${x1},${y1} C${m},${y1} ${m},${y2} ${x2},${y2}`;
+  if(ALL[a].k===ALL[b].k){const xr=A.right-r.left;d=`M${xr},${y1} C${xr+40},${y1} ${xr+40},${y2} ${xr},${y2}`}
+  const p=document.createElementNS('http://www.w3.org/2000/svg','path');p.setAttribute('d',d);p.setAttribute('stroke',color);svg.appendChild(p)}
+function clearAll(){svg.innerHTML='';board.classList.remove('dim');document.querySelectorAll('.chip').forEach(c=>c.classList.remove('on','sel'))}
+function select(id){clearAll();board.classList.add('dim');
+  const dn=closure(id,'down'),up=closure(id,'up');
+  [...dn,...up].forEach(i=>document.getElementById('n_'+i).classList.add('on'));
+  document.getElementById('n_'+id).classList.add('sel');
+  dn.forEach(x=>(ALL[x].u||[]).forEach(y=>wire(y,x,col(ALL[x]))));
+  up.forEach(x=>{if(x!==id)(ALL[x].u||[]).filter(y=>up.has(y)).forEach(y=>wire(y,x,col(ALL[x])))});
+  showDetail(id,dn,up)}
+function showDetail(id,dn,up){const x=ALL[id],det=document.getElementById('detail');
+  const kind={A:'⚛️ Atom',M:'🧪 Molecule',C:'🏗️ Compound'}[x.k];
+  const made=x.u?`<p><b>Made of:</b> ${x.u.map(i=>ALL[i].n).join(' + ')}</p>`:`<p><b>Made of:</b> nothing smaller — this is an atom.</p>`;
+  const builds=[...up].filter(i=>i!==id).map(i=>ALL[i].n);
+  const atoms=[...dn].filter(i=>ALL[i].k==='A'&&i!==id).map(i=>ALL[i].n);
+  det.innerHTML=`<span class="tag">${kind}</span><h3>${x.n}</h3><p>${x.d||x.t}</p>${made}`+
+    (x.k!=='A'?`<p><b>All atoms inside it:</b> ${atoms.join(', ')}</p>`:'')+
+    (builds.length?`<p><b>Helps to build:</b> ${builds.join(', ')}</p>`:'')+
+    (x.f?`<div>$$${x.f}$$</div><div class="sym">${x.s.map(([a,b])=>`<div>${a}</div><div>${b}</div>`).join('')}</div>`:'');
+  if(window.MathJax&&MathJax.typesetPromise)MathJax.typesetPromise([det])}
+document.getElementById('clear').onclick=()=>{clearAll();document.getElementById('detail').innerHTML='<p class="note">Click a box above to see what it is, its formula, and how to read every symbol.</p>'};
+// animated build: atoms appear, then each molecule draws its bonds, then each compound
+document.getElementById('play').onclick=async()=>{clearAll();const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+  document.querySelectorAll('.chip').forEach(c=>c.style.visibility='hidden');
+  for(const a of ATOMS){const e=document.getElementById('n_'+a.id);e.style.visibility='visible';e.classList.remove('pop');void e.offsetWidth;e.classList.add('pop');await sleep(90)}
+  for(const m of [...MOLS,...CMPS]){const e=document.getElementById('n_'+m.id);e.style.visibility='visible';e.classList.remove('pop');void e.offsetWidth;e.classList.add('pop');
+    m.u.forEach(y=>wire(y,m.id,col(ALL[m.id])));await sleep(230)}
+  await sleep(1400);svg.innerHTML=''};
+addEventListener('resize',clearAll);
+
+// ---------------- MOLECULE LIST ----------------
+document.getElementById('molList').innerHTML=MOLS.map((m,i)=>`<details><summary>${i+1}. ${m.n} = ${m.u.map(j=>ALL[j].n).join(' + ')}</summary>
+  <p>${m.t}</p><div>$$${m.f}$$</div><div class="sym">${m.s.map(([a,b])=>`<div>${a}</div><div>${b}</div>`).join('')}</div></details>`).join('');
+
+// ---------------- CHECKLIST ----------------
+const KEY='atoms-molecules-progress';const st=JSON.parse(localStorage.getItem(KEY)||'{}');
+function chk(list,host){host.innerHTML=list.map(x=>`<label><input type="checkbox" data-id="${x.id}" ${st[x.id]?'checked':''}> ${x.n}</label>`).join('')}
+const AX=['A. Linearity','B. Inner product','C. Local linearity','D. Probability rules (sum + product)','E. Learning = optimization'].map((n,i)=>({id:'ax'+i,n}));
+const PRINC=['Add and scale','Inner product = similarity','Slopes multiply along a chain','Step downhill','Probabilities ≥ 0, sum to 1, product rule','log turns products into sums','Center and spread','Directions a matrix only stretches'].map((n,i)=>({id:'pr'+i,n:(i+1)+'. '+n}));
+chk(AX,chkX);chk(PRINC,chkP);chk(ATOMS,chkA);chk(MOLS,chkM);
+function prog(){const n=AX.length+PRINC.length+ATOMS.length+MOLS.length,k=Object.values(st).filter(Boolean).length;
+  pbar.style.width=(100*k/n)+'%';ptext.textContent=`${k} of ${n} mastered`+(k===n?' — every compound is now within reach 🎉':'')}
+document.querySelectorAll('.check input').forEach(i=>i.onchange=()=>{st[i.dataset.id]=i.checked;localStorage.setItem(KEY,JSON.stringify(st));prog()});prog();
+
+// ---------------- QUIZ ----------------
+const Q=[
+ {q:'Which of these is an atom, not a molecule?',a:['Softmax','Inner product','Attention'],c:1,
+  why:'The inner product is not built from anything smaller in this map. Softmax (exp + distribution) and attention (inner product + softmax + weighted average) are molecules.'},
+ {q:'Attention = which molecules/atoms?',a:['Inner product + softmax + weighted average','Derivative + Bayes','Eigenvectors + norm'],c:0,
+  why:'Query·key inner products give scores, softmax turns them into weights, and the weights average the values.'},
+ {q:'PCA is a compound. What is inside it?',a:['Softmax + cross-entropy','Covariance + eigenvectors/SVD + projection','Chain rule + ReLU'],c:1,
+  why:'PCA finds the eigenvectors of the data covariance matrix (or uses the SVD) and projects the data onto the top ones.'},
+ {q:'Which one is truly elemental (cannot be derived from the others)?',a:['The chain rule','The probability sum and product rules','Gradient descent'],c:1,
+  why:'The chain rule comes from local linearity, and gradient descent from local linearity + the inner product. The probability rules are axioms.'},
+ {q:'Minimizing cross-entropy loss is the same as…',a:['Maximum likelihood estimation','Gaussian elimination','Computing a determinant'],c:0,
+  why:'Cross-entropy = −log p(correct answer). Making that small for every example is exactly maximizing the log-likelihood of the data.'},
+];
+quiz.innerHTML=Q.map((it,k)=>`<div class="q card"><b>${k+1}. ${it.q}</b>${it.a.map((o,i)=>`<label><input type="radio" name="q${k}" value="${i}"> ${o}</label>`).join('')}<div class="fb" id="fb${k}"></div></div>`).join('');
+Q.forEach((it,k)=>document.querySelectorAll(`input[name=q${k}]`).forEach(r=>r.onchange=()=>{
+  document.getElementById('fb'+k).innerHTML=(+r.value===it.c?'✅ Correct. ':'❌ Not quite. ')+it.why}));
+</script>
+
+<!-- ============ VOCAB HELPER ============ -->
+<style>
+  #vpop{position:absolute;z-index:50;max-width:320px;background:var(--card);color:var(--fg);border:1px solid var(--accent);
+    border-radius:10px;padding:10px 14px;box-shadow:0 8px 28px rgba(0,0,0,.18);font:15px/1.45 system-ui,sans-serif;display:none}
+  #vpop .w{font-weight:700;font-size:1.05rem} #vpop .es{color:var(--cnn);font-weight:600}
+  #vpop .ex{color:var(--muted);font-style:italic;margin-top:4px}
+  #vpop button{margin-top:8px;padding:4px 10px;font-size:.8rem}
+  .vbar{position:sticky;top:0;z-index:40;background:var(--bg);border-bottom:1px solid var(--line);padding:6px 0;font:600 .85rem system-ui,sans-serif;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+  #glossary table td:first-child{font-weight:700;white-space:nowrap}
+  #flash{font:1.3rem system-ui,sans-serif;text-align:center;padding:24px;min-height:110px}
+</style>
+<div id="vpop"></div>
+<script>
+const VOCAB = {
+  'irreducible':  [['irreducible'], 'cannot be split further', 'Irreducible (adjective): that cannot be made smaller or simpler. Here: an atom is an idea you cannot break into smaller ideas.'],
+  'assembly':     [['assembly','assemble','assembles'], 'putting parts together', 'Assembly (noun): the act of fitting separate parts together to make one thing, like building furniture from a kit.'],
+  'bond':         [['bond','bonds','bonding'], 'connection / join', 'Bond (noun/verb): a strong connection; in chemistry, the link that holds atoms together in a molecule. Here: how two ideas join into one formula.'],
+  'compound':     [['compound','compounds'], 'thing made of parts', 'Compound (noun): something made by combining two or more parts. Here: a full ML method built from several molecules.'],
+  'ingredient':   [['ingredient','ingredients'], 'part of a recipe', 'Ingredient (noun): one of the things you mix together to make a food; (figurative) one of the parts of something.'],
+  'reach':        [['reach'], 'how far it spreads', 'Reach (noun): how far something can extend or how many things it affects. Here: how many pages depend on this page.'],
+  'judgment':     [['judgment'], 'own decision', 'Judgment (noun): the ability to make a sensible decision when there is no exact rule.'],
+  'law of nature':[['law of nature'], 'fixed fact of the world', 'Law of nature (phrase): a rule that is always true, like gravity. "Not a law of nature" = only a useful guide.'],
+  'take it apart':[['take it apart','taking it apart'], 'separate into pieces', 'Take (something) apart (phrasal verb): to separate a thing into its pieces, to see how it works.'],
+  'within reach': [['within reach'], 'easy to get now', 'Within reach (idiom): close enough to get or do without much more effort.'],
+  'steady':       [['steady'], 'stable', 'Steady (adjective): not shaking or changing suddenly; stable.'],
+  'blame':        [['blame'], 'responsibility for a fault', 'Blame (noun): responsibility for something bad. In backpropagation: how much one part caused the error.'],
+  'normalizer':   [['normalizer'], 'number you divide by', 'Normalizer (noun, math): a number you divide by so that the values add up to 1.'],
+  'squash':       [['squash'], 'squeeze', 'Squash (verb): to press something so it becomes flatter or smaller. A sigmoid "squashes" any number into the range 0 to 1.'],
+  'last line':[['last line'],'final fallback','Last line (phrase): the final thing you can rely on when everything else fails.'],
+  'shortcut':[['shortcut','shortcuts'],'faster way','Shortcut (noun): a quicker way to get somewhere or to do something.'],
+  'axiom':[['axiom','axioms'],'basic rule accepted as true','Axiom (noun): a starting rule that you accept without proof, and from which you prove everything else.'],
+  'bend':         [['bend'], 'curve', 'Bend (noun): a curve or angle in something that was straight. An activation function puts a bend in a straight line.'],
+};
+const forms=[];for(const k in VOCAB)VOCAB[k][0].forEach(f=>forms.push([f,k]));
+forms.sort((a,b)=>b[0].length-a[0].length);
+const esc=s=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+const RE=new RegExp('\\b('+forms.map(f=>esc(f[0])).join('|')+')\\b','gi');
+const formToKey=Object.fromEntries(forms.map(([f,k])=>[f.toLowerCase(),k]));
+const pop=document.getElementById('vpop');
+document.addEventListener('click',e=>{if(!e.target.closest('#vpop')&&window.getSelection().isCollapsed)pop.style.display='none'});
+function renderGlossary(){
+  const g=document.getElementById('glossary');if(!g)return;
+  const used=usedKeys();
+  g.querySelector('tbody').innerHTML=used.sort().map(k=>`<tr><td>${k}</td><td>${VOCAB[k][1]}</td><td>${VOCAB[k][2]}</td></tr>`).join('')||'<tr><td colspan="3">No words.</td></tr>';
+  document.getElementById('gCount').textContent=`${used.length} words on this page`;
+}
+let deck=[],di=0,flipped=false;
+function flash(){const f=document.getElementById('flash');if(!deck.length){f.textContent='No words on this page.';return}
+  const k=deck[di%deck.length];f.innerHTML=flipped?`<b>${k}</b><br><span style="color:var(--cnn)">${VOCAB[k][1]}</span><br><small>${VOCAB[k][2]}</small>`:`<b>${k}</b><br><small class="note">What does it mean? Tap “Flip”.</small>`}
+function initVocab(){
+  const main=document.querySelector('main');
+  const bar=document.createElement('div');bar.className='vbar';
+  bar.innerHTML=`📖 Vocabulary helper: <b>select any word or phrase</b> to see its meaning. On a Mac: <b>Ctrl + ⌘ + D</b> over any word.`;
+  main.prepend(bar);
+  const sum=document.querySelector('.summary');
+  const sec=document.createElement('section');sec.id='glossary';
+  sec.innerHTML=`<h2>📚 Vocabulary from this page</h2><p class="note" id="gCount"></p>
+    <table style="margin-top:8px"><thead><tr><th>Word</th><th>Short synonym</th><th>Simple meaning</th></tr></thead><tbody></tbody></table>
+    <h3>Flashcards</h3><div class="card" id="flash"></div>
+    <p><button id="fFlip">Flip</button> <button id="fNext">Next ▶</button> <button id="fShuffle">Shuffle</button></p>`;
+  sum.before(sec);
+  document.getElementById('fFlip').onclick=()=>{flipped=!flipped;flash()};
+  document.getElementById('fNext').onclick=()=>{di++;flipped=false;flash()};
+  document.getElementById('fShuffle').onclick=()=>{deck.sort(()=>Math.random()-.5);di=0;flipped=false;flash()};
+  renderGlossary();deck=usedKeys();flash();
+}
+(function wait(){ if(window.MathJax&&MathJax.startup&&MathJax.startup.promise){MathJax.startup.promise.then(initVocab)} else setTimeout(wait,100) })();
+</script>
+
+<!-- ============ SELECT-TO-LOOK-UP ============ -->
+<script>
+function usedKeys(){const t=[...document.querySelectorAll('main > :not(#glossary):not(script)')].map(e=>e.textContent).join(' ');
+  const ks=new Set();let m;RE.lastIndex=0;while((m=RE.exec(t)))ks.add(formToKey[m[0].toLowerCase()]);return [...ks]}
+const escH=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function sentenceAround(range){const blk=(range.startContainer.parentElement||document.body).closest('p,li,td,div')||document.body;
+  const t=blk.textContent.replace(/\s+/g,' '),q=range.toString().replace(/\s+/g,' ').trim(),i=t.indexOf(q);if(i<0)return '';
+  const a=t.lastIndexOf('.',i)+1,b=t.indexOf('.',i+q.length);return t.slice(a,b<0?undefined:b+1).trim()}
+function placePop(rect){pop.style.display='block';
+  pop.style.left=Math.min(window.scrollX+rect.left,window.scrollX+innerWidth-340)+'px';pop.style.top=(window.scrollY+rect.bottom+6)+'px'}
+function popButtons(term){
+  return `<div style="margin-top:8px"><button id="lsay">🔊 Listen</button>
+    <a href="https://dictionary.cambridge.org/search/english/direct/?q=${encodeURIComponent(term)}" target="_blank" style="font-size:.8rem;margin-left:6px">Cambridge ↗</a></div>`}
+function wireButtons(term){
+  document.getElementById('lsay').onclick=e=>{e.stopPropagation();const u=new SpeechSynthesisUtterance(term);u.lang='en-US';speechSynthesis.speak(u)};
+}
+async function lookUp(term,range){
+  const rect=range.getBoundingClientRect(),ctx=sentenceAround(range),k=term.toLowerCase();
+  const key=VOCAB[k]?k:formToKey[k];
+  if(key){const [,syn,def]=VOCAB[key];
+    pop.innerHTML=`<div class="w">${escH(term)}</div><div class="es">≈ ${escH(syn)}</div><div>${escH(def)}</div>${ctx?`<div class="ex">“${escH(ctx)}”</div>`:''}`+popButtons(term);
+    placePop(rect);wireButtons(term);return}
+  pop.innerHTML=`<div class="w">${escH(term)}</div><div class="note">Looking it up…</div>`;placePop(rect);
+  try{
+    const strip=h=>{const d=document.createElement('div');d.innerHTML=h;return d.textContent.replace(/\s+/g,' ').trim()};
+    let data=null;
+    for(const q of [k,term]){const r=await fetch('https://en.wiktionary.org/api/rest_v1/page/definition/'+encodeURIComponent(q.replace(/ /g,'_')));
+      if(r.ok){const j=await r.json();if(j.en&&j.en.length){data=j.en;break}}}
+    if(!data)throw 0;
+    const senses=[];
+    data.forEach(m=>m.definitions.forEach(d=>{const def=strip(d.definition);if(def&&senses.length<3)
+      senses.push({pos:m.partOfSpeech.toLowerCase(),def,ex:d.parsedExamples&&d.parsedExamples[0]?strip(d.parsedExamples[0].example):''})}));
+    if(!senses.length)throw 0;
+    pop.innerHTML=`<div class="w">${escH(term)}</div>`+
+      senses.map(x=>`<div style="margin-top:4px"><i>${escH(x.pos)}</i> — ${escH(x.def)}${x.ex?`<div class="note">e.g. “${escH(x.ex)}”</div>`:''}</div>`).join('')+
+      (ctx?`<div class="ex">On this page: “${escH(ctx)}”</div>`:'')+popButtons(term);
+    placePop(rect);wireButtons(term);
+  }catch(_){
+    pop.innerHTML=`<div class="w">${escH(term)}</div><div>No entry found here (phrases and idioms are often missing, or you are offline).</div>
+      <div class="note" style="margin-top:4px">Tip: open Cambridge below, or on a Mac press <b>Ctrl + ⌘ + D</b> over the word.</div>${ctx?`<div class="ex">“${escH(ctx)}”</div>`:''}`+popButtons(term);
+    placePop(rect);wireButtons(term);
+  }
+}
+function onSelect(){
+  const sel=window.getSelection();if(!sel||sel.isCollapsed||!sel.rangeCount)return;
+  const term=sel.toString().replace(/\s+/g,' ').trim().replace(/^[^A-Za-z]+|[^A-Za-z]+$/g,'');
+  const range=sel.getRangeAt(0),node=range.commonAncestorContainer,el=node.nodeType===1?node:node.parentElement;
+  if(!term||term.length>40||term.split(' ').length>5||!/^[A-Za-z][A-Za-z' \-]*$/.test(term))return;
+  if(el.closest('#vpop,mjx-container,input,button,textarea,.chip'))return;
+  lookUp(term,range);
+}
+document.addEventListener('mouseup',e=>{if(e.target.closest('#vpop'))return;setTimeout(onSelect,0)});
+document.addEventListener('touchend',e=>{if(e.target.closest('#vpop'))return;setTimeout(onSelect,350)});
+</script>
+</body>
+</html>

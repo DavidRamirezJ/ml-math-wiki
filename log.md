@@ -85,3 +85,50 @@ Result: 10 source pages (`llm-ch01`…`llm-ch07`, `llm-appA`, `llm-appD`, `llm-a
 New map: [[llm-learning-path]]. Index rebuilt: 278 concepts, 48 people, 21 sources.
 Lint after ingest: all frontmatter valid, every concept page has all three tiers; only 4 dangling links remain (auto-encoder, gaussian-process, overview,
 convolutional-neural-network), all older TODO markers.
+
+## [2026-10-13] query | Foundations for MLP vs CNN
+Human asked which foundations are needed to understand MLP vs CNN. Answered with a 7-step prerequisite chain (data as numbers →
+dot product/matrix multiplication → neuron & layer → MLP → learning via backprop → overfitting/regularization → CNN-only ideas).
+Filed back as a "Foundations" section in [[mlp-vs-cnn]]. Gap noted: no `convolution` / `convolutional-neural-network` concept page yet.
+
+## [2026-10-13] query | Lesson — foundations 1-2-3 for MLP vs CNN
+Built `explainers/2026-10-13_foundations-1-2-3.html`: (1) vectors/matrices/tensors with a clickable pixel-grid, (2) dot product
+(weight sliders, geometric view), matrix multiplication step-through, linear map canvas, (3) a live neuron (ReLU/sigmoid) and why
+activations stop layers collapsing. MathJax formulas read symbol by symbol, 5-question quiz, English vocab helper. Draws on
+[[vector]], [[matrix]], [[tensor]], [[inner-product]], [[matrix-multiplication]], [[linear-mapping]], [[activation-function]], [[relu]].
+
+## [2026-10-13] query | Tensor deep-dive + activation-function animation
+Human didn't understand tensors and asked why activation functions matter. Extended `explainers/2026-10-13_foundations-1-2-3.html`:
+new part 1b (cinema analogy, interactive tensor builder with 0-4 axes and index picking, colour-image stack, reshape/flatten demo,
+physics-vs-ML warning) and an animation in step 3 (a 1-hidden-layer ReLU net adds one bend per neuron to fit a curve; with ReLU off,
+the sum of neurons stays one straight line). Added 3 quiz questions and vocab entries. Relates to [[tensor]], [[activation-function]], [[relu]].
+
+## [2026-10-13] query | Función de activación — por qué importa, dónde va (HTML animado, español)
+Human asked (in Spanish) why activation functions matter and whether they apply per layer or per perceptron. Built
+`explainers/2026-10-13_funcion-de-activacion.html`: animated layer (each neuron computes z then σ(z); one σ chosen per layer),
+collapse animation W2·W1 = W' with a live "does ReLU break the collapse?" check, XOR plane-folding animation (Goodfellow et al. §6.1
+network) with the final decision band, hinge-curve builder, per-neuron vs per-layer cards + softmax exception with live bars,
+which-layer table, animated activation gallery, perceptron→MLP history, where it appears (MLP/CNN/GPT), 6-question quiz.
+Relates to [[activation-function]], [[relu]], [[gelu]], [[softmax]], [[multilayer-perceptron]], [[feed-forward-network]].
+
+## [2026-10-15] query | Backpropagation explainer (HTML, animated)
+Human asked to explain backprop (open item from the 13 Oct session). Built `explainers/2026-10-15_backpropagation.html`: tiny
+1-hidden-ReLU net with a 10-step forward/backward/update animation (sliders recompute every value), chain-rule "nudge ripple"
+check, reuse-trick comparison, live training loss chart, matrix form δ_prev = (Wᵀδ) ⊙ σ′(z), 5-question quiz, vocab helper.
+No new wiki page; content draws on [[backpropagation]], [[chain-rule]], [[relu]], [[gradient-descent]].
+
+## [2026-10-27] query | Atoms, molecules, compounds + 8 first principles
+- Asked: what are the atoms and molecules needed to understand everything, so forgotten formulas can be re-derived from principles.
+- Method: computed downstream reach over the `Builds on:` graph of all 278 concept pages (vector 276, vector-space 264, matrix 255, … loss-function 165).
+- Created [[atoms-and-molecules]] (map): 8 principles with worked re-derivations, 15 atoms, 16 molecules with formulas, 8 compounds. Added to [[index]].
+- Explainer: `explainers/2026-10-27_atoms-and-molecules.html` (clickable atom→molecule→compound map with animated bonds, re-derivation drills, checklist, quiz, vocab helper).
+
+## [2026-10-27] query | Validate: are the atoms/principles the most elemental?
+- Result: no — 4 of the 8 working principles are derived (chain rule, gradient descent, mean/variance, eigenvectors). The irreducible bottom is 5 axioms: linearity, inner product, local linearity, probability rules (sum + product), learning = optimization. The sum rule and axiom E were missing.
+- Updated [[atoms-and-molecules]] with a validation section; explainer `explainers/2026-10-27_atoms-and-molecules.html` §3.
+- Graph fix: [[activation-function]] no longer lists [[neural-network]] under `Builds on:` (broke a cycle). TODO: floor-level `logarithm-and-exponential` page.
+
+## [2026-10-27] query | Video series — one video per ML math atom
+- Made 16 narrated Manim videos (`explainers/atoms-series/NN-*/final.mp4`, 1080p, subtitles, chapters), 3.2 h total, one per study atom from [[atoms-and-molecules]]; each: hook, ≥2 worked examples, try-it-yourself, real NumPy demo, summary, credits (David R. · davidramirezj.com).
+- Pilot 01-vector approved by the user; 02–16 produced in parallel from `series_guide.md`. All finals: 0 layout warnings, no audio gaps; 52 glossary terms, no duplicates.
+- Index: `explainers/atoms-series/index.html`. Linked from [[atoms-and-molecules]].

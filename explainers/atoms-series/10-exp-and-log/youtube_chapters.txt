@@ -1,0 +1,10 @@
+00:00 Intro
+00:45 Repeated growth: e to the x
+02:19 The logarithm
+03:28 Products become sums
+04:53 Taming tiny probabilities
+06:26 Slopes of exp and log
+07:36 exp and log in ML
+09:14 Try it yourself
+10:29 Python demo
+11:20 Summary

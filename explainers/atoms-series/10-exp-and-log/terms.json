@@ -1,0 +1,12 @@
+[
+ {
+  "term": "exponential",
+  "definition": "The function e to the power x, with e ≈ 2.718: repeated growth that is always positive.",
+  "video": "10-exp-and-log"
+ },
+ {
+  "term": "logarithm",
+  "definition": "The power you must put on e to get a number: ln y = x means e^x = y.",
+  "video": "10-exp-and-log"
+ }
+]

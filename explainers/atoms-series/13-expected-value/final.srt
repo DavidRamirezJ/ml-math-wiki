@@ -1,0 +1,603 @@
+1
+00:00:00,106 --> 00:00:02,327
+A casino does not know who will win tonight.
+
+2
+00:00:02,765 --> 00:00:07,752
+But it knows, almost exactly, how much money it will make over a million games.
+
+3
+00:00:08,151 --> 00:00:12,260
+A machine learning model does not know its error on the next example.
+
+4
+00:00:12,699 --> 00:00:15,718
+But we can talk about its average error over all examples.
+
+5
+00:00:16,143 --> 00:00:19,773
+That long-run average has a name: the expected value.
+
+6
+00:00:20,706 --> 00:00:30,865
+In this video you will learn to compute an expected value, see why a fair die expects three point five, check a lottery, and discover a shortcut called linearity.
+
+7
+00:00:31,291 --> 00:00:35,520
+Then we watch the average of real simulated rolls settle down.
+
+8
+00:00:35,945 --> 00:00:39,429
+You need video twelve, the probability distribution.
+
+9
+00:00:39,842 --> 00:00:46,504
+This atom is built from axiom A, linearity, and axiom D, the probability rules.
+
+10
+00:00:48,239 --> 00:00:50,659
+Start with something familiar: a grade.
+
+11
+00:00:51,098 --> 00:00:55,327
+Your homework score is eighty, and your exam score is ninety.
+
+12
+00:00:55,752 --> 00:00:57,135
+But the exam counts more.
+
+13
+00:00:57,561 --> 00:01:01,989
+Homework has a weight of thirty percent, the exam seventy percent.
+
+14
+00:01:02,415 --> 00:01:04,702
+A plain average would give eighty five.
+
+15
+00:01:05,127 --> 00:01:06,870
+That is not fair to the weights.
+
+16
+00:01:07,806 --> 00:01:11,223
+Instead, multiply each score by its weight and add.
+
+17
+00:01:11,636 --> 00:01:14,960
+Zero point three times eighty is twenty four.
+
+18
+00:01:15,372 --> 00:01:18,883
+Zero point seven times ninety is sixty three.
+
+19
+00:01:19,309 --> 00:01:22,806
+Twenty four plus sixty three is eighty seven.
+
+20
+00:01:23,245 --> 00:01:24,535
+This is a weighted average.
+
+21
+00:01:24,973 --> 00:01:29,787
+The weights add up to one, and big weights pull the result toward their score.
+
+22
+00:01:31,293 --> 00:01:32,290
+Now the key idea.
+
+23
+00:01:32,729 --> 00:01:36,878
+A probability distribution is a list of weights that add up to one.
+
+24
+00:01:37,317 --> 00:01:39,617
+So we can use the probabilities as weights.
+
+25
+00:01:40,043 --> 00:01:43,859
+Each value of the random variable is weighted by how likely it is.
+
+26
+00:01:44,285 --> 00:01:46,705
+That weighted average is the expected value.
+
+27
+00:01:48,452 --> 00:01:49,955
+Here is the formula.
+
+28
+00:01:50,394 --> 00:01:57,788
+The expected value of X, written E of X, equals the sum over all values x of p of x times x.
+
+29
+00:01:58,280 --> 00:01:59,649
+Read it piece by piece.
+
+30
+00:02:00,088 --> 00:02:01,710
+The values x are what can happen.
+
+31
+00:02:02,149 --> 00:02:04,849
+p of x is the weight of each value.
+
+32
+00:02:05,274 --> 00:02:07,468
+Multiply, then add everything up.
+
+33
+00:02:09,059 --> 00:02:11,187
+First example: one fair die.
+
+34
+00:02:11,626 --> 00:02:15,828
+The values are one to six, each with probability one sixth.
+
+35
+00:02:16,253 --> 00:02:22,556
+So E of X is one sixth times one, plus one sixth times two, and so on up to six.
+
+36
+00:02:22,982 --> 00:02:25,322
+The sum of one to six is twenty one.
+
+37
+00:02:25,761 --> 00:02:28,727
+Twenty one over six is three point five.
+
+38
+00:02:30,226 --> 00:02:31,622
+Notice something strange.
+
+39
+00:02:32,061 --> 00:02:34,308
+You can never roll three point five.
+
+40
+00:02:34,747 --> 00:02:37,952
+The expected value does not have to be a possible value.
+
+41
+00:02:38,377 --> 00:02:39,375
+It is a balance point.
+
+42
+00:02:39,800 --> 00:02:46,516
+If the bars of the distribution were weights on a ruler, the ruler would balance exactly at three point five.
+
+43
+00:02:48,039 --> 00:02:50,273
+Second example: a toy lottery.
+
+44
+00:02:50,699 --> 00:02:52,534
+A ticket costs two euros.
+
+45
+00:02:52,973 --> 00:02:57,946
+With probability zero point one you win ten euros, so your net win is eight.
+
+46
+00:02:58,372 --> 00:03:03,412
+With probability zero point nine you win nothing, so your net win is minus two.
+
+47
+00:03:03,837 --> 00:03:09,622
+E of the win is zero point one times eight, plus zero point nine times minus two.
+
+48
+00:03:10,539 --> 00:03:15,672
+That is zero point eight minus one point eight, which is minus one euro.
+
+49
+00:03:16,071 --> 00:03:19,183
+On average, every ticket loses one euro.
+
+50
+00:03:19,608 --> 00:03:21,244
+One single ticket can still win.
+
+51
+00:03:21,656 --> 00:03:25,393
+But over many tickets, you lose about one euro per ticket.
+
+52
+00:03:25,818 --> 00:03:30,646
+The expected value tells you the long-run truth, not the result of one game.
+
+53
+00:03:32,373 --> 00:03:33,862
+Now a powerful property.
+
+54
+00:03:34,287 --> 00:03:36,362
+The expected value is linear.
+
+55
+00:03:36,801 --> 00:03:41,960
+E of a X plus b Y equals a times E of X, plus b times E of Y.
+
+56
+00:03:42,412 --> 00:03:45,258
+Here a and b are ordinary numbers.
+
+57
+00:03:45,697 --> 00:03:52,359
+This is axiom A again: the expected value respects adding and scaling, just like a linear mapping.
+
+58
+00:03:53,873 --> 00:03:54,631
+Why is it true?
+
+59
+00:03:55,069 --> 00:03:58,327
+E of X is a sum of probabilities times values.
+
+60
+00:03:58,753 --> 00:04:02,596
+Scaling every value by a scales the whole sum by a.
+
+61
+00:04:03,021 --> 00:04:07,011
+And the expected value of a sum splits into two sums.
+
+62
+00:04:07,450 --> 00:04:10,681
+The sum rule from video twelve does the bookkeeping.
+
+63
+00:04:11,120 --> 00:04:15,468
+Linearity holds even when X and Y are not independent.
+
+64
+00:04:16,986 --> 00:04:18,462
+Here is the shortcut.
+
+65
+00:04:18,887 --> 00:04:19,885
+Roll two dice.
+
+66
+00:04:20,324 --> 00:04:21,441
+What is the expected sum?
+
+67
+00:04:21,866 --> 00:04:24,765
+With the table, you would add thirty six products.
+
+68
+00:04:25,191 --> 00:04:30,058
+With linearity, E of X plus Y is E of X plus E of Y.
+
+69
+00:04:30,496 --> 00:04:34,406
+That is three point five plus three point five, which is seven.
+
+70
+00:04:34,832 --> 00:04:35,709
+No table needed.
+
+71
+00:04:37,239 --> 00:04:38,862
+One more example with numbers.
+
+72
+00:04:39,287 --> 00:04:43,702
+Take a die X, and make a new score: two times X plus one.
+
+73
+00:04:44,141 --> 00:04:49,620
+Its expected value is two times three point five, plus one, which is eight.
+
+74
+00:04:50,058 --> 00:04:53,901
+Be careful: linearity works for adding and scaling.
+
+75
+00:04:54,393 --> 00:05:01,588
+For a curved function, like X squared, the expected value of X squared is not E of X, squared.
+
+76
+00:05:03,306 --> 00:05:05,593
+What does long-run average mean in practice?
+
+77
+00:05:06,005 --> 00:05:11,178
+Let's roll a die many times in a computer, with a fixed seed, and keep a running average.
+
+78
+00:05:11,604 --> 00:05:16,032
+The first ten rolls are five, one, two, two, two, five, six, four, one, one.
+
+79
+00:05:16,457 --> 00:05:18,838
+Their average is only two point nine.
+
+80
+00:05:20,373 --> 00:05:21,024
+Keep rolling.
+
+81
+00:05:21,463 --> 00:05:22,766
+Watch the running average move.
+
+82
+00:05:23,205 --> 00:05:26,011
+After one hundred rolls it is three point four six.
+
+83
+00:05:26,450 --> 00:05:29,548
+After one thousand, three point four five three.
+
+84
+00:05:29,987 --> 00:05:33,631
+After ten thousand, three point four eight eight three.
+
+85
+00:05:34,056 --> 00:05:39,136
+The wild jumps at the start calm down, and the line stays close to three point five.
+
+86
+00:05:40,673 --> 00:05:42,734
+This is the law of large numbers.
+
+87
+00:05:43,173 --> 00:05:49,715
+The average of many independent samples gets close to the expected value, as the number of samples grows.
+
+88
+00:05:50,154 --> 00:05:52,175
+It never promises an exact match.
+
+89
+00:05:52,614 --> 00:05:55,313
+It promises that big errors become rare.
+
+90
+00:05:55,739 --> 00:06:00,446
+This is why a casino can plan, and why averages over data are reliable.
+
+91
+00:06:02,173 --> 00:06:06,508
+Now look at a data set: two, four, four, five, ten.
+
+92
+00:06:06,946 --> 00:06:08,994
+Its mean is the sum divided by the count.
+
+93
+00:06:09,420 --> 00:06:11,814
+Twenty five over five is five.
+
+94
+00:06:12,252 --> 00:06:15,165
+The mean of a data set is the everyday average.
+
+95
+00:06:16,119 --> 00:06:17,489
+Here is the connection.
+
+96
+00:06:17,941 --> 00:06:22,874
+Pick one row of the data at random, each row with probability one fifth.
+
+97
+00:06:23,313 --> 00:06:25,055
+That defines a random variable.
+
+98
+00:06:25,494 --> 00:06:31,319
+Its expected value is one fifth times each value, added up, which is again five.
+
+99
+00:06:31,731 --> 00:06:37,010
+So the mean of a data set is an expected value, under the pick a row at random distribution.
+
+100
+00:06:37,939 --> 00:06:41,782
+The value four appears twice, so it gets the weight two fifths.
+
+101
+00:06:42,208 --> 00:06:46,849
+Big values pull the mean up: the ten moves it more than any other row.
+
+102
+00:06:47,274 --> 00:06:55,851
+In machine learning, we often write E of X for the true long-run average, and x bar for the mean of our samples, our best estimate of it.
+
+103
+00:06:57,559 --> 00:07:00,206
+Now the most important use in machine learning.
+
+104
+00:07:00,711 --> 00:07:06,402
+For every training example, the model makes an error, measured by a number called the loss.
+
+105
+00:07:06,828 --> 00:07:09,448
+We will study losses in video fifteen.
+
+106
+00:07:09,860 --> 00:07:12,200
+Training does not try to fix one example.
+
+107
+00:07:12,639 --> 00:07:15,977
+It tries to make the average loss over all examples small.
+
+108
+00:07:17,493 --> 00:07:24,634
+Take four toy examples with losses zero point two, zero point five, zero point one, and one point two.
+
+109
+00:07:25,059 --> 00:07:29,115
+The average loss is two over four, which is zero point five.
+
+110
+00:07:29,554 --> 00:07:33,889
+This average is an expected value under the pick a row at random distribution.
+
+111
+00:07:34,314 --> 00:07:37,479
+It is our estimate of the expected loss on new data.
+
+112
+00:07:39,006 --> 00:07:48,607
+And because expectation is linear, we can split the average loss into pieces, estimate it from small random batches, and take derivatives inside the sum.
+
+113
+00:07:49,032 --> 00:07:56,971
+Most of modern training is: estimate an expected value from samples, then improve the model to make it smaller.
+
+114
+00:07:58,706 --> 00:07:59,251
+Your turn.
+
+115
+00:07:59,650 --> 00:08:10,953
+A random variable takes the value zero with probability zero point five, the value two with probability zero point three, and the value ten with probability zero point two.
+
+116
+00:08:11,392 --> 00:08:12,735
+What is its expected value?
+
+117
+00:08:13,174 --> 00:08:13,879
+Pause and try.
+
+118
+00:08:14,806 --> 00:08:15,923
+Multiply and add.
+
+119
+00:08:16,362 --> 00:08:19,354
+Zero point five times zero is zero.
+
+120
+00:08:19,793 --> 00:08:23,330
+Zero point three times two is zero point six.
+
+121
+00:08:23,755 --> 00:08:26,574
+Zero point two times ten is two.
+
+122
+00:08:27,000 --> 00:08:28,715
+The sum is two point six.
+
+123
+00:08:29,141 --> 00:08:32,452
+The rare value ten pulls the expected value up a lot.
+
+124
+00:08:33,973 --> 00:08:34,824
+Second question.
+
+125
+00:08:35,249 --> 00:08:36,619
+Roll three dice.
+
+126
+00:08:37,044 --> 00:08:38,281
+What is the expected sum?
+
+127
+00:08:38,707 --> 00:08:43,201
+And what is the expected value of three times one die, minus two?
+
+128
+00:08:43,627 --> 00:08:44,717
+Use linearity.
+
+129
+00:08:45,143 --> 00:08:45,848
+Pause and try.
+
+130
+00:08:46,846 --> 00:08:54,505
+For three dice, add three expected values: three point five, three times, which is ten point five.
+
+131
+00:08:54,971 --> 00:09:05,582
+For three times X minus two, multiply and shift: three times three point five is ten point five, minus two is eight point five.
+
+132
+00:09:07,306 --> 00:09:09,194
+Let's compute it all in NumPy.
+
+133
+00:09:09,620 --> 00:09:13,250
+We multiply each face by its probability and sum.
+
+134
+00:09:13,689 --> 00:09:15,298
+We do the same for the lottery.
+
+135
+00:09:15,803 --> 00:09:19,035
+For two dice, we average all thirty six sums.
+
+136
+00:09:19,473 --> 00:09:26,654
+Then we roll one die ten thousand times with a fixed seed, and compute the running average with a cumulative sum.
+
+137
+00:09:28,173 --> 00:09:32,042
+This output is real; the script ran while the video was made.
+
+138
+00:09:32,468 --> 00:09:37,707
+The die gives three point five, the lottery minus one, and two dice seven.
+
+139
+00:09:38,159 --> 00:09:40,845
+The first ten rolls average two point nine.
+
+140
+00:09:41,271 --> 00:09:48,226
+Then the averages go to three point four six, three point four five three, and three point four eight eight three.
+
+141
+00:09:48,665 --> 00:09:50,606
+The data mean is five.
+
+142
+00:09:52,339 --> 00:09:53,004
+In summary.
+
+143
+00:09:53,430 --> 00:10:02,180
+The expected value is a weighted average of the values, with the probabilities as weights: E of X equals the sum of p of x times x.
+
+144
+00:10:02,618 --> 00:10:07,206
+A fair die expects three point five, a value you can never roll.
+
+145
+00:10:07,632 --> 00:10:13,230
+It is linear: E of a X plus b Y equals a E of X plus b E of Y.
+
+146
+00:10:14,173 --> 00:10:19,837
+The average of many samples approaches the expected value: the law of large numbers.
+
+147
+00:10:20,276 --> 00:10:25,409
+The mean of a data set is an expected value, and training minimizes an average loss.
+
+148
+00:10:25,835 --> 00:10:32,936
+Next, in video fourteen: variance and covariance, how far values spread around this average.
+
+149
+00:10:34,873 --> 00:10:36,694
+This video was made by David R.
+
+150
+00:10:37,133 --> 00:10:40,365
+You can find more lessons at David Ramirez J dot com.
+
+151
+00:10:40,923 --> 00:10:41,641
+Thanks for watching.

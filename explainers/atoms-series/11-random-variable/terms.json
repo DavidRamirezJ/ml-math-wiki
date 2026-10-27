@@ -1,0 +1,12 @@
+[
+ {
+  "term": "outcome",
+  "definition": "One possible result of an experiment, like heads or a roll of blue 3, green 4.",
+  "video": "11-random-variable"
+ },
+ {
+  "term": "random variable",
+  "definition": "A rule (a function) that gives each outcome of an experiment a number.",
+  "video": "11-random-variable"
+ }
+]

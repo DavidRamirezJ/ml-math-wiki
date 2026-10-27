@@ -1,0 +1,679 @@
+1
+00:00:00,119 --> 00:00:01,529
+Will this customer click on the ad?
+
+2
+00:00:01,968 --> 00:00:03,111
+Is this email spam?
+
+3
+00:00:03,550 --> 00:00:05,890
+What word will a language model write next?
+
+4
+00:00:06,316 --> 00:00:08,856
+Machine learning lives with uncertainty.
+
+5
+00:00:09,281 --> 00:00:11,316
+We cannot know the answer before it happens.
+
+6
+00:00:11,755 --> 00:00:15,319
+But to compute with uncertainty, we first need numbers.
+
+7
+00:00:15,757 --> 00:00:19,454
+The tool that turns chance into numbers is called a random variable.
+
+8
+00:00:20,373 --> 00:00:27,208
+In this video you will learn what a random variable really is: not something mysterious, but a simple rule.
+
+9
+00:00:27,633 --> 00:00:34,588
+You will build random variables from coins and dice, ask questions about them, and watch them in a computer simulation.
+
+10
+00:00:35,013 --> 00:00:38,524
+You only need counting and the idea of a function.
+
+11
+00:00:38,963 --> 00:00:43,138
+This is the first video about axiom D, the rules of probability.
+
+12
+00:00:44,859 --> 00:00:46,069
+Start with an experiment.
+
+13
+00:00:46,468 --> 00:00:55,670
+In probability, an experiment is anything with an uncertain result: flipping a coin, rolling a die, picking a random email.
+
+14
+00:00:56,109 --> 00:00:58,290
+Each possible result is called an outcome.
+
+15
+00:00:58,716 --> 00:01:01,654
+A coin has two outcomes: heads and tails.
+
+16
+00:01:03,173 --> 00:01:06,351
+Now roll two dice, a blue one and a green one.
+
+17
+00:01:06,803 --> 00:01:08,718
+The blue die shows one to six.
+
+18
+00:01:09,170 --> 00:01:11,524
+The green die also shows one to six.
+
+19
+00:01:11,962 --> 00:01:13,891
+Every pair is a different outcome.
+
+20
+00:01:14,316 --> 00:01:16,923
+Six times six gives thirty six outcomes.
+
+21
+00:01:17,361 --> 00:01:18,239
+Here they are in a grid.
+
+22
+00:01:18,665 --> 00:01:23,465
+Each cell is one outcome, for example blue three and green four.
+
+23
+00:01:24,406 --> 00:01:25,137
+Notice something.
+
+24
+00:01:25,563 --> 00:01:27,584
+Outcomes are not always numbers.
+
+25
+00:01:28,023 --> 00:01:28,901
+Heads is a word.
+
+26
+00:01:29,326 --> 00:01:30,523
+An email is a text.
+
+27
+00:01:30,962 --> 00:01:32,159
+A photo is a picture.
+
+28
+00:01:32,571 --> 00:01:36,427
+Even for dice, an outcome is a pair, not one number.
+
+29
+00:01:36,866 --> 00:01:39,924
+But mathematics and computers want numbers.
+
+30
+00:01:40,363 --> 00:01:43,076
+So we need a way to go from outcomes to numbers.
+
+31
+00:01:44,819 --> 00:01:46,309
+Here is the key idea.
+
+32
+00:01:46,721 --> 00:01:50,431
+A random variable is a rule that gives each outcome a number.
+
+33
+00:01:50,870 --> 00:01:51,388
+That is all.
+
+34
+00:01:51,814 --> 00:01:52,492
+Take the coin.
+
+35
+00:01:52,931 --> 00:01:57,186
+Let Y be one if the outcome is heads, and zero if it is tails.
+
+36
+00:01:57,625 --> 00:01:59,872
+Each outcome gets exactly one number.
+
+37
+00:02:00,298 --> 00:02:01,588
+Y is a random variable.
+
+38
+00:02:03,106 --> 00:02:04,263
+Back to the two dice.
+
+39
+00:02:04,675 --> 00:02:06,710
+Let X be the sum of the two dice.
+
+40
+00:02:07,135 --> 00:02:10,593
+The rule reads the outcome and adds the two faces.
+
+41
+00:02:11,045 --> 00:02:14,063
+Blue three and green four give seven.
+
+42
+00:02:14,489 --> 00:02:16,789
+Blue six and green six give twelve.
+
+43
+00:02:17,255 --> 00:02:22,880
+Fill in the whole grid, and every outcome now has a number from two to twelve.
+
+44
+00:02:23,806 --> 00:02:24,989
+A word about notation.
+
+45
+00:02:25,428 --> 00:02:28,407
+We write the rule with a capital letter, X.
+
+46
+00:02:28,846 --> 00:02:31,891
+One value it can take gets a small letter, x.
+
+47
+00:02:32,317 --> 00:02:35,894
+So X of blue three, green four equals seven.
+
+48
+00:02:36,306 --> 00:02:41,146
+And a fun fact: a random variable is neither random nor a variable.
+
+49
+00:02:41,585 --> 00:02:42,370
+It is a function.
+
+50
+00:02:42,795 --> 00:02:45,960
+The randomness lives in the outcome, not in the rule.
+
+51
+00:02:46,906 --> 00:02:49,991
+One experiment can carry many random variables.
+
+52
+00:02:50,430 --> 00:02:53,382
+Take the outcome blue two, green five.
+
+53
+00:02:53,834 --> 00:02:55,137
+The sum is seven.
+
+54
+00:02:55,576 --> 00:02:57,451
+The largest face is five.
+
+55
+00:02:57,890 --> 00:03:00,948
+The difference, green minus blue, is three.
+
+56
+00:03:01,401 --> 00:03:05,190
+Three different rules, three different numbers, from the very same roll.
+
+57
+00:03:05,603 --> 00:03:08,222
+We choose the rule that measures what we care about.
+
+58
+00:03:09,939 --> 00:03:11,176
+Now we can ask questions.
+
+59
+00:03:11,601 --> 00:03:16,562
+An event is a set of outcomes, such as the outcomes where X is at least ten.
+
+60
+00:03:16,974 --> 00:03:17,865
+Which cells are they?
+
+61
+00:03:18,290 --> 00:03:23,104
+A sum of ten has three cells, eleven has two, and twelve has one.
+
+62
+00:03:23,530 --> 00:03:27,373
+So the event X at least ten has six outcomes out of thirty six.
+
+63
+00:03:28,306 --> 00:03:31,285
+Another question: when is X equal to seven?
+
+64
+00:03:31,684 --> 00:03:32,362
+Look at the grid.
+
+65
+00:03:32,801 --> 00:03:39,596
+The sevens lie on one diagonal: one and six, two and five, all the way to six and one.
+
+66
+00:03:40,035 --> 00:03:41,285
+That is six outcomes too.
+
+67
+00:03:41,710 --> 00:03:43,133
+No other sum has that many.
+
+68
+00:03:43,585 --> 00:03:46,218
+So seven is the most common sum of two dice.
+
+69
+00:03:47,139 --> 00:03:48,230
+Some events are extreme.
+
+70
+00:03:48,655 --> 00:03:52,738
+X equal to one is impossible: the smallest sum is two.
+
+71
+00:03:53,176 --> 00:03:56,168
+That event is empty, it has no outcomes.
+
+72
+00:03:56,607 --> 00:04:01,355
+And X at most twelve always happens: all thirty six outcomes are in it.
+
+73
+00:04:01,780 --> 00:04:05,570
+Counting outcomes like this tells us how likely each value is.
+
+74
+00:04:06,473 --> 00:04:11,100
+With fair dice, every outcome has the same chance, one in thirty six.
+
+75
+00:04:11,539 --> 00:04:15,781
+So the chance of an event is its number of outcomes divided by thirty six.
+
+76
+00:04:16,207 --> 00:04:23,055
+The chance that X is at least ten is six over thirty six, about zero point one six seven.
+
+77
+00:04:23,494 --> 00:04:28,095
+The full table of chances for every value is the topic of video twelve.
+
+78
+00:04:29,806 --> 00:04:31,827
+Random variables come in two kinds.
+
+79
+00:04:32,239 --> 00:04:41,707
+A discrete random variable takes separate values that you can list: zero or one for the coin, two to twelve for the dice, or the number of emails you get in a day.
+
+80
+00:04:42,133 --> 00:04:43,702
+You can count them, one by one.
+
+81
+00:04:44,626 --> 00:04:48,788
+A continuous random variable can take any value in a range.
+
+82
+00:04:49,280 --> 00:04:54,905
+Think of the height of a random person, like one hundred seventy two point three centimeters.
+
+83
+00:04:55,344 --> 00:05:00,876
+Or the time you wait for the next bus: two minutes, two point five, two point five one.
+
+84
+00:05:01,328 --> 00:05:04,892
+Between any two values there are always more values.
+
+85
+00:05:05,879 --> 00:05:11,305
+For continuous variables, we ask about ranges instead of exact values.
+
+86
+00:05:11,770 --> 00:05:17,089
+For example: what is the chance that the waiting time is between two and five minutes?
+
+87
+00:05:17,528 --> 00:05:19,749
+The rule idea does not change.
+
+88
+00:05:20,161 --> 00:05:22,448
+An outcome comes in, a number comes out.
+
+89
+00:05:22,874 --> 00:05:25,321
+Only the set of possible numbers is different.
+
+90
+00:05:27,072 --> 00:05:31,354
+We can also see a random variable by running the experiment many times.
+
+91
+00:05:31,780 --> 00:05:35,450
+Each run gives one outcome, and the rule gives one number.
+
+92
+00:05:35,875 --> 00:05:37,844
+That number is called a sample of X.
+
+93
+00:05:38,282 --> 00:05:46,713
+Here are the first six runs of a computer simulation: the sums are ten, eleven, nine, eight, three, and eight.
+
+94
+00:05:48,239 --> 00:05:53,199
+Now run it ten thousand times and count how often each sum appears.
+
+95
+00:05:53,638 --> 00:05:55,699
+This bar chart is called a histogram.
+
+96
+00:05:56,111 --> 00:05:57,361
+It has a triangle shape.
+
+97
+00:05:57,800 --> 00:06:04,037
+The middle value, seven, appears most often, about one thousand six hundred eighty times.
+
+98
+00:06:04,476 --> 00:06:08,332
+Two and twelve are rare, because each has only one outcome.
+
+99
+00:06:09,226 --> 00:06:11,340
+Compare the simulation with our counting.
+
+100
+00:06:11,752 --> 00:06:17,484
+The event X at least ten happened in zero point one six three seven of the runs.
+
+101
+00:06:17,922 --> 00:06:20,569
+Counting gave zero point one six seven.
+
+102
+00:06:20,994 --> 00:06:25,050
+They are close, but not equal, because samples are random.
+
+103
+00:06:25,476 --> 00:06:29,292
+With more runs, the share usually gets closer to the counted value.
+
+104
+00:06:30,206 --> 00:06:33,131
+This is exactly the situation in machine learning.
+
+105
+00:06:33,557 --> 00:06:36,456
+We almost never know the rule and all the outcomes.
+
+106
+00:06:36,868 --> 00:06:40,126
+We only see samples, and those samples are our data.
+
+107
+00:06:40,551 --> 00:06:44,847
+A histogram of the data is our window into the random variable.
+
+108
+00:06:45,285 --> 00:06:48,530
+The more samples we have, the clearer the picture becomes.
+
+109
+00:06:50,226 --> 00:06:53,643
+In machine learning, random variables are everywhere.
+
+110
+00:06:54,095 --> 00:06:56,063
+Pick a random email from your inbox.
+
+111
+00:06:56,502 --> 00:07:00,106
+The label Y is one if it is spam and zero if it is not.
+
+112
+00:07:00,545 --> 00:07:03,603
+That is a random variable, exactly like the coin.
+
+113
+00:07:04,015 --> 00:07:07,566
+A classifier tries to predict Y from the email.
+
+114
+00:07:09,106 --> 00:07:11,379
+Measurements are random variables too.
+
+115
+00:07:11,792 --> 00:07:17,098
+A thermometer shows the true temperature plus a small error, called noise.
+
+116
+00:07:17,536 --> 00:07:23,215
+If the true value is twenty degrees, the reading might be twenty point three, or nineteen point eight.
+
+117
+00:07:23,653 --> 00:07:28,148
+The noise is a continuous random variable, and so is the reading.
+
+118
+00:07:29,672 --> 00:07:32,212
+And a data set is a collection of samples.
+
+119
+00:07:32,651 --> 00:07:41,680
+Each row is one sample of a random vector: a list of random variables measured together, like age, income, and the label.
+
+120
+00:07:42,119 --> 00:07:46,893
+When a language model writes, the next word is also a random variable.
+
+121
+00:07:47,305 --> 00:07:50,470
+Each time it generates, we see one sample.
+
+122
+00:07:52,032 --> 00:07:56,580
+Here is a real example from the book Build a Large Language Model from Scratch.
+
+123
+00:07:57,006 --> 00:08:10,490
+After the words every effort moves you, a small model gave the next word forward a probability of about zero point five seven, toward about zero point three six, and closer about zero point zero six.
+
+124
+00:08:10,915 --> 00:08:15,742
+In one thousand samples, forward appeared five hundred eighty two times.
+
+125
+00:08:16,181 --> 00:08:19,492
+Each sample is one value of the same random variable.
+
+126
+00:08:21,239 --> 00:08:21,757
+Your turn.
+
+127
+00:08:22,236 --> 00:08:23,340
+Flip two coins.
+
+128
+00:08:23,765 --> 00:08:25,773
+Let Z be the number of heads.
+
+129
+00:08:26,199 --> 00:08:27,036
+Pause the video.
+
+130
+00:08:27,435 --> 00:08:31,584
+Write down all the outcomes, and give each outcome its value of Z.
+
+131
+00:08:32,010 --> 00:08:33,792
+Which outcomes give Z equal to one?
+
+132
+00:08:34,739 --> 00:08:35,922
+There are four outcomes.
+
+133
+00:08:36,348 --> 00:08:37,438
+Heads heads gives two.
+
+134
+00:08:37,864 --> 00:08:38,994
+Heads tails gives one.
+
+135
+00:08:39,433 --> 00:08:40,430
+Tails heads gives one.
+
+136
+00:08:40,856 --> 00:08:42,345
+Tails tails gives zero.
+
+137
+00:08:42,784 --> 00:08:47,757
+So Z equals one for two outcomes: heads tails and tails heads.
+
+138
+00:08:48,169 --> 00:08:51,055
+Notice that two different outcomes can give the same number.
+
+139
+00:08:51,507 --> 00:08:52,106
+That is allowed.
+
+140
+00:08:53,639 --> 00:08:54,423
+Second question.
+
+141
+00:08:54,835 --> 00:08:57,827
+Roll two fair dice, and let X be their sum.
+
+142
+00:08:58,280 --> 00:09:01,245
+How many outcomes are in the event X at most three?
+
+143
+00:09:01,684 --> 00:09:02,814
+And what is its chance?
+
+144
+00:09:03,253 --> 00:09:03,958
+Pause and try.
+
+145
+00:09:04,872 --> 00:09:07,279
+A sum of two needs one and one.
+
+146
+00:09:07,718 --> 00:09:11,614
+A sum of three needs one and two, or two and one.
+
+147
+00:09:12,053 --> 00:09:13,489
+That is three outcomes.
+
+148
+00:09:13,928 --> 00:09:20,364
+The chance is three over thirty six, which is one twelfth, about zero point zero eight three.
+
+149
+00:09:22,105 --> 00:09:24,698
+Let's simulate it in Python with NumPy.
+
+150
+00:09:25,097 --> 00:09:30,642
+We create a random number generator with a fixed seed, so the run repeats exactly.
+
+151
+00:09:31,081 --> 00:09:34,060
+We roll two dice ten thousand times.
+
+152
+00:09:34,486 --> 00:09:36,999
+The random variable X is the sum of each row.
+
+153
+00:09:37,424 --> 00:09:42,145
+Then we count each sum, and the share of runs where X is at least ten.
+
+154
+00:09:43,672 --> 00:09:47,741
+This output is real; the script ran while the video was made.
+
+155
+00:09:48,180 --> 00:09:53,499
+The first rolls give sums ten, eleven, nine, eight, three, and eight.
+
+156
+00:09:53,938 --> 00:09:58,246
+Seven appeared one thousand six hundred eighty times, the most of all.
+
+157
+00:09:58,672 --> 00:10:06,252
+The share of X at least ten is zero point one six three seven, close to the counted zero point one six seven.
+
+158
+00:10:06,691 --> 00:10:10,520
+The coin flips give seven ones and three zeros.
+
+159
+00:10:12,239 --> 00:10:12,930
+In summary.
+
+160
+00:10:13,342 --> 00:10:15,191
+An experiment has outcomes.
+
+161
+00:10:15,616 --> 00:10:19,127
+A random variable is a rule that gives each outcome a number.
+
+162
+00:10:19,539 --> 00:10:22,624
+One experiment can have many random variables.
+
+163
+00:10:23,036 --> 00:10:30,550
+An event is a set of outcomes, like X at least ten, and with equally likely outcomes, its chance comes from counting.
+
+164
+00:10:31,472 --> 00:10:36,631
+Random variables can be discrete or continuous, and we see them through samples.
+
+165
+00:10:37,030 --> 00:10:41,725
+Labels, noise, and data sets are all random variables.
+
+166
+00:10:42,150 --> 00:10:48,706
+Next, in video twelve, we write down the full rules of chance: the probability distribution.
+
+167
+00:10:49,145 --> 00:10:49,690
+See you there.
+
+168
+00:10:51,639 --> 00:10:53,460
+This video was made by David R.
+
+169
+00:10:53,899 --> 00:10:57,131
+You can find more lessons at David Ramirez J dot com.
+
+170
+00:10:57,689 --> 00:10:58,407
+Thanks for watching.

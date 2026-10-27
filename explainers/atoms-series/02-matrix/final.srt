@@ -1,0 +1,799 @@
+1
+00:00:00,093 --> 00:00:03,710
+In video one, we saw that data becomes vectors.
+
+2
+00:00:04,122 --> 00:00:07,327
+But a model almost never looks at just one vector.
+
+3
+00:00:07,752 --> 00:00:09,906
+It looks at a whole table of them at once.
+
+4
+00:00:10,345 --> 00:00:14,720
+And every layer of a neural network keeps what it has learned in a grid of numbers.
+
+5
+00:00:15,146 --> 00:00:16,409
+That grid has a name.
+
+6
+00:00:16,835 --> 00:00:18,018
+It is called a matrix.
+
+7
+00:00:18,939 --> 00:00:22,756
+In this video you will learn the two faces of a matrix.
+
+8
+00:00:23,181 --> 00:00:28,115
+It is a table that stores data, and it is a machine that moves vectors.
+
+9
+00:00:28,554 --> 00:00:33,899
+You will multiply a matrix by a vector, and two matrices together, by hand.
+
+10
+00:00:34,338 --> 00:00:40,256
+You only need video one: vectors, adding, scaling, and linear combinations.
+
+11
+00:00:41,973 --> 00:00:44,579
+Let's start with the first face: a table.
+
+12
+00:00:45,018 --> 00:00:46,374
+Here are three houses.
+
+13
+00:00:46,840 --> 00:00:54,353
+For each house we write three numbers: the area in square meters, the number of bedrooms, and the age in years.
+
+14
+00:00:54,792 --> 00:00:57,571
+Each house is a vector, just like in video one.
+
+15
+00:00:57,996 --> 00:01:00,989
+Now we stack the three vectors, one per row.
+
+16
+00:01:01,906 --> 00:01:05,244
+The result is a grid of numbers with rows and columns.
+
+17
+00:01:05,669 --> 00:01:08,728
+A rectangular grid of numbers is called a matrix.
+
+18
+00:01:09,140 --> 00:01:15,204
+This one has three rows and three columns, so we call it a three by three matrix.
+
+19
+00:01:15,643 --> 00:01:19,712
+We always say the number of rows first, and then the number of columns.
+
+20
+00:01:20,639 --> 00:01:23,046
+Each number in the matrix has an address.
+
+21
+00:01:23,485 --> 00:01:28,658
+We write the letter a with two small numbers: first the row, then the column.
+
+22
+00:01:29,070 --> 00:01:32,727
+So a two one is the number in row two, column one.
+
+23
+00:01:33,166 --> 00:01:36,224
+Here that is eighty, the area of the second house.
+
+24
+00:01:37,126 --> 00:01:39,520
+Read the matrix in two directions.
+
+25
+00:01:39,932 --> 00:01:42,379
+A row is one house: one data point.
+
+26
+00:01:42,791 --> 00:01:46,195
+A column is one feature across all the houses.
+
+27
+00:01:46,687 --> 00:01:52,139
+For example, the second column lists the bedrooms: three, two, and four.
+
+28
+00:01:52,551 --> 00:01:59,041
+In machine learning, a batch of data is stored exactly like this, with one row per example.
+
+29
+00:02:00,759 --> 00:02:03,086
+Now the second face: a machine.
+
+30
+00:02:03,499 --> 00:02:07,408
+A matrix can take a vector as input and give back a new vector.
+
+31
+00:02:07,860 --> 00:02:10,028
+Here is a two by two matrix A.
+
+32
+00:02:10,467 --> 00:02:15,680
+Its first column is two, one, and its second column is one, three.
+
+33
+00:02:16,132 --> 00:02:19,961
+Here is an input vector x, equal to one, two.
+
+34
+00:02:20,387 --> 00:02:21,491
+What is A times x?
+
+35
+00:02:22,419 --> 00:02:24,015
+Here is the key idea.
+
+36
+00:02:24,440 --> 00:02:28,084
+A times x is a linear combination of the columns of A.
+
+37
+00:02:28,523 --> 00:02:30,637
+The components of x are the weights.
+
+38
+00:02:31,076 --> 00:02:35,823
+So we take one times the first column, plus two times the second column.
+
+39
+00:02:36,249 --> 00:02:38,297
+One times two, one is two, one.
+
+40
+00:02:38,736 --> 00:02:41,462
+Two times one, three is two, six.
+
+41
+00:02:42,406 --> 00:02:43,297
+Now add them.
+
+42
+00:02:43,736 --> 00:02:45,398
+Two plus two is four.
+
+43
+00:02:45,837 --> 00:02:47,645
+One plus six is seven.
+
+44
+00:02:48,071 --> 00:02:51,023
+So A times x equals four, seven.
+
+45
+00:02:51,462 --> 00:02:55,983
+The machine turned the vector one, two into the vector four, seven.
+
+46
+00:02:56,409 --> 00:03:01,887
+Every matrix times a vector works this way, no matter how big the matrix is.
+
+47
+00:03:02,852 --> 00:03:05,924
+There is a second way to get the same answer: the row view.
+
+48
+00:03:06,350 --> 00:03:10,592
+Take the first row of A, two, one, and the vector one, two.
+
+49
+00:03:11,017 --> 00:03:13,491
+Multiply matching entries and add.
+
+50
+00:03:13,916 --> 00:03:16,802
+Two times one plus one times two is four.
+
+51
+00:03:17,241 --> 00:03:22,520
+The second row gives one times one plus three times two, which is seven.
+
+52
+00:03:23,473 --> 00:03:25,361
+Same answer: four, seven.
+
+53
+00:03:25,800 --> 00:03:33,007
+This multiply-and-add pattern between a row and a vector is so important that it has its own name, the inner product.
+
+54
+00:03:33,446 --> 00:03:35,574
+It gets its own video, video five.
+
+55
+00:03:35,999 --> 00:03:42,103
+One rule about shapes: the matrix needs as many columns as the vector has components.
+
+56
+00:03:43,839 --> 00:03:46,326
+Let's watch the machine at work on the whole plane.
+
+57
+00:03:46,778 --> 00:03:49,491
+Here is a grid with two special arrows.
+
+58
+00:03:49,930 --> 00:03:53,081
+The blue arrow, e one, is one, zero.
+
+59
+00:03:53,507 --> 00:03:56,486
+The green arrow, e two, is zero, one.
+
+60
+00:03:56,911 --> 00:03:59,704
+We also follow a yellow vector, one, two.
+
+61
+00:04:00,142 --> 00:04:01,605
+Now look at the column view again.
+
+62
+00:04:02,044 --> 00:04:04,052
+A times e one is just the first column.
+
+63
+00:04:04,478 --> 00:04:06,592
+A times e two is the second column.
+
+64
+00:04:07,539 --> 00:04:12,353
+So the columns tell you everything: they say where e one and e two land.
+
+65
+00:04:12,792 --> 00:04:16,861
+Take the matrix with columns two, zero and zero, one.
+
+66
+00:04:17,273 --> 00:04:22,034
+It sends e one to two, zero, and it leaves e two where it is.
+
+67
+00:04:22,459 --> 00:04:23,138
+Watch the grid.
+
+68
+00:04:23,563 --> 00:04:27,566
+Everything becomes twice as wide, and the heights stay the same.
+
+69
+00:04:28,493 --> 00:04:31,870
+The yellow vector one, two became two, two.
+
+70
+00:04:32,309 --> 00:04:33,612
+Check it with the column rule.
+
+71
+00:04:34,051 --> 00:04:38,439
+One times two, zero, plus two times zero, one, is two, two.
+
+72
+00:04:38,878 --> 00:04:40,886
+The picture and the arithmetic agree.
+
+73
+00:04:41,826 --> 00:04:47,025
+Now a different matrix, with columns zero, one and minus one, zero.
+
+74
+00:04:47,464 --> 00:04:52,677
+It sends e one to zero, one, and e two to minus one, zero.
+
+75
+00:04:53,102 --> 00:04:55,882
+Each arrow turns a quarter turn to the left.
+
+76
+00:04:56,307 --> 00:05:01,720
+So this matrix rotates the whole plane by ninety degrees, counterclockwise.
+
+77
+00:05:02,639 --> 00:05:06,323
+The yellow vector one, two now becomes minus two, one.
+
+78
+00:05:06,748 --> 00:05:07,892
+Notice what stays true.
+
+79
+00:05:08,331 --> 00:05:15,153
+The grid lines stay straight, parallel, and evenly spaced, and the origin does not move.
+
+80
+00:05:15,565 --> 00:05:18,557
+Machines with this property are called linear maps.
+
+81
+00:05:18,982 --> 00:05:21,535
+They get their own video, video four.
+
+82
+00:05:23,273 --> 00:05:26,411
+What happens if we use two machines, one after the other?
+
+83
+00:05:26,890 --> 00:05:28,525
+First apply B to x.
+
+84
+00:05:28,964 --> 00:05:30,826
+Then apply A to the result.
+
+85
+00:05:31,265 --> 00:05:34,695
+Is there one single matrix that does both steps at once?
+
+86
+00:05:35,108 --> 00:05:35,600
+Yes.
+
+87
+00:05:36,025 --> 00:05:37,794
+It is the product, A B.
+
+88
+00:05:38,379 --> 00:05:42,089
+Note the order: B acts first, because B stands next to x.
+
+89
+00:05:43,593 --> 00:05:47,103
+Computing this product is called matrix multiplication.
+
+90
+00:05:47,542 --> 00:05:54,297
+To find the entry in row i and column j of A B, take row i of A and column j of B.
+
+91
+00:05:54,949 --> 00:05:57,648
+Multiply matching entries and add them up.
+
+92
+00:05:58,074 --> 00:06:05,295
+In symbols: A B, i j, equals the sum over k of a i k times b k j.
+
+93
+00:06:06,793 --> 00:06:08,016
+Let's do one completely.
+
+94
+00:06:08,428 --> 00:06:12,125
+A has rows one, two and three, four.
+
+95
+00:06:12,564 --> 00:06:15,250
+B has rows five, six and seven, eight.
+
+96
+00:06:15,689 --> 00:06:23,215
+Top left: row one of A, which is one, two, with column one of B, which is five, seven.
+
+97
+00:06:23,654 --> 00:06:26,753
+One times five plus two times seven is nineteen.
+
+98
+00:06:27,178 --> 00:06:31,500
+Top right: one times six plus two times eight is twenty-two.
+
+99
+00:06:32,452 --> 00:06:38,676
+Bottom left: row two of A, three, four, with column one of B, five, seven.
+
+100
+00:06:39,141 --> 00:06:42,546
+Three times five plus four times seven is forty-three.
+
+101
+00:06:42,971 --> 00:06:47,266
+Bottom right: three times six plus four times eight is fifty.
+
+102
+00:06:47,705 --> 00:06:52,359
+So A B has rows nineteen, twenty-two and forty-three, fifty.
+
+103
+00:06:53,873 --> 00:06:54,737
+Now the shape rule.
+
+104
+00:06:55,162 --> 00:07:01,625
+If A is m by n, and B is n by p, then A B is m by p.
+
+105
+00:07:02,064 --> 00:07:05,123
+The two inner numbers must match, and they disappear.
+
+106
+00:07:05,548 --> 00:07:10,748
+A two by three matrix times a three by two matrix gives a two by two matrix.
+
+107
+00:07:11,173 --> 00:07:14,777
+But a two by three times a two by three is not allowed.
+
+108
+00:07:16,332 --> 00:07:18,819
+Here is a surprise: the order matters.
+
+109
+00:07:19,245 --> 00:07:21,519
+Take the stretch S and the rotation R.
+
+110
+00:07:22,090 --> 00:07:28,686
+Stretch first, then rotate: e one goes to two, zero, and then to zero, two.
+
+111
+00:07:29,098 --> 00:07:36,612
+Rotate first, then stretch: e one goes to zero, one, and the stretch leaves it at zero, one.
+
+112
+00:07:37,037 --> 00:07:38,194
+The results are different.
+
+113
+00:07:39,106 --> 00:07:41,220
+The matrices agree with the pictures.
+
+114
+00:07:41,646 --> 00:07:43,867
+R S has the first column zero, two.
+
+115
+00:07:44,292 --> 00:07:46,765
+S R has the first column zero, one.
+
+116
+00:07:47,191 --> 00:07:49,531
+So R S is not equal to S R.
+
+117
+00:07:49,957 --> 00:07:53,640
+With numbers, a times b always equals b times a.
+
+118
+00:07:54,079 --> 00:07:58,242
+With matrices, in general, A B is not equal to B A.
+
+119
+00:07:59,973 --> 00:08:02,366
+Two more tools finish the toolbox.
+
+120
+00:08:02,792 --> 00:08:04,534
+The first is the transpose.
+
+121
+00:08:04,959 --> 00:08:10,172
+Take a matrix and flip it over its diagonal, so its rows become its columns.
+
+122
+00:08:10,611 --> 00:08:14,135
+We write a small T at the top right, and we say A transpose.
+
+123
+00:08:15,086 --> 00:08:21,695
+Here is a two by three matrix, with rows one, two, three and four, five, six.
+
+124
+00:08:22,120 --> 00:08:24,381
+Its transpose is three by two.
+
+125
+00:08:24,807 --> 00:08:29,009
+The first row, one, two, three, becomes the first column.
+
+126
+00:08:29,434 --> 00:08:31,642
+The second row becomes the second column.
+
+127
+00:08:32,067 --> 00:08:35,325
+The shape flips: m by n becomes n by m.
+
+128
+00:08:36,239 --> 00:08:37,822
+Careful with a common mistake.
+
+129
+00:08:38,247 --> 00:08:44,378
+The transpose is not the same as pouring the numbers, in reading order, into a new shape.
+
+130
+00:08:44,816 --> 00:08:48,500
+That gives one, two, then three, four, then five, six: wrong.
+
+131
+00:08:48,925 --> 00:08:55,189
+In the transpose, the entry in row i, column j comes from row j, column i.
+
+132
+00:08:56,752 --> 00:08:59,399
+The second tool is the identity matrix.
+
+133
+00:08:59,838 --> 00:09:03,229
+It has ones on the diagonal and zeros everywhere else.
+
+134
+00:09:03,627 --> 00:09:09,598
+Its columns are e one and e two, so it leaves e one and e two where they are.
+
+135
+00:09:10,037 --> 00:09:12,604
+So the identity matrix does nothing.
+
+136
+00:09:13,029 --> 00:09:16,167
+I times x equals x, for every x.
+
+137
+00:09:17,106 --> 00:09:21,707
+It is the matrix version of the number one, because one times five equals five.
+
+138
+00:09:22,146 --> 00:09:31,694
+Multiply any matrix by the identity, on either side, and you get it back: A times I equals A, and I times A equals A.
+
+139
+00:09:33,239 --> 00:09:34,542
+Where does all of this come from?
+
+140
+00:09:34,955 --> 00:09:38,798
+A matrix times a vector is a linear combination of its columns.
+
+141
+00:09:39,223 --> 00:09:43,492
+Matrix multiplication is one such machine after another.
+
+142
+00:09:43,931 --> 00:09:47,734
+So everything in this video is built from adding and scaling.
+
+143
+00:09:48,173 --> 00:09:50,553
+That is axiom A, linearity.
+
+144
+00:09:52,273 --> 00:09:54,320
+Now let's put matrices to work.
+
+145
+00:09:54,759 --> 00:09:59,174
+Take our three houses again, as a three by three matrix X.
+
+146
+00:09:59,467 --> 00:10:05,570
+Suppose a toy model gives each house a score with three weights: two, ten, and minus one.
+
+147
+00:10:06,009 --> 00:10:08,097
+We put the weights into a vector w.
+
+148
+00:10:08,536 --> 00:10:12,432
+Then X times w scores all three houses at once.
+
+149
+00:10:13,339 --> 00:10:18,632
+Row one: two times one hundred twenty, plus ten times three, minus fifteen.
+
+150
+00:10:19,057 --> 00:10:24,164
+That is two hundred forty plus thirty minus fifteen, which is two hundred fifty-five.
+
+151
+00:10:24,602 --> 00:10:29,004
+The other rows give one hundred fifty and three hundred thirty-five.
+
+152
+00:10:29,430 --> 00:10:32,222
+One matrix product gives three predictions.
+
+153
+00:10:32,634 --> 00:10:35,321
+This is why data is kept in matrices.
+
+154
+00:10:36,873 --> 00:10:39,612
+A layer in a neural network works the same way.
+
+155
+00:10:40,024 --> 00:10:46,115
+A layer with three inputs and two outputs has a two by three matrix of weights, W.
+
+156
+00:10:46,553 --> 00:10:50,623
+The layer multiplies the input vector x by this matrix.
+
+157
+00:10:51,048 --> 00:10:54,718
+Each output is one row of weights combined with the input.
+
+158
+00:10:56,239 --> 00:10:57,875
+Real models are much bigger.
+
+159
+00:10:58,274 --> 00:11:07,210
+In the book Build a Large Language Model from Scratch, one example layer has a weight matrix of two thousand forty-eight by two thousand forty-eight.
+
+160
+00:11:07,635 --> 00:11:10,960
+That is more than four million numbers in a single matrix.
+
+161
+00:11:12,673 --> 00:11:13,510
+Now it is your turn.
+
+162
+00:11:13,962 --> 00:11:15,731
+Pause the video and try this.
+
+163
+00:11:16,143 --> 00:11:22,925
+Multiply the matrix with rows one, two and zero, one by the vector three, one.
+
+164
+00:11:23,351 --> 00:11:25,252
+Use the column view or the row view.
+
+165
+00:11:25,691 --> 00:11:26,954
+Both give the same answer.
+
+166
+00:11:27,886 --> 00:11:29,814
+Here is the answer with the row view.
+
+167
+00:11:30,240 --> 00:11:34,495
+Row one: one times three plus two times one is five.
+
+168
+00:11:34,934 --> 00:11:39,189
+Row two: zero times three plus one times one is one.
+
+169
+00:11:39,615 --> 00:11:41,529
+So the answer is five, one.
+
+170
+00:11:41,955 --> 00:11:48,896
+With the column view, three times one, zero plus one times two, one also gives five, one.
+
+171
+00:11:50,439 --> 00:11:52,527
+Second question, about shapes.
+
+172
+00:11:52,952 --> 00:11:57,620
+A is a two by three matrix, and B is a three by four matrix.
+
+173
+00:11:58,059 --> 00:12:00,120
+Is A B allowed, and what is its shape?
+
+174
+00:12:00,546 --> 00:12:01,476
+Is B A allowed?
+
+175
+00:12:01,915 --> 00:12:03,617
+Pause and use the shape rule.
+
+176
+00:12:04,539 --> 00:12:08,914
+A B is allowed, because the inner numbers are three and three.
+
+177
+00:12:09,340 --> 00:12:11,175
+The result is two by four.
+
+178
+00:12:11,614 --> 00:12:12,704
+B A is not allowed.
+
+179
+00:12:13,130 --> 00:12:18,529
+B is three by four and A is two by three, so the inner numbers are four and two.
+
+180
+00:12:18,954 --> 00:12:19,938
+They do not match.
+
+181
+00:12:20,364 --> 00:12:22,185
+Even the shape can depend on the order.
+
+182
+00:12:23,906 --> 00:12:29,424
+Let's check everything in Python with NumPy, where the at sign multiplies matrices.
+
+183
+00:12:29,850 --> 00:12:37,802
+We compute A times x, the stretch and the rotation, both orders of the product, the transpose, and the identity check.
+
+184
+00:12:39,306 --> 00:12:43,309
+This output is real; the script ran while the video was made.
+
+185
+00:12:43,721 --> 00:12:45,942
+A times x is four, seven.
+
+186
+00:12:46,380 --> 00:12:51,593
+The stretch gives two, two, and the rotation gives minus two, one.
+
+187
+00:12:52,005 --> 00:12:54,160
+R S and S R are different.
+
+188
+00:12:54,585 --> 00:13:01,846
+And X times w scores the houses: two hundred fifty-five, one hundred fifty, and three hundred thirty-five.
+
+189
+00:13:03,573 --> 00:13:04,237
+In summary.
+
+190
+00:13:04,663 --> 00:13:10,381
+A matrix is a rectangular grid of numbers, with m rows and n columns.
+
+191
+00:13:10,793 --> 00:13:13,546
+As a table, each row is a data point.
+
+192
+00:13:13,985 --> 00:13:23,692
+As a machine, it moves vectors: A times x is a linear combination of the columns, and the columns show where e one and e two land.
+
+193
+00:13:24,606 --> 00:13:28,263
+Matrix multiplication is one machine after another.
+
+194
+00:13:28,675 --> 00:13:34,765
+An m by n matrix times an n by p matrix gives m by p, and the order matters.
+
+195
+00:13:35,218 --> 00:13:40,058
+The transpose swaps rows and columns, and the identity does nothing.
+
+196
+00:13:40,470 --> 00:13:46,202
+Next, in video three: basis and rank, how many directions are really there.
+
+197
+00:13:46,640 --> 00:13:47,186
+See you there.
+
+198
+00:13:49,106 --> 00:13:50,928
+This video was made by David R.
+
+199
+00:13:51,367 --> 00:13:54,598
+You can find more lessons at David Ramirez J dot com.
+
+200
+00:13:55,156 --> 00:13:55,874
+Thanks for watching.

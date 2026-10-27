@@ -1,0 +1,10 @@
+00:00 Intro
+00:40 A map of heights
+02:05 Partial derivatives
+03:23 The gradient
+04:35 Local linearity with many inputs
+06:06 Why the gradient points uphill
+07:27 The gradient in ML
+08:34 Try it yourself
+09:42 Python demo
+10:28 Summary

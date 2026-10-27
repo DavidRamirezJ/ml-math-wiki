@@ -1,0 +1,699 @@
+1
+00:00:00,106 --> 00:00:08,736
+Every photo, every word, every song, and every customer that a machine learning model sees becomes a list of numbers first.
+
+2
+00:00:09,162 --> 00:00:11,888
+A photo becomes its pixel brightness values.
+
+3
+00:00:12,300 --> 00:00:14,986
+A word becomes a few hundred learned numbers.
+
+4
+00:00:15,425 --> 00:00:19,734
+A customer becomes age, income, and number of purchases.
+
+5
+00:00:20,159 --> 00:00:21,702
+That list of numbers has a name.
+
+6
+00:00:22,114 --> 00:00:23,031
+It is called a vector.
+
+7
+00:00:23,973 --> 00:00:29,571
+In this video you will learn the two moves that vectors allow: adding and scaling.
+
+8
+00:00:30,023 --> 00:00:31,433
+They look simple, and they are.
+
+9
+00:00:31,872 --> 00:00:39,944
+But every other idea in this series, from matrices to gradients to attention, is built from these two moves.
+
+10
+00:00:40,369 --> 00:00:42,550
+You only need arithmetic to follow.
+
+11
+00:00:42,976 --> 00:00:44,744
+Let's discover it step by step.
+
+12
+00:00:46,446 --> 00:00:50,555
+A vector has three faces, and it helps to know all three.
+
+13
+00:00:50,981 --> 00:00:52,749
+The first face is an arrow.
+
+14
+00:00:53,188 --> 00:00:53,946
+Here is a grid.
+
+15
+00:00:54,358 --> 00:00:56,406
+Start at the center, the origin.
+
+16
+00:00:56,805 --> 00:00:59,558
+Walk three steps to the right and two steps up.
+
+17
+00:00:59,983 --> 00:01:03,082
+The arrow from the origin to that point is a vector.
+
+18
+00:01:03,989 --> 00:01:05,757
+The second face is a list.
+
+19
+00:01:06,183 --> 00:01:10,318
+We can write the same arrow as two numbers: three and two.
+
+20
+00:01:10,744 --> 00:01:12,512
+Each number is called a component.
+
+21
+00:01:12,951 --> 00:01:15,797
+The first component says how far to go right.
+
+22
+00:01:16,223 --> 00:01:19,055
+The second component says how far to go up.
+
+23
+00:01:19,494 --> 00:01:23,111
+The arrow and the list carry exactly the same information.
+
+24
+00:01:24,632 --> 00:01:26,759
+Lists are how data looks in practice.
+
+25
+00:01:27,171 --> 00:01:27,956
+Take a house.
+
+26
+00:01:28,395 --> 00:01:33,568
+It has one hundred twenty square meters, three bedrooms, and it is fifteen years old.
+
+27
+00:01:34,007 --> 00:01:36,187
+That is a vector with three components.
+
+28
+00:01:36,626 --> 00:01:44,352
+We cannot draw three-dimensional houses as flat arrows easily, and with a hundred features we cannot draw them at all.
+
+29
+00:01:44,778 --> 00:01:46,626
+But the list still works perfectly.
+
+30
+00:01:48,132 --> 00:01:50,379
+The third face is the deepest one.
+
+31
+00:01:50,791 --> 00:02:00,459
+Mathematicians say: a vector is anything you can add to another thing of its kind, and stretch by a number, and still get the same kind of thing back.
+
+32
+00:02:00,871 --> 00:02:01,802
+Arrows do that.
+
+33
+00:02:02,227 --> 00:02:03,012
+Lists do that.
+
+34
+00:02:03,424 --> 00:02:06,257
+Later we will see that even sound waves do that.
+
+35
+00:02:06,695 --> 00:02:09,781
+Keep these two moves in mind: add and scale.
+
+36
+00:02:11,439 --> 00:02:12,357
+Let's start with adding.
+
+37
+00:02:12,809 --> 00:02:16,692
+Here is a blue vector u, equal to three, one.
+
+38
+00:02:17,131 --> 00:02:20,216
+Here is a green vector v, equal to one, two.
+
+39
+00:02:20,655 --> 00:02:21,878
+What should u plus v mean?
+
+40
+00:02:22,357 --> 00:02:23,740
+Think of it as two walks.
+
+41
+00:02:24,218 --> 00:02:25,322
+First walk along u.
+
+42
+00:02:25,761 --> 00:02:28,540
+Then, from where you stopped, walk along v.
+
+43
+00:02:29,473 --> 00:02:31,441
+Put the tail of v on the tip of u.
+
+44
+00:02:31,879 --> 00:02:35,802
+The yellow arrow from the origin to the final point is u plus v.
+
+45
+00:02:36,241 --> 00:02:36,933
+Where did we end up?
+
+46
+00:02:37,438 --> 00:02:39,260
+Three plus one is four steps right.
+
+47
+00:02:39,699 --> 00:02:42,212
+One plus two is three steps up.
+
+48
+00:02:42,651 --> 00:02:44,805
+So u plus v equals four, three.
+
+49
+00:02:45,732 --> 00:02:46,516
+Notice the rule.
+
+50
+00:02:46,955 --> 00:02:50,785
+To add two vectors, you add them component by component.
+
+51
+00:02:51,290 --> 00:02:53,604
+First with first, second with second.
+
+52
+00:02:54,003 --> 00:02:54,601
+Nothing more.
+
+53
+00:02:55,040 --> 00:02:57,966
+The arrow picture and the list rule always agree.
+
+54
+00:02:58,391 --> 00:03:04,242
+That is why we can trust the list rule even in a hundred dimensions, where no picture exists.
+
+55
+00:03:05,178 --> 00:03:05,976
+Does the order matter?
+
+56
+00:03:06,402 --> 00:03:07,838
+Walk v first, then u.
+
+57
+00:03:08,277 --> 00:03:13,410
+You trace the other side of this shape, a parallelogram, and you arrive at the same point.
+
+58
+00:03:13,835 --> 00:03:16,721
+So u plus v equals v plus u.
+
+59
+00:03:17,146 --> 00:03:21,561
+This is our first rule of vectors: the order of adding does not matter.
+
+60
+00:03:23,273 --> 00:03:25,201
+Now the second move: scaling.
+
+61
+00:03:25,640 --> 00:03:28,193
+We multiply a vector by an ordinary number.
+
+62
+00:03:28,605 --> 00:03:34,270
+In linear algebra, an ordinary single number is called a scalar, because it scales things.
+
+63
+00:03:34,709 --> 00:03:36,663
+Take u equal to two, one.
+
+64
+00:03:37,102 --> 00:03:38,618
+Two times u is four, two.
+
+65
+00:03:39,044 --> 00:03:42,235
+The arrow keeps its direction and gets twice as long.
+
+66
+00:03:43,175 --> 00:03:44,904
+Watch the scalar c change.
+
+67
+00:03:45,343 --> 00:03:48,468
+When c is bigger than one, the arrow stretches.
+
+68
+00:03:48,893 --> 00:03:52,444
+When c is between zero and one, it shrinks.
+
+69
+00:03:52,856 --> 00:03:56,686
+At zero, it collapses to the zero vector, a point.
+
+70
+00:03:57,085 --> 00:04:02,138
+And when c is negative, the arrow flips around and points the opposite way.
+
+71
+00:04:03,049 --> 00:04:05,469
+The rule is again component by component.
+
+72
+00:04:05,881 --> 00:04:08,408
+Multiply every component by the scalar.
+
+73
+00:04:08,847 --> 00:04:12,544
+Minus one times two, one is minus two, minus one.
+
+74
+00:04:12,996 --> 00:04:16,134
+One half times two, one is one, one half.
+
+75
+00:04:16,560 --> 00:04:21,134
+Every multiple of u lies on the same straight line through the origin.
+
+76
+00:04:22,859 --> 00:04:24,455
+Now combine the two moves.
+
+77
+00:04:24,881 --> 00:04:26,795
+Scale some vectors, then add them.
+
+78
+00:04:27,234 --> 00:04:29,734
+The result is called a linear combination.
+
+79
+00:04:30,160 --> 00:04:38,790
+With two vectors u and v, a linear combination looks like a times u plus b times v, where a and b are scalars.
+
+80
+00:04:39,216 --> 00:04:42,420
+This single pattern is the heart of linear algebra.
+
+81
+00:04:43,352 --> 00:04:44,044
+Here is a puzzle.
+
+82
+00:04:44,483 --> 00:04:47,741
+Let u be two, one, and v be one, two.
+
+83
+00:04:48,140 --> 00:04:50,108
+Can we reach the yellow point five, four?
+
+84
+00:04:50,547 --> 00:04:52,993
+Try a equals two and b equals one.
+
+85
+00:04:53,419 --> 00:04:55,015
+Two times u is four, two.
+
+86
+00:04:55,427 --> 00:04:57,661
+Add v, which is one, two.
+
+87
+00:04:58,100 --> 00:04:59,217
+Four plus one is five.
+
+88
+00:04:59,642 --> 00:05:01,398
+Two plus two is four.
+
+89
+00:05:01,823 --> 00:05:03,472
+Yes, we reached five, four.
+
+90
+00:05:04,393 --> 00:05:08,874
+In fact, with these two vectors we can reach every point on the whole plane.
+
+91
+00:05:09,300 --> 00:05:10,988
+Just choose the right a and b.
+
+92
+00:05:11,401 --> 00:05:15,137
+All the points you can reach with linear combinations are called the span.
+
+93
+00:05:15,589 --> 00:05:18,927
+Here, the span of u and v is the entire plane.
+
+94
+00:05:20,456 --> 00:05:21,280
+But be careful.
+
+95
+00:05:21,706 --> 00:05:28,408
+If the two vectors point along the same line, like two, one and four, two, the span is only that line.
+
+96
+00:05:28,847 --> 00:05:31,533
+The second vector adds nothing new.
+
+97
+00:05:31,972 --> 00:05:39,671
+This idea of redundant vectors is so important that it gets its own video: basis and rank, video three.
+
+98
+00:05:41,406 --> 00:05:42,549
+So what is a vector, really?
+
+99
+00:05:43,002 --> 00:05:44,757
+Here is the precise answer.
+
+100
+00:05:45,156 --> 00:05:49,212
+A vector space is a collection of objects where two things are true.
+
+101
+00:05:49,677 --> 00:05:52,616
+First, adding two members gives another member.
+
+102
+00:05:53,042 --> 00:05:56,087
+Second, scaling a member gives another member.
+
+103
+00:05:56,526 --> 00:05:58,081
+You never fall out of the collection.
+
+104
+00:05:59,001 --> 00:06:03,522
+The adding and scaling must also follow a few common-sense rules.
+
+105
+00:06:03,935 --> 00:06:07,764
+Order does not matter: u plus v equals v plus u.
+
+106
+00:06:08,216 --> 00:06:10,703
+There is a zero vector that changes nothing.
+
+107
+00:06:11,102 --> 00:06:13,948
+Every vector has an opposite that cancels it.
+
+108
+00:06:14,387 --> 00:06:20,703
+And scaling spreads over a sum: a times u plus v equals a u plus a v.
+
+109
+00:06:22,248 --> 00:06:23,764
+Here is the surprise.
+
+110
+00:06:24,269 --> 00:06:25,931
+Functions follow these rules too.
+
+111
+00:06:26,357 --> 00:06:27,713
+Take two sound waves.
+
+112
+00:06:28,112 --> 00:06:31,490
+Add them, point by point, and you get a new sound wave.
+
+113
+00:06:31,902 --> 00:06:36,317
+Make one louder by multiplying it by two, and it is still a sound wave.
+
+114
+00:06:36,742 --> 00:06:40,200
+So sound waves are vectors, even though they are not arrows.
+
+115
+00:06:41,734 --> 00:06:44,474
+That is why the definition is so powerful.
+
+116
+00:06:44,886 --> 00:06:52,479
+Anything we prove using only add and scale works for arrows, for lists of data, for sound, and for images.
+
+117
+00:06:52,891 --> 00:06:58,304
+In this series, this is our first axiom, axiom A: linearity.
+
+118
+00:06:58,716 --> 00:07:00,724
+Everything else is built on top of it.
+
+119
+00:07:02,439 --> 00:07:04,899
+Now let's see vectors at work in machine learning.
+
+120
+00:07:05,338 --> 00:07:09,274
+Here are two tiny toy images, just two by two pixels.
+
+121
+00:07:09,700 --> 00:07:12,878
+Each pixel is a brightness between zero and one.
+
+122
+00:07:13,317 --> 00:07:19,261
+Write the four pixels in a row, and each image becomes a vector with four components.
+
+123
+00:07:20,173 --> 00:07:23,657
+What is one half of the first image plus one half of the second?
+
+124
+00:07:24,082 --> 00:07:25,478
+It is a linear combination.
+
+125
+00:07:25,904 --> 00:07:28,856
+Each pixel becomes the average of the two pixels.
+
+126
+00:07:29,295 --> 00:07:32,008
+The result is a blend of the two pictures.
+
+127
+00:07:32,420 --> 00:07:38,856
+Mixing images, mixing sounds, averaging data: all of them are linear combinations.
+
+128
+00:07:40,373 --> 00:07:42,420
+And here is the most important example.
+
+129
+00:07:42,806 --> 00:07:50,585
+A neuron in a neural network takes an input vector, multiplies each component by a weight, and adds everything up.
+
+130
+00:07:51,024 --> 00:07:53,923
+That weighted sum is a linear combination too.
+
+131
+00:07:54,362 --> 00:07:59,907
+Billions of these sums, stacked together, are what a large language model computes.
+
+132
+00:08:01,606 --> 00:08:02,470
+Now it is your turn.
+
+133
+00:08:02,909 --> 00:08:04,704
+Pause the video and try this.
+
+134
+00:08:05,143 --> 00:08:09,917
+What is three times the vector one, minus two, plus the vector two, five?
+
+135
+00:08:10,343 --> 00:08:15,821
+Use the two rules: scale component by component, then add component by component.
+
+136
+00:08:16,247 --> 00:08:17,510
+Take a few seconds.
+
+137
+00:08:18,458 --> 00:08:19,721
+Here is the answer.
+
+138
+00:08:20,213 --> 00:08:24,282
+Three times one, minus two, is three, minus six.
+
+139
+00:08:24,721 --> 00:08:26,011
+Now add two, five.
+
+140
+00:08:26,490 --> 00:08:28,617
+Three plus two is five.
+
+141
+00:08:29,056 --> 00:08:31,503
+Minus six plus five is minus one.
+
+142
+00:08:31,942 --> 00:08:34,216
+So the answer is five, minus one.
+
+143
+00:08:34,641 --> 00:08:38,405
+If you got it, you already know how to compute any linear combination.
+
+144
+00:08:39,931 --> 00:08:41,726
+One more question, about span.
+
+145
+00:08:42,165 --> 00:08:44,173
+Use only one vector, two, one.
+
+146
+00:08:44,572 --> 00:08:46,527
+Can you reach the point six, three?
+
+147
+00:08:46,953 --> 00:08:49,359
+And can you reach the point one, one?
+
+148
+00:08:49,785 --> 00:08:55,862
+Remember, with one vector, a linear combination is just c times that vector.
+
+149
+00:08:56,288 --> 00:08:57,165
+Pause and think.
+
+150
+00:08:58,065 --> 00:09:02,253
+Six, three is three times two, one, so yes, it is in the span.
+
+151
+00:09:02,692 --> 00:09:05,631
+But one, one is not a multiple of two, one.
+
+152
+00:09:06,070 --> 00:09:09,288
+To get the first component one, c must be one half.
+
+153
+00:09:09,714 --> 00:09:12,745
+Then the second component is one half, not one.
+
+154
+00:09:13,184 --> 00:09:18,277
+So one, one is outside the span: one vector only reaches a line.
+
+155
+00:09:19,959 --> 00:09:25,677
+Let's check everything in Python with NumPy, a library for working with arrays of numbers.
+
+156
+00:09:26,090 --> 00:09:33,191
+We make u and v, then add them, scale them, and build the linear combination two u plus v.
+
+157
+00:09:33,616 --> 00:09:38,576
+Then we ask NumPy to find a and b for the point five, four.
+
+158
+00:09:39,055 --> 00:09:41,661
+Finally, we blend two toy images.
+
+159
+00:09:43,182 --> 00:09:46,985
+This output is real; the script ran while the video was made.
+
+160
+00:09:47,411 --> 00:09:49,033
+u plus v is four, three.
+
+161
+00:09:49,459 --> 00:09:51,028
+Two times u is four, two.
+
+162
+00:09:51,467 --> 00:09:59,365
+Two u plus v is five, four, and NumPy found a equals two and b equals one, just like our puzzle.
+
+163
+00:09:59,778 --> 00:10:02,929
+The blended image is the pixel-by-pixel average.
+
+164
+00:10:04,639 --> 00:10:05,278
+In summary.
+
+165
+00:10:05,676 --> 00:10:08,482
+A vector is anything you can add and scale.
+
+166
+00:10:08,881 --> 00:10:14,440
+In practice, it is a list of numbers, and in two dimensions you can draw it as an arrow.
+
+167
+00:10:14,865 --> 00:10:17,272
+You add and scale component by component.
+
+168
+00:10:17,698 --> 00:10:21,142
+Scale and then add, and you get a linear combination.
+
+169
+00:10:21,567 --> 00:10:23,815
+All the reachable points form the span.
+
+170
+00:10:24,746 --> 00:10:31,568
+In machine learning, every data point is a vector, and every neuron computes a linear combination.
+
+171
+00:10:31,980 --> 00:10:41,009
+Next, in video two, we stack many vectors side by side and get a matrix: a grid of numbers that is also a machine that moves vectors.
+
+172
+00:10:41,448 --> 00:10:42,007
+See you there.
+
+173
+00:10:43,873 --> 00:10:45,694
+This video was made by David R.
+
+174
+00:10:46,133 --> 00:10:49,365
+You can find more lessons at David Ramirez J dot com.
+
+175
+00:10:49,923 --> 00:10:50,641
+Thanks for watching.

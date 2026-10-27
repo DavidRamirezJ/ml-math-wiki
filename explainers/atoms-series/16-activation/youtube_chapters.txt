@@ -1,0 +1,10 @@
+00:00 Intro
+00:42 Two linear layers = one
+02:21 The bend: ReLU
+03:49 Sigmoid, tanh, GELU
+05:02 How bends build curves
+06:24 Slope of ReLU & dead units
+07:46 Activations in real networks
+08:52 Try it yourself
+10:07 Python demo
+10:56 Summary

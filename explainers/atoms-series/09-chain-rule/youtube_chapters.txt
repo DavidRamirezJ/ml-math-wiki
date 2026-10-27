@@ -1,0 +1,10 @@
+00:00 Intro
+00:47 Functions inside functions; gears
+02:41 Why slopes multiply
+03:36 Worked example
+04:41 Longer chains
+05:37 The Jacobian
+07:23 Backpropagation (preview)
+08:26 Try it yourself
+09:34 Python demo
+10:14 Summary

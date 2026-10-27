@@ -1,0 +1,22 @@
+[
+ {
+  "term": "linear independence",
+  "definition": "No vector in the set is a combination of the others. Only all-zero weights give the zero vector.",
+  "video": "03-basis-and-rank"
+ },
+ {
+  "term": "basis",
+  "definition": "A linearly independent set of vectors that spans the whole space.",
+  "video": "03-basis-and-rank"
+ },
+ {
+  "term": "dimension",
+  "definition": "The number of vectors in any basis of a space.",
+  "video": "03-basis-and-rank"
+ },
+ {
+  "term": "rank",
+  "definition": "The number of linearly independent columns of a matrix (it equals the number of independent rows).",
+  "video": "03-basis-and-rank"
+ }
+]

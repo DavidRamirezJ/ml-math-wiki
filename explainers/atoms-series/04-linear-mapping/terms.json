@@ -1,0 +1,17 @@
+[
+ {
+  "term": "linear mapping",
+  "definition": "A function f with f(a·u + b·v) = a·f(u) + b·f(v): it respects adding and scaling.",
+  "video": "04-linear-mapping"
+ },
+ {
+  "term": "kernel (null space)",
+  "definition": "All inputs that the map sends to the zero vector.",
+  "video": "04-linear-mapping"
+ },
+ {
+  "term": "image (range)",
+  "definition": "All the outputs that the map can produce.",
+  "video": "04-linear-mapping"
+ }
+]

@@ -1,0 +1,10 @@
+00:00 Intro
+00:40 The dot product
+02:06 What the number means
+03:46 The sign and orthogonality
+05:01 Cosine similarity
+06:16 Axiom B: the inner product
+07:39 Inner products in ML
+08:40 Try it yourself
+09:31 Python demo
+10:10 Summary

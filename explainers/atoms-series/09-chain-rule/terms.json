@@ -1,0 +1,17 @@
+[
+ {
+  "term": "composition",
+  "definition": "Putting one function after another: the output of f becomes the input of g, written g(f(x)).",
+  "video": "09-chain-rule"
+ },
+ {
+  "term": "chain rule",
+  "definition": "The slope of a composition is the product of the slopes: dy/dx = dy/du · du/dx.",
+  "video": "09-chain-rule"
+ },
+ {
+  "term": "Jacobian",
+  "definition": "The matrix of all partial derivatives of a function with many outputs: row = output, column = input.",
+  "video": "09-chain-rule"
+ }
+]

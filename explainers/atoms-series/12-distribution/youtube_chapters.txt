@@ -1,0 +1,10 @@
+00:00 Intro
+00:47 A table of chances
+02:25 Continuous: probability is area
+03:33 Two variables: a joint table
+04:15 Sum rule and product rule
+05:42 Independence and Bayes
+07:18 Distributions in ML
+08:18 Try it yourself
+09:22 Python demo
+10:16 Summary

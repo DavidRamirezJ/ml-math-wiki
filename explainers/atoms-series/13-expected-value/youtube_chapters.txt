@@ -1,0 +1,10 @@
+00:00 Intro
+00:47 A weighted average
+01:47 The expected value
+03:31 Linearity: the shortcut
+05:02 Law of large numbers
+06:01 The mean of a data set
+06:56 Expected value in ML
+07:57 Try it yourself
+09:06 Python demo
+09:51 Summary

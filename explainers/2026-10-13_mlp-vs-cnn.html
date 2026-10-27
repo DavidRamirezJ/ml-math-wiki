@@ -313,5 +313,143 @@ Q.forEach((it,k)=>{const d=document.createElement('div');d.className='q card';
     document.getElementById('fb'+k).innerHTML=(ok?'✅ Correct. ':'❌ Not quite. ')+it.why;});
 });
 </script>
+<!-- ============ VOCAB HELPER ============ -->
+<style>
+  .vocab{border-bottom:2px dotted var(--accent);cursor:help}
+  .vocab.saved{background:rgba(99,102,241,.14);border-radius:3px}
+  #vpop{position:absolute;z-index:50;max-width:320px;background:var(--card);color:var(--fg);border:1px solid var(--accent);
+    border-radius:10px;padding:10px 14px;box-shadow:0 8px 28px rgba(0,0,0,.18);font:15px/1.45 system-ui,sans-serif;display:none}
+  #vpop .w{font-weight:700;font-size:1.05rem} #vpop .es{color:var(--cnn);font-weight:600}
+  #vpop .ex{color:var(--muted);font-style:italic;margin-top:4px}
+  #vpop button{margin-top:8px;padding:4px 10px;font-size:.8rem}
+  .vbar{position:sticky;top:0;z-index:40;background:var(--bg);border-bottom:1px solid var(--line);padding:6px 0;font:600 .85rem system-ui,sans-serif;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+  .vbar label{cursor:pointer}
+  .es-inline{color:var(--cnn);font:600 .78em system-ui,sans-serif;margin-left:3px}
+  #glossary table td:first-child{font-weight:700;white-space:nowrap}
+  #flash{font:1.3rem system-ui,sans-serif;text-align:center;padding:24px;min-height:110px}
+</style>
+<div id="vpop"></div>
+<script>
+const VOCAB = {
+  // key: [forms to match, short synonym, simple English meaning]
+  'flatten':        [['flattens','flattened','flatten','flattening'], 'make flat', 'to make something flat — here: turn a 2-D grid of pixels into one long list'],
+  'wire':           [['wired','wire','wires','wiring'], 'connect', 'a connection between two things, like an electric cable'],
+  'downside':       [['downsides','downside'], 'disadvantage', 'a bad side of something'],
+  'huge':           [['huge'], 'very big', 'very, very big'],
+  'layout':         [['layout'], 'arrangement', 'how things are arranged in space'],
+  'brand-new':      [['brand-new'], 'totally new', 'completely new, never seen before'],
+  'basically':      [['basically'], 'in short', 'in simple terms'],
+  'slide':          [['slides','slide','sliding'], 'move across', 'to move smoothly over a surface'],
+  'patch':          [['patch','patches'], 'small area', 'a small piece of something bigger'],
+  'spot':           [['spot'], 'notice / place', 'as a verb: to notice or find; as a noun: a place'],
+  'edge':           [['edge','edges'], 'border', 'the line where one area ends and another begins'],
+  'corner':         [['corner','corners'], 'meeting point', 'the place where two edges meet'],
+  'trick':          [['trick'], 'clever idea', 'a clever way of doing something'],
+  'tiny':           [['tiny'], 'very small', 'very small'],
+  'whatever':       [['whatever'], 'any', 'it does not matter which one'],
+  'stare':          [['staring','stare'], 'look hard', 'to look at something for a long time without moving your eyes'],
+  'magnifying glass':[['magnifying glass'], 'lens', 'a glass lens that makes small things look bigger'],
+  'lean':           [['leaner','lean'], 'slim', 'with nothing extra; efficient'],
+  'neighbour':      [['neighbours','neighbouring','neighbors','neighbor'], 'nearby thing', 'something that is right next to something else'],
+  'squash':         [['squash'], 'press flat', 'to press something into a smaller shape'],
+  'zoom in':        [['zoom in'], 'look closer', 'to look at one small part in more detail'],
+  'grid':           [['grid','grid-like'], 'rows and columns', 'a pattern of rows and columns, like a chessboard'],
+  'footnote':       [['footnote'], 'side note', 'a small extra comment'],
+  'strictly speaking':[['strictly speaking'], 'to be exact', 'if we use the exact, technical meaning'],
+  'flip':           [['flips','flip'], 'turn over', 'to turn something over or reverse its order'],
+  'tie together':   [['ties it all together'], 'connects everything', 'joins all the ideas into one picture'],
+  'side by side':   [['side by side'], 'next to each other', 'placed next to each other so you can compare'],
+  'drag':           [['drag'], 'pull', 'to pull something along (with the mouse)'],
+  'grayscale':      [['grayscale'], 'black and white', 'only black, white and greys — no colour'],
+  'gap':            [['gap'], 'difference', 'the space or difference between two things'],
+  'shift':          [['shifts','shift','shifted'], 'move', 'to move a little to another position'],
+  'unrelated':      [['unrelated'], 'not connected', 'with no link to each other'],
+  'built-in':       [['built-in'], 'included', 'part of something from the start'],
+  'assumption':     [['assumption'], 'belief', 'something you accept as true without proof'],
+  'fire':           [['fires'], 'activates', 'here: a neuron gives a big output'],
+  'reuse':          [['reused','reusable','reuse'], 'use again', 'to use something one more time'],
+  'texture':        [['texture'], 'surface look', 'how a surface looks or feels (rough, smooth…)'],
+  'pool':           [['pooling'], 'shrink', 'making a feature map smaller by keeping one value per small block (for example the max)'],
+  'pull out':       [['pull out','pulls out'], 'extract', 'to take something out'],
+  'make the call':  [['makes the final call'], 'decides', 'makes the final decision'],
+};
+// ---- build lookup, longest phrases first
+const forms=[];for(const k in VOCAB)VOCAB[k][0].forEach(f=>forms.push([f,k]));
+forms.sort((a,b)=>b[0].length-a[0].length);
+const esc=s=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+const RE=new RegExp('\\b('+forms.map(f=>esc(f[0])).join('|')+')\\b','gi');
+const RE1=new RegExp(RE.source,'i');
+const formToKey=Object.fromEntries(forms.map(([f,k])=>[f.toLowerCase(),k]));
+const SKIP='script,style,mjx-container,.MathJax,code,pre,svg,button,input,#vpop,#glossary,.vbar,.cell,.calc';
+let saved=new Set(JSON.parse(localStorage.getItem('vocab-saved')||'[]'));
+function persist(){localStorage.setItem('vocab-saved',JSON.stringify([...saved]))}
+
+function wrapVocab(root){
+  const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:n=>
+    (n.parentElement.closest(SKIP)||/\$/.test(n.nodeValue)||!RE1.test(n.nodeValue))?NodeFilter.FILTER_REJECT:NodeFilter.FILTER_ACCEPT});
+  const nodes=[];while(walker.nextNode())nodes.push(walker.currentNode);
+  nodes.forEach(n=>{
+    RE.lastIndex=0;const frag=document.createDocumentFragment();let last=0,m;const t=n.nodeValue;
+    while((m=RE.exec(t))){frag.append(t.slice(last,m.index));const k=formToKey[m[0].toLowerCase()];
+      const s=document.createElement('span');s.className='vocab'+(saved.has(k)?' saved':'');s.dataset.k=k;s.textContent=m[0];frag.append(s);last=m.index+m[0].length}
+    frag.append(t.slice(last));n.replaceWith(frag);
+  });
+}
+const pop=document.getElementById('vpop');
+function sentenceOf(el){const t=(el.closest('p,li,td,div')||el).textContent.replace(/\s+/g,' ');
+  const i=t.indexOf(el.textContent);const a=t.lastIndexOf('.',i)+1,b=t.indexOf('.',i);return t.slice(a,b<0?undefined:b+1).trim()}
+function showPop(el){
+  const k=el.dataset.k,[,es,def]=VOCAB[k];
+  pop.innerHTML=`<div class="w">${el.textContent}</div><div class="es">≈ ${es}</div><div>${def}</div><div class="ex">“${sentenceOf(el)}”</div>
+    <button id="vsave">${saved.has(k)?'★ Saved — remove':'☆ Save to my words'}</button> <button id="vsay">🔊 Listen</button>`;
+  const r=el.getBoundingClientRect();pop.style.display='block';
+  pop.style.left=Math.min(window.scrollX+r.left,window.scrollX+innerWidth-340)+'px';pop.style.top=(window.scrollY+r.bottom+6)+'px';
+  document.getElementById('vsave').onclick=e=>{e.stopPropagation();saved.has(k)?saved.delete(k):saved.add(k);persist();
+    document.querySelectorAll(`.vocab[data-k="${k}"]`).forEach(x=>x.classList.toggle('saved',saved.has(k)));renderGlossary();showPop(el)};
+  document.getElementById('vsay').onclick=e=>{e.stopPropagation();const u=new SpeechSynthesisUtterance(el.textContent);u.lang='en-US';speechSynthesis.speak(u)};
+}
+document.addEventListener('click',e=>{const v=e.target.closest('.vocab');if(v){showPop(v);e.stopPropagation()}else if(!e.target.closest('#vpop'))pop.style.display='none'});
+document.addEventListener('mouseover',e=>{const v=e.target.closest('.vocab');if(v&&matchMedia('(hover:hover)').matches)showPop(v)});
+
+function renderGlossary(){
+  const g=document.getElementById('glossary');if(!g)return;
+  const used=[...new Set([...document.querySelectorAll('main .vocab')].map(v=>v.dataset.k))];
+  const onlySaved=document.getElementById('gOnlySaved').checked;
+  const rows=used.filter(k=>!onlySaved||saved.has(k)).sort().map(k=>`<tr><td>${saved.has(k)?'★ ':''}${k}</td><td>${VOCAB[k][1]}</td><td>${VOCAB[k][2]}</td></tr>`).join('');
+  g.querySelector('tbody').innerHTML=rows||'<tr><td colspan="3">No saved words yet — tap an underlined word and press ☆.</td></tr>';
+  document.getElementById('gCount').textContent=`${used.length} words on this page · ${[...saved].filter(k=>used.includes(k)).length} saved`;
+}
+let deck=[],di=0,flipped=false;
+function flash(){const f=document.getElementById('flash');if(!deck.length){f.textContent='Save some words first (☆), or untick "only saved".';return}
+  const k=deck[di%deck.length];f.innerHTML=flipped?`<b>${k}</b><br><span style="color:var(--cnn)">${VOCAB[k][1]}</span><br><small>${VOCAB[k][2]}</small>`:`<b>${k}</b><br><small class="note">What does it mean? Tap “Flip”.</small>`}
+function initVocab(){
+  const main=document.querySelector('main');
+  const bar=document.createElement('div');bar.className='vbar';
+  bar.innerHTML=`📖 Vocabulary helper: tap a <span class="vocab" style="cursor:default">dotted word</span> for its meaning.
+    <label><input type="checkbox" id="vInline"> Show a short synonym next to every word</label>`;
+  main.prepend(bar);
+  const sum=document.querySelector('.summary');
+  const sec=document.createElement('section');sec.id='glossary';
+  sec.innerHTML=`<h2>📚 Vocabulary from this page</h2><p class="note" id="gCount"></p>
+    <label><input type="checkbox" id="gOnlySaved"> Only my saved words</label>
+    <table style="margin-top:8px"><thead><tr><th>Word</th><th>Short synonym</th><th>Simple meaning</th></tr></thead><tbody></tbody></table>
+    <h3>Flashcards</h3><div class="card" id="flash"></div>
+    <p><button id="fFlip">Flip</button> <button id="fNext">Next ▶</button> <button id="fShuffle">Shuffle</button></p>`;
+  sum.before(sec);
+  wrapVocab(main);
+  const dk=()=>{const used=[...new Set([...document.querySelectorAll('main .vocab')].map(v=>v.dataset.k))];
+    deck=document.getElementById('gOnlySaved').checked?used.filter(k=>saved.has(k)):used;di=0;flipped=false;flash()};
+  document.getElementById('gOnlySaved').onchange=()=>{renderGlossary();dk()};
+  document.getElementById('fFlip').onclick=()=>{flipped=!flipped;flash()};
+  document.getElementById('fNext').onclick=()=>{di++;flipped=false;flash()};
+  document.getElementById('fShuffle').onclick=()=>{deck.sort(()=>Math.random()-.5);di=0;flipped=false;flash()};
+  document.getElementById('vInline').onchange=e=>{document.querySelectorAll('.es-inline').forEach(x=>x.remove());
+    if(e.target.checked)document.querySelectorAll('main .vocab').forEach(v=>{if(v.closest('#glossary'))return;const s=document.createElement('span');s.className='es-inline';s.textContent='('+VOCAB[v.dataset.k][1]+')';v.after(s)})};
+  renderGlossary();dk();
+}
+// run after MathJax has rendered, so formulas are never touched
+(function wait(){ if(window.MathJax&&MathJax.startup&&MathJax.startup.promise){MathJax.startup.promise.then(initVocab)} else setTimeout(wait,100) })();
+</script>
+
 </body>
 </html>

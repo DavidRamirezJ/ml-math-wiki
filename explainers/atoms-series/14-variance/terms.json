@@ -1,0 +1,17 @@
+[
+ {
+  "term": "variance",
+  "definition": "The expected squared distance from the mean: a number for how spread out the values are.",
+  "video": "14-variance"
+ },
+ {
+  "term": "standard deviation",
+  "definition": "The square root of the variance. It is in the original units: a typical distance from the mean.",
+  "video": "14-variance"
+ },
+ {
+  "term": "covariance",
+  "definition": "The average product of the deviations of two variables. Its sign says if they move together.",
+  "video": "14-variance"
+ }
+]

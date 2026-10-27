@@ -1,0 +1,10 @@
+00:00 Intro
+00:39 What makes a map linear
+02:24 What it does to a grid
+03:25 Maps that are not linear
+04:48 Every linear map is a matrix
+06:34 Composition, kernel, image
+08:07 Linear maps in ML
+09:37 Try it yourself
+10:45 Python demo
+11:27 Summary

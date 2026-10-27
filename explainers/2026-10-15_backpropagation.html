@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Backpropagation — passing the blame backward</title>
+<script>
+  window.MathJax = { tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']] } };
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<style>
+  :root{
+    --bg:#f7f5ef; --fg:#1d1d1f; --muted:#62615c; --card:#ffffff; --line:#dedbd2;
+    --fwd:#0f766e; --fwd-soft:#d5f0ec; --bwd:#c2410c; --bwd-soft:#fde7d9; --accent:#4338ca; --cnn:#0f766e;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#15161a; --fg:#ecebe6; --muted:#a3a29b; --card:#1e2026; --line:#33353d;
+      --fwd:#2dd4bf; --fwd-soft:#123430; --bwd:#fb923c; --bwd-soft:#3a2418; --accent:#a5b4fc; --cnn:#2dd4bf; }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);font:17px/1.6 "Iowan Old Style","Charter",Georgia,serif}
+  main{max-width:980px;margin:0 auto;padding:40px 22px 80px}
+  h1,h2,h3{font-family:"Avenir Next","Segoe UI",system-ui,sans-serif;line-height:1.2}
+  h1{font-size:2.3rem;margin:0 0 6px}
+  h2{font-size:1.45rem;margin:48px 0 12px;border-bottom:2px solid var(--line);padding-bottom:6px}
+  .hero{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 26px;margin:18px 0}
+  .hero p{font-size:1.15rem;margin:.3em 0}
+  .f{color:var(--fwd);font-weight:700} .b{color:var(--bwd);font-weight:700}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:12px 0}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media (max-width:760px){.grid2{grid-template-columns:1fr}}
+  table{border-collapse:collapse;width:100%;font-size:.95rem;background:var(--card)}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{font-family:system-ui,sans-serif;font-size:.85rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+  .sym{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin:10px 0;font-size:.95rem}
+  .sym > div:nth-child(odd){text-align:right;font-weight:600}
+  details{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 16px;margin:12px 0}
+  summary{cursor:pointer;font-family:system-ui,sans-serif;font-weight:600}
+  button{font:600 .9rem system-ui,sans-serif;border:1px solid var(--line);background:var(--card);color:var(--fg);
+    padding:7px 14px;border-radius:8px;cursor:pointer}
+  button:hover{border-color:var(--accent)}
+  button.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .note{color:var(--muted);font-size:.92rem}
+  svg text{font-family:system-ui,sans-serif}
+  .mono{font:.95rem ui-monospace,Menlo,monospace}
+  /* network */
+  #net{width:100%;height:auto;max-height:330px}
+  .node circle{fill:var(--card);stroke:var(--line);stroke-width:2.5;transition:.25s}
+  .node.on circle{stroke:var(--accent);stroke-width:4}
+  .edge{stroke:var(--line);stroke-width:3;transition:.25s}
+  .edge.fon{stroke:var(--fwd);stroke-width:5}
+  .edge.bon{stroke:var(--bwd);stroke-width:5}
+  .nlab{font-weight:700;font-size:20px;fill:var(--fg)}
+  .fval{font-size:14px;font-weight:700;fill:var(--fwd)}
+  .bval{font-size:14px;font-weight:700;fill:var(--bwd)}
+  .wlab{font-size:14px;font-weight:600;fill:var(--muted)}
+  .pulse{transition:opacity .3s}
+  #stepbox{min-height:210px}
+  .phase{display:inline-block;font:700 .75rem system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase;padding:3px 9px;border-radius:20px}
+  .phase.F{background:var(--fwd-soft);color:var(--fwd)} .phase.B{background:var(--bwd-soft);color:var(--bwd)} .phase.U{background:rgba(99,102,241,.15);color:var(--accent)}
+  .ctrls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0}
+  .sliders{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px 18px;font:.9rem system-ui,sans-serif}
+  .sliders input{width:100%}
+  .dots{display:flex;gap:5px;margin-left:auto}
+  .dots span{width:11px;height:11px;border-radius:50%;background:var(--line)}
+  .dots span.F{background:var(--fwd)} .dots span.B{background:var(--bwd)} .dots span.U{background:var(--accent)}
+  .dots span.cur{outline:2px solid var(--fg);outline-offset:1px}
+  /* ripple */
+  .chain{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font:600 .95rem system-ui,sans-serif;margin:12px 0}
+  .chain .box{background:var(--card);border:2px solid var(--line);border-radius:10px;padding:8px 12px;text-align:center;min-width:92px;transition:.3s}
+  .chain .box.hit{border-color:var(--bwd);background:var(--bwd-soft)}
+  .chain .box small{display:block;font-weight:500;color:var(--muted)}
+  .chain .arr{color:var(--muted);text-align:center;font-size:.8rem}
+  .chain .arr b{display:block;font-size:1.2rem}
+  canvas{width:100%;height:220px;background:var(--card);border:1px solid var(--line);border-radius:10px}
+  .q{margin:12px 0} .q label{display:block;margin:4px 0;cursor:pointer}
+  .fb{margin-top:6px;font-size:.95rem}
+  .summary{background:var(--card);border:2px solid var(--accent);border-radius:14px;padding:18px 24px;margin-top:40px}
+  .ascii{font:.88rem/1.35 ui-monospace,Menlo,monospace;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 16px;overflow-x:auto;white-space:pre}
+</style>
+</head>
+<body>
+<main>
+
+<h1>Backpropagation</h1>
+<p class="note">Continues the 13 Oct session: neuron → activation → XOR → “where do the weights come from?” Today we open the box marked $\partial L/\partial w$.</p>
+
+<div class="hero">
+  <p><b>Bottom line:</b> Backpropagation is how a network finds out <b>how much each weight is to blame for the error</b>.</p>
+  <p>It runs the network <span class="f">forward</span> once to get the error, and then it passes the blame <span class="b">backward</span>, layer by layer, using the <b>chain rule</b>: multiply the small local rates together.</p>
+  <p>Then gradient descent uses that blame to fix each weight: $w \leftarrow w - \eta\,\dfrac{\partial L}{\partial w}$.</p>
+</div>
+
+<h2>1. Where backprop fits — the training loop from last time</h2>
+<div class="ascii">  ┌──────────┐    ┌──────────┐    ┌───────────────┐    ┌───────────┐
+  │ FORWARD  │ →  │  LOSS L  │ →  │   BACKWARD    │ →  │  UPDATE   │
+  │ x → ŷ    │    │ how wrong│    │ ∂L/∂w for     │    │ w ← w−η·g │
+  │          │    │          │    │ EVERY weight  │    │           │
+  └──────────┘    └──────────┘    └───────────────┘    └───────────┘
+        ↑                          ▲ this is backprop             │
+        └──────────────────── repeat many times ──────────────────┘</div>
+<p>Last time you saw the loop: predict, measure the error, compute the gradient, update, repeat. Backpropagation is only <b>step 3</b>. It does not change any weight. It only answers one question for every weight: <i>“if I nudge you a tiny bit, how much does the error move?”</i> That number is the <b>gradient</b> $\partial L/\partial w$.</p>
+
+<h2>2. The intuition — a factory and its blame</h2>
+<div class="grid2">
+  <div class="card">
+    <p>Imagine a factory with 3 workers in a line. Worker 1 cuts the wood, worker 2 paints it, worker 3 packs it. At the end, the boss sees the box is <b>wrong</b>.</p>
+    <p>The boss does not ask everybody from scratch. The boss tells worker 3: “this much is wrong.” Worker 3 knows how their own work affects the box, and passes the blame to worker 2. Worker 2 does the same for worker 1.</p>
+    <p>Each worker only needs <b>local</b> knowledge: “how does my output change when my input changes?” The blame travels <span class="b">backward</span> and nobody does the work twice.</p>
+  </div>
+  <div class="card">
+    <p><b>The gear picture of the chain rule.</b> Three gears are connected. When gear A turns 1 time, gear B turns 2 times. When gear B turns 1 time, gear C turns 3 times.</p>
+    <p>So when A turns 1 time, C turns $2 \times 3 = 6$ times. You <b>multiply the rates</b>. That is the whole chain rule:</p>
+    $$\frac{dC}{dA} = \frac{dC}{dB}\cdot\frac{dB}{dA} = 3 \cdot 2 = 6$$
+    <div class="sym">
+      <div>$\frac{dC}{dA}$</div><div>how fast C moves when A moves</div>
+      <div>$\frac{dC}{dB}$</div><div>the local rate of the last gear pair (3)</div>
+      <div>$\frac{dB}{dA}$</div><div>the local rate of the first gear pair (2)</div>
+    </div>
+  </div>
+</div>
+
+<h2>3. Our tiny network</h2>
+<p>We use the smallest network that still has a hidden layer with ReLU, like your XOR network. One input, one hidden neuron, one output, and a loss:</p>
+$$z = w_1 x + b_1 \qquad h = \mathrm{ReLU}(z) \qquad \hat y = w_2\,h \qquad L = (\hat y - t)^2$$
+<div class="sym">
+  <div>$x$</div><div>the input number</div>
+  <div>$w_1,\ b_1$</div><div>weight and bias of the hidden neuron (the network learns them)</div>
+  <div>$z$</div><div>the hidden neuron's raw sum, before the activation</div>
+  <div>$h = \mathrm{ReLU}(z)$</div><div>the hidden neuron's output: $\max(0, z)$ — keep it if positive, else 0</div>
+  <div>$w_2$</div><div>the weight from the hidden neuron to the output</div>
+  <div>$\hat y$</div><div>“y-hat”: the network's prediction (the hat means “estimate”)</div>
+  <div>$t$</div><div>the target: the correct answer we wanted</div>
+  <div>$L = (\hat y - t)^2$</div><div>the loss: the squared error — always ≥ 0, and 0 only when the prediction is perfect</div>
+</div>
+
+<h2>4. Step through it — forward, then backward</h2>
+<div class="card">
+  <svg id="net" viewBox="0 0 900 300">
+    <defs>
+      <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker>
+    </defs>
+    <line class="edge" id="e1" x1="135" y1="150" x2="285" y2="150"/>
+    <line class="edge" id="e2" x1="355" y1="150" x2="485" y2="150"/>
+    <line class="edge" id="e3" x1="555" y1="150" x2="685" y2="150"/>
+    <line class="edge" id="e4" x1="755" y1="150" x2="840" y2="150"/>
+    <line class="edge" id="eb" x1="320" y1="250" x2="320" y2="185" style="stroke-dasharray:5 4"/>
+    <text class="wlab" x="210" y="138" text-anchor="middle">× w₁</text>
+    <text class="wlab" x="420" y="138" text-anchor="middle">ReLU</text>
+    <text class="wlab" x="620" y="138" text-anchor="middle">× w₂</text>
+    <text class="wlab" x="800" y="138" text-anchor="middle">(ŷ−t)²</text>
+    <text class="wlab" x="340" y="262">+ b₁</text>
+    <g class="node" id="nx"><circle cx="100" cy="150" r="35"/><text class="nlab" x="100" y="157" text-anchor="middle">x</text></g>
+    <g class="node" id="nz"><circle cx="320" cy="150" r="35"/><text class="nlab" x="320" y="157" text-anchor="middle">z</text></g>
+    <g class="node" id="nh"><circle cx="520" cy="150" r="35"/><text class="nlab" x="520" y="157" text-anchor="middle">h</text></g>
+    <g class="node" id="ny"><circle cx="720" cy="150" r="35"/><text class="nlab" x="720" y="157" text-anchor="middle">ŷ</text></g>
+    <g class="node" id="nL"><circle cx="860" cy="150" r="30"/><text class="nlab" x="860" y="157" text-anchor="middle">L</text></g>
+    <!-- forward values (below) -->
+    <text class="fval pulse" id="vx" x="100" y="212" text-anchor="middle"></text>
+    <text class="fval pulse" id="vz" x="320" y="212" text-anchor="middle"></text>
+    <text class="fval pulse" id="vh" x="520" y="212" text-anchor="middle"></text>
+    <text class="fval pulse" id="vy" x="720" y="212" text-anchor="middle"></text>
+    <text class="fval pulse" id="vL" x="860" y="212" text-anchor="middle"></text>
+    <!-- backward gradients (above) -->
+    <text class="bval pulse" id="gz" x="320" y="95" text-anchor="middle"></text>
+    <text class="bval pulse" id="gh" x="520" y="95" text-anchor="middle"></text>
+    <text class="bval pulse" id="gy" x="720" y="95" text-anchor="middle"></text>
+    <text class="bval pulse" id="gw1" x="210" y="70" text-anchor="middle"></text>
+    <text class="bval pulse" id="gw2" x="620" y="70" text-anchor="middle"></text>
+    <text class="bval pulse" id="gb1" x="340" y="285"></text>
+    <text x="10" y="24" style="font-size:13px;fill:var(--fwd);font-weight:700">green, below = forward values</text>
+    <text x="10" y="44" style="font-size:13px;fill:var(--bwd);font-weight:700">orange, above = gradients (blame)</text>
+  </svg>
+  <div class="ctrls">
+    <button id="prev">◀ Back</button>
+    <button id="next" class="primary">Next step ▶</button>
+    <button id="play">▶ Play all</button>
+    <button id="reset">↺ Restart</button>
+    <div class="dots" id="dots"></div>
+  </div>
+  <div id="stepbox" class="card" style="margin:0"></div>
+  <details>
+    <summary>🎛️ Change the numbers (everything recomputes)</summary>
+    <div class="sliders" style="margin-top:10px">
+      <label>input x = <b id="sx"></b><input type="range" id="px" min="-3" max="3" step="0.5"></label>
+      <label>target t = <b id="st"></b><input type="range" id="pt" min="-4" max="5" step="0.5"></label>
+      <label>w₁ = <b id="sw1"></b><input type="range" id="pw1" min="-2" max="2" step="0.1"></label>
+      <label>b₁ = <b id="sb1"></b><input type="range" id="pb1" min="-2" max="2" step="0.1"></label>
+      <label>w₂ = <b id="sw2"></b><input type="range" id="pw2" min="-2" max="2" step="0.1"></label>
+      <label>learning rate η = <b id="seta"></b><input type="range" id="peta" min="0.01" max="0.2" step="0.01"></label>
+    </div>
+    <p class="note">Try this: make $w_1$ negative so that $z &lt; 0$. Then ReLU outputs 0, its slope is 0, and the blame for $w_1$ and $b_1$ becomes <b>0</b>. That neuron cannot learn from this example — this is the “dead ReLU” problem.</p>
+  </details>
+</div>
+
+<h2>5. Check that the gradient is real — the nudge test</h2>
+<p>The gradient is a prediction: “if you nudge $w_1$ by a tiny amount $\varepsilon$, the loss changes by about $\frac{\partial L}{\partial w_1}\cdot\varepsilon$.” Press the button and watch the nudge ripple through the chain. Each arrow multiplies by one <b>local rate</b>.</p>
+<div class="card">
+  <div class="chain" id="chain"></div>
+  <div class="ctrls"><button id="nudge" class="primary">Nudge w₁ by +0.01</button><span class="note" id="nudgeout"></span></div>
+</div>
+<p>The product of the local rates on the arrows is exactly the chain rule. Backprop just computes it from the <b>right</b> (the loss) to the <b>left</b> (the weights):</p>
+$$\frac{\partial L}{\partial w_1} = \underbrace{\frac{\partial L}{\partial \hat y}}_{2(\hat y-t)}\cdot\underbrace{\frac{\partial \hat y}{\partial h}}_{w_2}\cdot\underbrace{\frac{\partial h}{\partial z}}_{\mathrm{ReLU}'(z)}\cdot\underbrace{\frac{\partial z}{\partial w_1}}_{x}$$
+<div class="sym">
+  <div>$\partial$</div><div>“partial”: a derivative where you move <i>one</i> thing and hold everything else still</div>
+  <div>$\frac{\partial L}{\partial w_1}$</div><div>how much L moves per unit of movement in $w_1$ — the blame of $w_1$</div>
+  <div>$\frac{\partial L}{\partial \hat y} = 2(\hat y - t)$</div><div>slope of the squared error; negative means “the prediction is too small”</div>
+  <div>$\frac{\partial \hat y}{\partial h} = w_2$</div><div>because $\hat y = w_2 h$, moving $h$ by 1 moves $\hat y$ by $w_2$</div>
+  <div>$\mathrm{ReLU}'(z)$</div><div>slope of ReLU: 1 if $z &gt; 0$, 0 if $z &lt; 0$ (a gate: pass the blame, or block it)</div>
+  <div>$\frac{\partial z}{\partial w_1} = x$</div><div>because $z = w_1 x + b_1$, moving $w_1$ by 1 moves $z$ by $x$</div>
+  <div>$\underbrace{\ \cdot\ }_{\text{text}}$</div><div>the brace just labels what that factor equals</div>
+</div>
+
+<h2>6. Why “backward”? The reuse trick</h2>
+<p>Look at the gradients for $w_1$ and $b_1$:</p>
+$$\frac{\partial L}{\partial w_1} = \color{#c2410c}{\frac{\partial L}{\partial z}}\cdot x \qquad\qquad \frac{\partial L}{\partial b_1} = \color{#c2410c}{\frac{\partial L}{\partial z}}\cdot 1$$
+<p>They share the orange part, $\partial L/\partial z$. Backprop computes it <b>one time</b> and reuses it. In a real network, every layer reuses the blame that came from the layer above it.</p>
+<div class="grid2">
+  <div class="card">
+    <h3 style="margin-top:0">Naive way</h3>
+    <p>For each weight, write its own long chain and compute it from scratch. With $N$ weights, you repeat almost the whole network $N$ times. GPT-2 has about 124 million weights — that means ~124 million passes. Impossible.</p>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">Backprop</h3>
+    <p>One forward pass, then one backward pass. You get <b>all</b> $N$ gradients for roughly the cost of 2–3 forward passes. That is why deep learning is possible at all.</p>
+  </div>
+</div>
+
+<h2>7. Train it live</h2>
+<p>Now use the gradients. Each step = forward → backward → update with $w \leftarrow w - \eta \cdot \partial L/\partial w$. Watch the loss go down.</p>
+<div class="card">
+  <div class="ctrls">
+    <button id="t1" class="primary">Train 1 step</button>
+    <button id="t20">Train 20 steps</button>
+    <button id="tr">↺ Reset weights</button>
+    <span class="mono" id="tinfo"></span>
+  </div>
+  <canvas id="lossc" width="900" height="220"></canvas>
+  <p class="note">The chart shows the loss L after each step. It drops fast at first and then slowly, because the gradient gets smaller as the prediction gets close to the target.</p>
+</div>
+
+<h2>8. The same thing for real layers (matrices)</h2>
+<details>
+  <summary>Show the matrix form — the formula used in real code</summary>
+  <p>A real layer is $\mathbf h = \sigma(W\mathbf x + \mathbf b)$ (you saw this on 13 Oct). Call the incoming blame $\boldsymbol\delta = \partial L/\partial \mathbf z$. Then backprop for one layer is just three lines:</p>
+  $$\frac{\partial L}{\partial W} = \boldsymbol\delta\,\mathbf x^{\top} \qquad \frac{\partial L}{\partial \mathbf b} = \boldsymbol\delta \qquad \boldsymbol\delta_{\text{prev}} = \left(W^{\top}\boldsymbol\delta\right)\odot\sigma'(\mathbf z_{\text{prev}})$$
+  <div class="sym">
+    <div>$\boldsymbol\delta$</div><div>“delta”: a vector with the blame of each neuron's raw sum $z$ in this layer</div>
+    <div>$\mathbf x^{\top}$</div><div>the input vector turned on its side (transpose), so $\boldsymbol\delta\,\mathbf x^{\top}$ is a full matrix: blame of neuron $i$ × input $j$</div>
+    <div>$W^{\top}\boldsymbol\delta$</div><div>send the blame backward through the same weights, with the matrix transposed</div>
+    <div>$\odot$</div><div>multiply element by element (one neuron at a time)</div>
+    <div>$\sigma'(\mathbf z)$</div><div>slope of the activation at each neuron — for ReLU, a 0/1 gate</div>
+  </div>
+  <p>Compare with our tiny network: $\partial L/\partial w_1 = \delta\cdot x$ and $\partial L/\partial h = w_2\cdot\delta$. Same pattern, just with numbers instead of matrices.</p>
+  <p>In PyTorch you never write this: <code>loss.backward()</code> does it for every weight, and <code>optimizer.step()</code> does the update.</p>
+</details>
+
+<h2>9. Check yourself</h2>
+<div id="quiz"></div>
+
+<div class="summary">
+  <h2 style="margin-top:0;border:0">In summary</h2>
+  <ul>
+    <li><b>Backprop computes the blame (gradient) of every weight; gradient descent then uses it to update the weights.</b></li>
+    <li>Forward pass: compute and remember every value. Backward pass: start at $\partial L/\partial \hat y$ and multiply local rates going left (chain rule).</li>
+    <li>The trick is <b>reuse</b>: each layer reuses the blame from the layer above, so all gradients cost about one extra pass.</li>
+    <li>ReLU's slope is a gate (1 or 0): if a neuron's $z &lt; 0$, no blame passes through it.</li>
+    <li>Next: overfitting (step 6), and then CNN backprop (the shared filter adds up blame from every position).</li>
+  </ul>
+</div>
+</main>
+
+<script>
+// ---------- model ----------
+const P0={x:2,t:3,w1:0.5,b1:0,w2:1,eta:0.05};
+let P={...P0};
+const r=v=>{const s=(Math.round(v*1000)/1000);return (Object.is(s,-0)?0:s).toString()};
+function compute(p){
+  const z=p.w1*p.x+p.b1, h=Math.max(0,z), y=p.w2*h, L=(y-p.t)**2;
+  const dy=2*(y-p.t), dw2=dy*h, dh=dy*p.w2, rel=z>0?1:0, dz=dh*rel, dw1=dz*p.x, db1=dz;
+  return {z,h,y,L,dy,dw2,dh,rel,dz,dw1,db1};
+}
+// ---------- steps ----------
+function steps(){
+  const p=P,c=compute(p);
+  return [
+   {ph:'F',t:'Forward 1 — the raw sum',on:['nx','nz'],e:['e1','eb'],show:['vx','vz'],
+    m:`$$z = w_1 x + b_1 = ${r(p.w1)}\\cdot ${r(p.x)} + ${r(p.b1)} = ${r(c.z)}$$`,
+    s:'Multiply the input by its weight and add the bias. This is the same neuron formula as last time.'},
+   {ph:'F',t:'Forward 2 — the activation',on:['nh'],e:['e2'],show:['vh'],
+    m:`$$h = \\mathrm{ReLU}(z) = \\max(0,\\ ${r(c.z)}) = ${r(c.h)}$$`,
+    s:c.z>0?'z is positive, so ReLU lets it pass unchanged.':'z is negative, so ReLU outputs 0. Watch what this does to the blame later!'},
+   {ph:'F',t:'Forward 3 — the prediction',on:['ny'],e:['e3'],show:['vy'],
+    m:`$$\\hat y = w_2 h = ${r(p.w2)}\\cdot ${r(c.h)} = ${r(c.y)}$$`,
+    s:`The network predicts ${r(c.y)}. We wanted t = ${r(p.t)}.`},
+   {ph:'F',t:'Forward 4 — the loss',on:['nL'],e:['e4'],show:['vL'],
+    m:`$$L = (\\hat y - t)^2 = (${r(c.y)} - ${r(p.t)})^2 = ${r(c.L)}$$`,
+    s:'One number that says how wrong we are. The forward pass is done. We keep all values (x, z, h, ŷ) in memory, because the backward pass needs them.'},
+   {ph:'B',t:'Backward 1 — start at the loss',on:['ny','nL'],e:['e4'],show:['gy'],
+    m:`$$\\frac{\\partial L}{\\partial \\hat y} = 2(\\hat y - t) = 2(${r(c.y)} - ${r(p.t)}) = ${r(c.dy)}$$`,
+    s:c.dy<0?'Negative: if ŷ goes up, L goes down. The prediction is too small.':c.dy>0?'Positive: if ŷ goes up, L goes up. The prediction is too big.':'Zero: the prediction is perfect, so there is no blame.'},
+   {ph:'B',t:'Backward 2 — blame for w₂',on:['ny'],e:['e3'],show:['gw2'],
+    m:`$$\\frac{\\partial L}{\\partial w_2} = \\frac{\\partial L}{\\partial \\hat y}\\cdot\\frac{\\partial \\hat y}{\\partial w_2} = ${r(c.dy)}\\cdot h = ${r(c.dy)}\\cdot ${r(c.h)} = ${r(c.dw2)}$$`,
+    s:'Because ŷ = w₂·h, moving w₂ by 1 moves ŷ by h. Multiply by the blame that arrived from the right.'},
+   {ph:'B',t:'Backward 3 — pass the blame to h',on:['nh'],e:['e3'],show:['gh'],
+    m:`$$\\frac{\\partial L}{\\partial h} = \\frac{\\partial L}{\\partial \\hat y}\\cdot w_2 = ${r(c.dy)}\\cdot ${r(p.w2)} = ${r(c.dh)}$$`,
+    s:'h has no weight to fix, but the layers to its left need its blame. This is the “pass it backward” move.'},
+   {ph:'B',t:'Backward 4 — through the ReLU gate',on:['nz'],e:['e2'],show:['gz'],
+    m:`$$\\frac{\\partial L}{\\partial z} = \\frac{\\partial L}{\\partial h}\\cdot \\mathrm{ReLU}'(z) = ${r(c.dh)}\\cdot ${c.rel} = ${r(c.dz)}$$`,
+    s:c.rel?'z > 0, so the ReLU slope is 1: the blame passes through unchanged.':'z < 0, so the ReLU slope is 0: the gate is closed and the blame stops here.'},
+   {ph:'B',t:'Backward 5 — blame for w₁ and b₁',on:['nx','nz'],e:['e1','eb'],show:['gw1','gb1'],
+    m:`$$\\frac{\\partial L}{\\partial w_1} = \\frac{\\partial L}{\\partial z}\\cdot x = ${r(c.dz)}\\cdot ${r(p.x)} = ${r(c.dw1)} \\qquad \\frac{\\partial L}{\\partial b_1} = \\frac{\\partial L}{\\partial z}\\cdot 1 = ${r(c.db1)}$$`,
+    s:'Both reuse ∂L/∂z from the step before. No work is done twice. Backprop is finished: we have the blame of every weight.'},
+   {ph:'U',t:'Update — gradient descent uses the blame',on:[],e:[],show:[],
+    m:`$$w \\leftarrow w - \\eta\\,\\frac{\\partial L}{\\partial w}\\quad(\\eta=${r(p.eta)})$$
+       $$w_1: ${r(p.w1)} - ${r(p.eta)}\\cdot(${r(c.dw1)}) = ${r(p.w1-p.eta*c.dw1)}\\qquad b_1: ${r(p.b1)} - ${r(p.eta)}\\cdot(${r(c.db1)}) = ${r(p.b1-p.eta*c.db1)}\\qquad w_2: ${r(p.w2)} - ${r(p.eta)}\\cdot(${r(c.dw2)}) = ${r(p.w2-p.eta*c.dw2)}$$`,
+    s:(()=>{const q={...p,w1:p.w1-p.eta*c.dw1,b1:p.b1-p.eta*c.db1,w2:p.w2-p.eta*c.dw2};const L2=compute(q).L;
+      return `With the new weights the loss goes from ${r(c.L)} to <b>${r(L2)}</b>. Negative blame → the weight goes up; positive blame → it goes down. Then the loop repeats.`})()},
+  ];
+}
+let si=-1, playing=null;
+const ALL=['vx','vz','vh','vy','vL','gz','gh','gy','gw1','gw2','gb1'];
+function label(id,c){const p=P;return {vx:'x = '+r(p.x),vz:'z = '+r(c.z),vh:'h = '+r(c.h),vy:'ŷ = '+r(c.y),vL:'L = '+r(c.L),
+  gz:'∂L/∂z = '+r(c.dz),gh:'∂L/∂h = '+r(c.dh),gy:'∂L/∂ŷ = '+r(c.dy),gw1:'∂L/∂w₁ = '+r(c.dw1),gw2:'∂L/∂w₂ = '+r(c.dw2),gb1:'∂L/∂b₁ = '+r(c.db1)}[id]}
+function render(){
+  const S=steps(),c=compute(P);
+  document.querySelectorAll('.node').forEach(n=>n.classList.remove('on'));
+  document.querySelectorAll('.edge').forEach(e=>e.classList.remove('fon','bon'));
+  const shown=new Set();S.slice(0,si+1).forEach(s=>s.show.forEach(x=>shown.add(x)));
+  ALL.forEach(id=>{const el=document.getElementById(id);el.textContent=shown.has(id)?label(id,c):'';});
+  const dots=document.getElementById('dots');dots.innerHTML=S.map((s,i)=>`<span class="${i<=si?s.ph:''} ${i===si?'cur':''}"></span>`).join('');
+  const box=document.getElementById('stepbox');
+  if(si<0){box.innerHTML='<p><b>Press “Next step”.</b> First the values flow <span class="f">forward</span> (left → right). Then the blame flows <span class="b">backward</span> (right → left). Finally the weights are updated.</p><p class="note">Start values: x = '+r(P.x)+', target t = '+r(P.t)+', w₁ = '+r(P.w1)+', b₁ = '+r(P.b1)+', w₂ = '+r(P.w2)+'.</p>';return}
+  const s=S[si];
+  s.on.forEach(id=>document.getElementById(id).classList.add('on'));
+  s.e.forEach(id=>document.getElementById(id).classList.add(s.ph==='F'?'fon':'bon'));
+  const name={F:'Forward',B:'Backward',U:'Update'}[s.ph];
+  box.innerHTML=`<span class="phase ${s.ph}">${name}</span> <b>${s.t}</b>${s.m}<p>${s.s}</p>`;
+  if(window.MathJax&&MathJax.typesetPromise)MathJax.typesetPromise([box]);
+}
+const go=d=>{si=Math.max(-1,Math.min(steps().length-1,si+d));render()};
+document.getElementById('next').onclick=()=>go(1);
+document.getElementById('prev').onclick=()=>go(-1);
+document.getElementById('reset').onclick=()=>{clearInterval(playing);si=-1;render()};
+document.getElementById('play').onclick=()=>{clearInterval(playing);si=-1;render();playing=setInterval(()=>{if(si>=steps().length-1){clearInterval(playing);return}go(1)},2200)};
+// sliders
+const SL={px:'x',pt:'t',pw1:'w1',pb1:'b1',pw2:'w2',peta:'eta'};
+const SV={px:'sx',pt:'st',pw1:'sw1',pb1:'sb1',pw2:'sw2',peta:'seta'};
+function syncSliders(){for(const id in SL){document.getElementById(id).value=P[SL[id]];document.getElementById(SV[id]).textContent=r(P[SL[id]])}}
+for(const id in SL)document.getElementById(id).oninput=e=>{P[SL[id]]=+e.target.value;syncSliders();render();buildChain();resetTrain()};
+// ---------- nudge ripple ----------
+function buildChain(){
+  const c=compute(P);
+  document.getElementById('chain').innerHTML=
+   `<div class="box" id="c0">Δw₁<small id="d0">—</small></div>
+    <div class="arr">× x<b>→</b>${r(P.x)}</div>
+    <div class="box" id="c1">Δz<small id="d1">—</small></div>
+    <div class="arr">× ReLU′<b>→</b>${c.rel}</div>
+    <div class="box" id="c2">Δh<small id="d2">—</small></div>
+    <div class="arr">× w₂<b>→</b>${r(P.w2)}</div>
+    <div class="box" id="c3">Δŷ<small id="d3">—</small></div>
+    <div class="arr">× 2(ŷ−t)<b>→</b>${r(c.dy)}</div>
+    <div class="box" id="c4">ΔL<small id="d4">—</small></div>`;
+  document.getElementById('nudgeout').textContent='';
+}
+document.getElementById('nudge').onclick=()=>{
+  buildChain();const c=compute(P),eps=0.01;
+  const d=[eps,eps*P.x,eps*P.x*c.rel,eps*P.x*c.rel*P.w2,eps*P.x*c.rel*P.w2*c.dy];
+  d.forEach((v,i)=>setTimeout(()=>{document.getElementById('c'+i).classList.add('hit');document.getElementById('d'+i).textContent=(v>=0?'+':'')+v.toFixed(4)},i*550));
+  setTimeout(()=>{const L1=compute({...P,w1:P.w1+eps}).L;
+    document.getElementById('nudgeout').innerHTML=`Chain rule predicts ΔL ≈ ${d[4].toFixed(4)}. Really recomputing L gives ΔL = ${(L1-c.L).toFixed(4)}. Ratio ΔL/Δw₁ ≈ <b>${(d[4]/eps).toFixed(2)}</b> = ∂L/∂w₁.`},5*550);
+};
+// ---------- training ----------
+let TP,hist;
+function resetTrain(){TP={...P};hist=[compute(TP).L];drawLoss()}
+function trainStep(){const c=compute(TP);TP.w1-=TP.eta*c.dw1;TP.b1-=TP.eta*c.db1;TP.w2-=TP.eta*c.dw2;hist.push(compute(TP).L)}
+function drawLoss(){
+  const cv=document.getElementById('lossc'),g=cv.getContext('2d'),W=cv.width,H=cv.height,pad=40;
+  const cs=getComputedStyle(document.documentElement);g.clearRect(0,0,W,H);
+  g.strokeStyle=cs.getPropertyValue('--line');g.lineWidth=1;g.beginPath();g.moveTo(pad,10);g.lineTo(pad,H-pad);g.lineTo(W-10,H-pad);g.stroke();
+  g.fillStyle=cs.getPropertyValue('--muted');g.font='13px system-ui';g.fillText('loss L',4,20);g.fillText('training step',W-110,H-12);
+  const mx=Math.max(...hist,1e-9),n=Math.max(hist.length-1,10);
+  g.fillText(r(mx),4,40);g.fillText('0',24,H-pad);
+  g.strokeStyle=cs.getPropertyValue('--bwd');g.lineWidth=3;g.beginPath();
+  hist.forEach((v,i)=>{const X=pad+(W-pad-20)*i/n,Y=(H-pad)-(H-pad-30)*v/mx;i?g.lineTo(X,Y):g.moveTo(X,Y)});g.stroke();
+  g.fillStyle=cs.getPropertyValue('--bwd');hist.forEach((v,i)=>{const X=pad+(W-pad-20)*i/n,Y=(H-pad)-(H-pad-30)*v/mx;g.beginPath();g.arc(X,Y,3.5,0,7);g.fill()});
+  const c=compute(TP);
+  document.getElementById('tinfo').textContent=`step ${hist.length-1} · w₁=${r(TP.w1)} b₁=${r(TP.b1)} w₂=${r(TP.w2)} · ŷ=${r(c.y)} (target ${r(TP.t)}) · L=${r(c.L)}`;
+}
+document.getElementById('t1').onclick=()=>{trainStep();drawLoss()};
+document.getElementById('t20').onclick=()=>{let k=0;const iv=setInterval(()=>{trainStep();drawLoss();if(++k>=20)clearInterval(iv)},90)};
+document.getElementById('tr').onclick=resetTrain;
+// ---------- quiz ----------
+const Q=[
+ {q:'What does backpropagation itself produce?',a:['New, better weights','The gradient ∂L/∂w for every weight','The prediction ŷ'],c:1,
+  why:'Backprop only computes the gradients (the blame). The optimizer (gradient descent) then changes the weights.'},
+ {q:'Why do we need to keep the forward values (x, z, h) in memory?',a:['To print them','The local rates in the backward pass use them (e.g. ∂z/∂w₁ = x)','We do not need them'],c:1,
+  why:'Each local rate depends on forward values: ∂ŷ/∂w₂ = h, ∂z/∂w₁ = x, ReLU′ depends on z. That is why training uses more memory than inference.'},
+ {q:'A hidden ReLU neuron has z = −1.5 for this example. What is ∂L/∂w₁ for its incoming weight?',a:['Very large','Exactly 0','Same as ∂L/∂ŷ'],c:1,
+  why:'ReLU′(−1.5) = 0, so the gate is closed and the blame becomes 0. The weight does not change from this example.'},
+ {q:'∂L/∂w = −8 and η = 0.05. What happens to w?',a:['It goes down by 0.4','It goes up by 0.4','It goes up by 8'],c:1,
+  why:'w ← w − 0.05·(−8) = w + 0.4. Negative blame means “increasing w lowers the loss”, so w goes up.'},
+ {q:'Why go backward (from the loss to the input) and not forward?',a:['It is just a convention','Going backward lets every layer reuse the blame from the layer above, so all gradients cost about one extra pass','Forward is mathematically wrong'],c:1,
+  why:'Both orders give the same numbers (the chain rule is just multiplication), but with one loss and millions of weights, the backward order shares work and is far cheaper.'},
+];
+const qz=document.getElementById('quiz');
+Q.forEach((it,k)=>{const d=document.createElement('div');d.className='q card';
+  d.innerHTML=`<b>${k+1}. ${it.q}</b>`+it.a.map((o,i)=>`<label><input type="radio" name="q${k}" value="${i}"> ${o}</label>`).join('')+`<div class="fb" id="fb${k}"></div>`;
+  qz.appendChild(d);
+  d.querySelectorAll('input').forEach(rr=>rr.onchange=()=>{const ok=+rr.value===it.c;
+    document.getElementById('fb'+k).innerHTML=(ok?'✅ Correct. ':'❌ Not quite. ')+it.why;});
+});
+syncSliders();render();buildChain();resetTrain();
+</script>
+
+<!-- ============ VOCAB HELPER ============ -->
+<style>
+  #vpop{position:absolute;z-index:50;max-width:320px;background:var(--card);color:var(--fg);border:1px solid var(--accent);
+    border-radius:10px;padding:10px 14px;box-shadow:0 8px 28px rgba(0,0,0,.18);font:15px/1.45 system-ui,sans-serif;display:none}
+  #vpop .w{font-weight:700;font-size:1.05rem} #vpop .es{color:var(--cnn);font-weight:600}
+  #vpop .ex{color:var(--muted);font-style:italic;margin-top:4px}
+  #vpop button{margin-top:8px;padding:4px 10px;font-size:.8rem}
+  .vbar{position:sticky;top:0;z-index:40;background:var(--bg);border-bottom:1px solid var(--line);padding:6px 0;font:600 .85rem system-ui,sans-serif;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+  .vbar label{cursor:pointer}
+  .es-inline{color:var(--cnn);font:600 .78em system-ui,sans-serif;margin-left:3px}
+  #glossary table td:first-child{font-weight:700;white-space:nowrap}
+  #flash{font:1.3rem system-ui,sans-serif;text-align:center;padding:24px;min-height:110px}
+</style>
+<div id="vpop"></div>
+<script>
+const VOCAB = {
+  // ONLY less-common words. key: [forms to match, short synonym, definition in simple English]
+  'blame':        [['blame','is to blame'], 'responsibility for a fault', 'Blame (noun): the responsibility for something bad or wrong. "X is to blame" = X caused the problem. Here: how much one weight caused the error.'],
+  'backward':     [['backward','backwards'], 'in the reverse direction', 'Backward (adverb/adjective): toward the back; in the opposite direction from normal. Opposite: forward. In a network: from the loss (right) to the input (left).'],
+  'nudge':        [['nudge','nudges','nudged'], 'small push', 'Nudge (verb/noun): to push or move something very gently, by a very small amount.'],
+  'ripple':       [['ripple','ripples'], 'spreading effect', 'Ripple (noun): a small wave on water that spreads out in rings; (figurative) one change that causes more changes, one after another.'],
+  'gear':         [['gear','gears'], 'toothed wheel', 'Gear (noun): a wheel with teeth on its edge. When it turns, its teeth push another gear and make it turn too, often at a different speed.'],
+  'from scratch': [['from scratch'], 'from the beginning', 'From scratch (idiom): starting again from nothing, without using any work that was already done.'],
+  'gate':         [['gate'], 'barrier that opens/closes', 'Gate (noun): a door in a fence or wall that can be open (things pass) or closed (things stop).'],
+  'roughly':      [['roughly'], 'approximately', 'Roughly (adverb): not exactly, but close to the number; about.'],
+  'estimate':     [['estimate'], 'approximate value', 'Estimate (noun): a value that you calculate or guess, which is close to the true value but may not be exact.'],
+  'naive':        [['naive'], 'too simple', 'Naive (adjective): simple and without clever thinking; here, the first obvious method, which is slow.'],
+  'convention':   [['convention'], 'usual practice', 'Convention (noun): a way of doing something that people agree to follow, not because it is required, just because it is usual.'],
+  'inference':    [['inference'], 'using a trained model', 'Inference (noun, ML): running a trained model to make predictions, with no learning and no gradients.'],
+  'intuition':    [['intuition'], 'gut feeling / understanding', 'Intuition (noun): understanding something quickly and naturally, without a formal proof or calculation.'],
+  'brace':        [['brace'], 'curly bracket', 'Brace (noun): the curly symbol { } or a long horizontal one under a formula, used to group things or add a label.'],
+  'incoming':     [['incoming'], 'arriving', 'Incoming (adjective): coming in or arriving at a place; here, the blame that arrives from the next layer.'],
+  'squared':      [['squared'], 'times itself', 'Squared (adjective): multiplied by itself, written with a small 2, e.g. 3² = 9.'],
+  'transpose':    [['transpose','transposed'], 'flip rows and columns', 'Transpose (verb, math): to turn a matrix so that its rows become columns and its columns become rows.'],
+  'on its side':  [['on its side'], 'turned 90°', 'On its side (phrase): turned so that what was standing up is now lying flat; here, a column becomes a row.'],
+  'far cheaper':  [['far cheaper'], 'much less costly', 'Far + comparative (e.g. "far cheaper"): very much more; "far cheaper" = it costs much, much less.'],
+  'at all':       [['at all'], 'in any way', 'At all (phrase): used to make a statement stronger: "possible at all" = possible in any way.'],
+  'dead':         [['dead'], 'not working', 'Dead (adjective, ML): a "dead" neuron always outputs 0, so it never learns.'],
+};
+// ---- build lookup, longest phrases first
+const forms=[];for(const k in VOCAB)VOCAB[k][0].forEach(f=>forms.push([f,k]));
+forms.sort((a,b)=>b[0].length-a[0].length);
+const esc=s=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+const RE=new RegExp('\\b('+forms.map(f=>esc(f[0])).join('|')+')\\b','gi');
+const RE1=new RegExp(RE.source,'i');
+const formToKey=Object.fromEntries(forms.map(([f,k])=>[f.toLowerCase(),k]));
+
+const pop=document.getElementById('vpop');
+document.addEventListener('click',e=>{if(!e.target.closest('#vpop')&&window.getSelection().isCollapsed)pop.style.display='none'});
+
+function renderGlossary(){
+  const g=document.getElementById('glossary');if(!g)return;
+  const used=usedKeys();
+  const rows=used.sort().map(k=>`<tr><td>${k}</td><td>${VOCAB[k][1]}</td><td>${VOCAB[k][2]}</td></tr>`).join('');
+  g.querySelector('tbody').innerHTML=rows||'<tr><td colspan="3">No words.</td></tr>';
+  document.getElementById('gCount').textContent=`${used.length} words on this page`;
+}
+let deck=[],di=0,flipped=false;
+function flash(){const f=document.getElementById('flash');if(!deck.length){f.textContent='No words on this page.';return}
+  const k=deck[di%deck.length];f.innerHTML=flipped?`<b>${k}</b><br><span style="color:var(--cnn)">${VOCAB[k][1]}</span><br><small>${VOCAB[k][2]}</small>`:`<b>${k}</b><br><small class="note">What does it mean? Tap “Flip”.</small>`}
+function initVocab(){
+  const main=document.querySelector('main');
+  const bar=document.createElement('div');bar.className='vbar';
+  bar.innerHTML=`📖 Vocabulary helper: <b>select any word or phrase</b> to see its meaning. On a Mac: <b>Ctrl + ⌘ + D</b> over any word.`;
+  main.prepend(bar);
+  const sum=document.querySelector('.summary');
+  const sec=document.createElement('section');sec.id='glossary';
+  sec.innerHTML=`<h2>📚 Vocabulary from this page</h2><p class="note" id="gCount"></p>
+    <table style="margin-top:8px"><thead><tr><th>Word</th><th>Short synonym</th><th>Simple meaning</th></tr></thead><tbody></tbody></table>
+    <h3>Flashcards</h3><div class="card" id="flash"></div>
+    <p><button id="fFlip">Flip</button> <button id="fNext">Next ▶</button> <button id="fShuffle">Shuffle</button></p>`;
+  sum.before(sec);
+  const dk=()=>{const used=usedKeys();
+    deck=used;di=0;flipped=false;flash()};
+  document.getElementById('fFlip').onclick=()=>{flipped=!flipped;flash()};
+  document.getElementById('fNext').onclick=()=>{di++;flipped=false;flash()};
+  document.getElementById('fShuffle').onclick=()=>{deck.sort(()=>Math.random()-.5);di=0;flipped=false;flash()};
+  renderGlossary();dk();window.refreshDeck=dk;
+}
+// run after MathJax has rendered, so formulas are never touched
+(function wait(){ if(window.MathJax&&MathJax.startup&&MathJax.startup.promise){MathJax.startup.promise.then(initVocab)} else setTimeout(wait,100) })();
+</script>
+
+<!-- ============ SELECT-TO-LOOK-UP ============ -->
+<script>
+// words from VOCAB that appear in the page text (no underlining — just for the table + flashcards)
+function usedKeys(){const g=document.getElementById('glossary');const t=[...document.querySelectorAll('main > :not(#glossary):not(script)')].map(e=>e.textContent).join(' ');
+  const ks=new Set();let m;RE.lastIndex=0;while((m=RE.exec(t)))ks.add(formToKey[m[0].toLowerCase()]);return [...ks]}
+const escH=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function sentenceAround(range){const blk=(range.startContainer.parentElement||document.body).closest('p,li,td,div')||document.body;
+  const t=blk.textContent.replace(/\s+/g,' '),q=range.toString().replace(/\s+/g,' ').trim(),i=t.indexOf(q);if(i<0)return '';
+  const a=t.lastIndexOf('.',i)+1,b=t.indexOf('.',i+q.length);return t.slice(a,b<0?undefined:b+1).trim()}
+function placePop(rect){pop.style.display='block';
+  pop.style.left=Math.min(window.scrollX+rect.left,window.scrollX+innerWidth-340)+'px';pop.style.top=(window.scrollY+rect.bottom+6)+'px'}
+function popButtons(term,entry){
+  return `<div style="margin-top:8px"><button id="lsay">🔊 Listen</button>
+    <a href="https://dictionary.cambridge.org/search/english/direct/?q=${encodeURIComponent(term)}" target="_blank" style="font-size:.8rem;margin-left:6px">Cambridge ↗</a></div>`}
+function wireButtons(term,entry){
+  const k=term.toLowerCase();
+  document.getElementById('lsay').onclick=e=>{e.stopPropagation();const u=new SpeechSynthesisUtterance(term);u.lang='en-US';speechSynthesis.speak(u)};
+}
+async function lookUp(term,range){
+  const rect=range.getBoundingClientRect(),ctx=sentenceAround(range),k=term.toLowerCase();
+  // 1) word already in this page's list
+  if(VOCAB[k]){const [,syn,def]=VOCAB[k];
+    pop.innerHTML=`<div class="w">${escH(term)}</div><div class="es">≈ ${escH(syn)}</div><div>${escH(def)}</div>${ctx?`<div class="ex">“${escH(ctx)}”</div>`:''}`+popButtons(term,VOCAB[k]);
+    placePop(rect);wireButtons(term,VOCAB[k]);return}
+  pop.innerHTML=`<div class="w">${escH(term)}</div><div class="note">Looking it up…</div>`;placePop(rect);
+  // 2) Wiktionary (free, works for words AND phrases; needs internet)
+  try{
+    const strip=h=>{const d=document.createElement('div');d.innerHTML=h;return d.textContent.replace(/\s+/g,' ').trim()};
+    let data=null;
+    for(const q of [k,term]){const r=await fetch('https://en.wiktionary.org/api/rest_v1/page/definition/'+encodeURIComponent(q.replace(/ /g,'_')));
+      if(r.ok){const j=await r.json();if(j.en&&j.en.length){data=j.en;break}}}
+    if(!data)throw 0;
+    const senses=[];
+    data.forEach(m=>m.definitions.forEach(d=>{const def=strip(d.definition);if(def&&senses.length<3)
+      senses.push({pos:m.partOfSpeech.toLowerCase(),def,ex:d.parsedExamples&&d.parsedExamples[0]?strip(d.parsedExamples[0].example):''})}));
+    if(!senses.length)throw 0;
+    const entry=[[k],senses[0].pos,senses.map(x=>`(${x.pos}) ${x.def}`).join(' · ')];
+    pop.innerHTML=`<div class="w">${escH(term)}</div>`+
+      senses.map(x=>`<div style="margin-top:4px"><i>${escH(x.pos)}</i> — ${escH(x.def)}${x.ex?`<div class="note">e.g. “${escH(x.ex)}”</div>`:''}</div>`).join('')+
+      (ctx?`<div class="ex">On this page: “${escH(ctx)}”</div>`:'')+popButtons(term,entry);
+    placePop(rect);wireButtons(term,entry);
+  }catch(_){
+    pop.innerHTML=`<div class="w">${escH(term)}</div><div>No entry found here (phrases and idioms are often missing, or you are offline).</div>
+      <div class="note" style="margin-top:4px">Tip: open Cambridge below, or on a Mac press <b>Ctrl + ⌘ + D</b> over the word.</div>${ctx?`<div class="ex">“${escH(ctx)}”</div>`:''}`+popButtons(term,null);
+    placePop(rect);wireButtons(term,null);
+  }
+}
+function onSelect(){
+  const sel=window.getSelection();if(!sel||sel.isCollapsed||!sel.rangeCount)return;
+  const term=sel.toString().replace(/\s+/g,' ').trim().replace(/^[^A-Za-z]+|[^A-Za-z]+$/g,'');
+  const range=sel.getRangeAt(0),node=range.commonAncestorContainer,el=node.nodeType===1?node:node.parentElement;
+  if(!term||term.length>40||term.split(' ').length>5||!/^[A-Za-z][A-Za-z' \-]*$/.test(term))return;
+  if(el.closest('#vpop,mjx-container,input,button,textarea'))return;
+  lookUp(term,range);
+}
+document.addEventListener('mouseup',e=>{if(e.target.closest('#vpop'))return;setTimeout(onSelect,0)});
+document.addEventListener('touchend',e=>{if(e.target.closest('#vpop'))return;setTimeout(onSelect,350)});
+</script>
+</body>
+</html>

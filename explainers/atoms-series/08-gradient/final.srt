@@ -1,0 +1,647 @@
+1
+00:00:00,093 --> 00:00:03,390
+In the last video, one weight had one slope.
+
+2
+00:00:03,816 --> 00:00:09,388
+But a real model has millions of weights, and its error depends on all of them at the same time.
+
+3
+00:00:09,813 --> 00:00:11,529
+So we need a slope for each weight.
+
+4
+00:00:11,968 --> 00:00:16,529
+Bundle all those slopes into one vector, and you get the gradient.
+
+5
+00:00:16,968 --> 00:00:20,704
+It is the arrow that tells a model which way is uphill.
+
+6
+00:00:21,639 --> 00:00:26,759
+In this video you will learn to read a function of two inputs as a map of heights.
+
+7
+00:00:27,184 --> 00:00:32,543
+You will compute partial derivatives, build the gradient, and see why it points straight uphill.
+
+8
+00:00:32,969 --> 00:00:39,259
+You need video five on the inner product, video six on the norm, and video seven on the derivative.
+
+9
+00:00:41,006 --> 00:00:47,083
+So far, our functions had one input and one output, so we could draw them as a curve.
+
+10
+00:00:47,522 --> 00:00:52,269
+Now take a function with two inputs, x and y, and one output.
+
+11
+00:00:52,748 --> 00:00:58,054
+For example, f of x and y equals x squared plus y squared.
+
+12
+00:00:58,466 --> 00:01:04,490
+At the point three, four, the output is nine plus sixteen, which is twenty five.
+
+13
+00:01:06,019 --> 00:01:08,785
+Think of the output as a height above the ground.
+
+14
+00:01:09,197 --> 00:01:11,910
+Each point of the flat x y plane gets a height.
+
+15
+00:01:12,336 --> 00:01:15,939
+Together, the heights form a surface, like a landscape.
+
+16
+00:01:16,378 --> 00:01:17,110
+This one is a bowl.
+
+17
+00:01:17,535 --> 00:01:21,910
+Its lowest point is the origin, where the height is zero.
+
+18
+00:01:23,439 --> 00:01:25,740
+A three dimensional picture is hard to read.
+
+19
+00:01:26,179 --> 00:01:28,705
+Hikers use a better trick: a contour map.
+
+20
+00:01:29,131 --> 00:01:32,761
+A contour line joins all the points that have the same height.
+
+21
+00:01:33,240 --> 00:01:38,984
+For our bowl, the points with height twenty five form a circle of radius five.
+
+22
+00:01:39,397 --> 00:01:41,724
+Lower heights give smaller circles.
+
+23
+00:01:42,176 --> 00:01:47,242
+Here we draw the heights five, ten, fifteen, twenty, and twenty five.
+
+24
+00:01:48,159 --> 00:01:49,436
+Read the map like this.
+
+25
+00:01:49,875 --> 00:01:53,478
+Where the contour lines are close together, the ground is steep.
+
+26
+00:01:53,917 --> 00:01:57,029
+Where they are far apart, the ground is gentle.
+
+27
+00:01:57,441 --> 00:02:04,210
+We will draw the slope of this landscape as arrows on the map, without any heavy three dimensional drawing.
+
+28
+00:02:05,952 --> 00:02:07,495
+Here is the main question.
+
+29
+00:02:07,921 --> 00:02:10,580
+At one point, how steep is the landscape?
+
+30
+00:02:11,019 --> 00:02:12,814
+The answer depends on the direction you walk.
+
+31
+00:02:13,240 --> 00:02:15,527
+So start with the two simplest directions.
+
+32
+00:02:15,966 --> 00:02:19,077
+Walk only in the x direction, and keep y frozen.
+
+33
+00:02:19,516 --> 00:02:22,708
+Or walk only in the y direction, and keep x frozen.
+
+34
+00:02:23,639 --> 00:02:30,514
+Take a new example: f of x and y equals x squared plus three y, at the point one, two.
+
+35
+00:02:30,980 --> 00:02:31,831
+Freeze y at two.
+
+36
+00:02:32,256 --> 00:02:37,376
+Then f becomes x squared plus six, a function of x alone.
+
+37
+00:02:37,815 --> 00:02:39,756
+Its derivative is two x.
+
+38
+00:02:40,168 --> 00:02:42,416
+At x equals one, that is two.
+
+39
+00:02:42,841 --> 00:02:44,863
+So the slope in the x direction is two.
+
+40
+00:02:45,806 --> 00:02:47,335
+Now freeze x at one instead.
+
+41
+00:02:47,761 --> 00:02:52,867
+Then f becomes one plus three y, a function of y alone.
+
+42
+00:02:53,306 --> 00:02:55,965
+Its derivative is three, everywhere.
+
+43
+00:02:56,391 --> 00:02:58,492
+So the slope in the y direction is three.
+
+44
+00:02:58,918 --> 00:03:04,529
+Each of these slopes is called a partial derivative, because it uses only part of the inputs.
+
+45
+00:03:06,039 --> 00:03:08,114
+We write a partial derivative with a curly d.
+
+46
+00:03:08,659 --> 00:03:14,084
+Read it as partial f, partial x: the slope of f when only x moves.
+
+47
+00:03:14,523 --> 00:03:15,707
+The rule is simple.
+
+48
+00:03:16,146 --> 00:03:22,396
+Treat every other input as a constant number, and use the normal derivative rules from video seven.
+
+49
+00:03:24,093 --> 00:03:27,457
+Now bundle the partial derivatives into one vector.
+
+50
+00:03:27,882 --> 00:03:29,664
+This vector is called the gradient.
+
+51
+00:03:30,103 --> 00:03:33,228
+We write it with an upside down triangle, called nabla.
+
+52
+00:03:33,707 --> 00:03:39,545
+For x squared plus three y at the point one, two, the gradient is two, three.
+
+53
+00:03:39,984 --> 00:03:41,194
+It is an arrow on the map.
+
+54
+00:03:42,706 --> 00:03:45,618
+Let's do the bowl, x squared plus y squared.
+
+55
+00:03:46,044 --> 00:03:49,169
+The partial with respect to x is two x.
+
+56
+00:03:49,621 --> 00:03:52,081
+The partial with respect to y is two y.
+
+57
+00:03:52,506 --> 00:03:55,312
+So the gradient is two x, two y.
+
+58
+00:03:55,738 --> 00:03:58,304
+At the point three, four, it is six, eight.
+
+59
+00:03:58,730 --> 00:04:00,312
+Its length is ten.
+
+60
+00:04:01,226 --> 00:04:03,992
+Draw the gradient at many points of the map.
+
+61
+00:04:04,417 --> 00:04:07,875
+Every arrow points away from the bottom of the bowl, straight up the hill.
+
+62
+00:04:08,287 --> 00:04:12,330
+The arrows are long where the bowl is steep, far from the center.
+
+63
+00:04:12,768 --> 00:04:16,013
+They are short near the bottom, where the bowl is almost flat.
+
+64
+00:04:17,539 --> 00:04:18,683
+A small note on writing.
+
+65
+00:04:19,108 --> 00:04:25,305
+Some books, including the Mathematics for Machine Learning book, write the gradient as a row of numbers.
+
+66
+00:04:25,731 --> 00:04:27,393
+Here we draw it as an arrow.
+
+67
+00:04:27,818 --> 00:04:29,122
+It is the same information.
+
+68
+00:04:29,547 --> 00:04:34,986
+In machine learning code, the gradient usually has exactly the same shape as the weights.
+
+69
+00:04:36,706 --> 00:04:42,357
+In video seven, we learned the key idea: close up, a function looks linear.
+
+70
+00:04:42,796 --> 00:04:47,344
+The new value is about the old value, plus the slope times the step.
+
+71
+00:04:47,770 --> 00:04:51,147
+With many inputs, the step h is a vector.
+
+72
+00:04:51,586 --> 00:04:56,107
+And the slope times the step becomes the dot product of the gradient with h.
+
+73
+00:04:57,039 --> 00:05:04,539
+So the formula is: f of x plus h is approximately f of x, plus the gradient dot h.
+
+74
+00:05:04,978 --> 00:05:11,308
+The dot product multiplies each partial slope by the step in that direction, and adds the results.
+
+75
+00:05:11,733 --> 00:05:17,850
+This is axiom C, local linearity, written with the inner product of video five.
+
+76
+00:05:19,373 --> 00:05:19,918
+Let's check it.
+
+77
+00:05:20,410 --> 00:05:25,263
+For x squared plus three y at one, two, the value is seven.
+
+78
+00:05:25,702 --> 00:05:29,412
+Step by h equal to zero point one, zero point one.
+
+79
+00:05:29,851 --> 00:05:36,021
+The gradient dot h is two times zero point one, plus three times zero point one.
+
+80
+00:05:36,447 --> 00:05:37,883
+That is zero point five.
+
+81
+00:05:38,309 --> 00:05:40,210
+So the guess is seven point five.
+
+82
+00:05:40,636 --> 00:05:42,910
+The true value is seven point five one.
+
+83
+00:05:43,839 --> 00:05:47,031
+A second check, on the bowl at three, four.
+
+84
+00:05:47,456 --> 00:05:50,674
+Step by zero point one, minus zero point one.
+
+85
+00:05:51,100 --> 00:05:57,190
+The gradient dot h is six times zero point one, minus eight times zero point one.
+
+86
+00:05:57,616 --> 00:05:59,398
+That is minus zero point two.
+
+87
+00:05:59,823 --> 00:06:01,791
+So the guess is twenty four point eight.
+
+88
+00:06:02,230 --> 00:06:04,597
+The true value is twenty four point eight two.
+
+89
+00:06:05,023 --> 00:06:05,993
+Very close again.
+
+90
+00:06:07,739 --> 00:06:08,617
+Now the big question.
+
+91
+00:06:09,029 --> 00:06:12,606
+Of all directions, which one goes uphill fastest?
+
+92
+00:06:13,045 --> 00:06:16,050
+Take a step of length one in some direction u.
+
+93
+00:06:16,489 --> 00:06:19,189
+The change in height is about the gradient dot u.
+
+94
+00:06:19,641 --> 00:06:25,452
+From video five, a dot product equals the two lengths times the cosine of the angle between them.
+
+95
+00:06:26,373 --> 00:06:32,476
+The length of u is one, so the change is the length of the gradient, times the cosine of the angle.
+
+96
+00:06:32,888 --> 00:06:34,963
+Watch the direction turn around the point.
+
+97
+00:06:35,402 --> 00:06:43,008
+When u points along the gradient, the angle is zero, the cosine is one, and the change is largest: ten.
+
+98
+00:06:43,447 --> 00:06:46,652
+So the gradient points in the steepest uphill direction.
+
+99
+00:06:47,593 --> 00:06:53,749
+At an angle of ninety degrees, the cosine is zero, and the height does not change.
+
+100
+00:06:54,162 --> 00:06:56,848
+That direction runs along the contour line.
+
+101
+00:06:57,287 --> 00:07:01,316
+So the gradient is always perpendicular to the contour lines.
+
+102
+00:07:01,742 --> 00:07:05,957
+And at one hundred eighty degrees, the change is minus ten.
+
+103
+00:07:06,396 --> 00:07:09,228
+Minus the gradient points steepest downhill.
+
+104
+00:07:10,139 --> 00:07:15,113
+That last fact is the seed of gradient descent, the main training method.
+
+105
+00:07:15,538 --> 00:07:20,950
+Take a small step against the gradient, again and again, and you walk down the hill.
+
+106
+00:07:21,376 --> 00:07:26,642
+Gradient descent is a molecule built from these atoms, so here we only preview it.
+
+107
+00:07:28,359 --> 00:07:35,580
+In machine learning, the landscape is the loss: the error score of the model, which we study in video fifteen.
+
+108
+00:07:36,019 --> 00:07:37,708
+Its inputs are all the weights.
+
+109
+00:07:38,160 --> 00:07:42,827
+The small GPT two model has about one hundred twenty four million weights.
+
+110
+00:07:43,266 --> 00:07:49,662
+So its gradient has one hundred twenty four million partial derivatives, one for each weight.
+
+111
+00:07:51,193 --> 00:07:55,248
+Each partial derivative answers the question from the start of this video.
+
+112
+00:07:55,687 --> 00:07:59,038
+If I nudge only this weight, how fast does the loss change?
+
+113
+00:07:59,490 --> 00:08:02,868
+The gradient collects all the answers in one vector.
+
+114
+00:08:03,294 --> 00:08:10,474
+Libraries like PyTorch compute it for us, and store a gradient with the same shape as each weight matrix.
+
+115
+00:08:12,019 --> 00:08:14,080
+Here is one toy step on our bowl.
+
+116
+00:08:14,493 --> 00:08:18,828
+Start at three, four, where the height is twenty five.
+
+117
+00:08:19,280 --> 00:08:21,168
+The gradient is six, eight.
+
+118
+00:08:21,594 --> 00:08:24,931
+Step against it, with a step size of zero point one.
+
+119
+00:08:25,370 --> 00:08:28,336
+The new point is two point four, three point two.
+
+120
+00:08:28,774 --> 00:08:31,607
+The height drops from twenty five to sixteen.
+
+121
+00:08:32,032 --> 00:08:34,054
+One step, and we are much lower.
+
+122
+00:08:35,759 --> 00:08:36,637
+Now it is your turn.
+
+123
+00:08:37,062 --> 00:08:38,884
+Pause the video and try this.
+
+124
+00:08:39,296 --> 00:08:43,179
+Take f of x and y equals three x plus y squared.
+
+125
+00:08:43,605 --> 00:08:48,007
+What are the two partial derivatives, and what is the gradient at the point two, one?
+
+126
+00:08:48,432 --> 00:08:50,733
+Remember: freeze the other input.
+
+127
+00:08:51,686 --> 00:08:52,617
+Here are the answers.
+
+128
+00:08:53,082 --> 00:08:57,550
+Freeze y, and three x plus a constant has slope three.
+
+129
+00:08:58,029 --> 00:09:00,954
+Freeze x, and y squared has slope two y.
+
+130
+00:09:01,367 --> 00:09:04,266
+At the point two, one, two y is two.
+
+131
+00:09:04,691 --> 00:09:07,125
+So the gradient is three, two.
+
+132
+00:09:08,652 --> 00:09:13,692
+One more question, on the bowl x squared plus y squared at the point zero, five.
+
+133
+00:09:14,105 --> 00:09:15,155
+What is the gradient?
+
+134
+00:09:15,581 --> 00:09:17,868
+In which direction is the steepest way up?
+
+135
+00:09:18,293 --> 00:09:21,512
+And in which direction does the height not change at all?
+
+136
+00:09:21,937 --> 00:09:22,801
+Pause and think.
+
+137
+00:09:23,706 --> 00:09:28,201
+The gradient is two x, two y, which is zero, ten.
+
+138
+00:09:28,639 --> 00:09:32,682
+So the steepest way up is straight in the y direction, with slope ten.
+
+139
+00:09:33,134 --> 00:09:38,613
+The height does not change if you walk in the x direction, along the circle of radius five.
+
+140
+00:09:39,052 --> 00:09:41,990
+That direction is perpendicular to the gradient.
+
+141
+00:09:43,739 --> 00:09:44,909
+Let's check this in Python.
+
+142
+00:09:45,335 --> 00:09:46,784
+We write a numeric gradient.
+
+143
+00:09:47,250 --> 00:09:55,694
+For each input, we nudge only that input up and down by a tiny h, freeze the others, and divide the change by two h.
+
+144
+00:09:56,120 --> 00:10:02,064
+Then we compare with the exact gradients, test the linear guess, and take one step downhill.
+
+145
+00:10:03,573 --> 00:10:07,429
+This output is real; the script ran while the video was made.
+
+146
+00:10:07,854 --> 00:10:14,397
+The numeric gradients are two, three and six, eight, equal to the exact ones.
+
+147
+00:10:14,836 --> 00:10:18,214
+The linear guesses are very close to the true values.
+
+148
+00:10:18,652 --> 00:10:23,905
+The slope along the gradient is ten, and at ninety degrees it is zero.
+
+149
+00:10:24,304 --> 00:10:27,509
+One step takes the height from twenty five to sixteen.
+
+150
+00:10:29,239 --> 00:10:29,944
+In summary.
+
+151
+00:10:30,370 --> 00:10:35,503
+A function of two inputs is a landscape, and a contour map shows it flat.
+
+152
+00:10:35,928 --> 00:10:41,566
+A partial derivative is the slope when only one input moves and the others are frozen.
+
+153
+00:10:41,992 --> 00:10:46,074
+The gradient bundles all the partial derivatives into one vector.
+
+154
+00:10:46,500 --> 00:10:52,417
+Close up, f of x plus h is about f of x, plus the gradient dot h.
+
+155
+00:10:53,373 --> 00:10:58,958
+The gradient points steepest uphill, and it is perpendicular to the contour lines.
+
+156
+00:10:59,396 --> 00:11:01,511
+Minus the gradient points downhill.
+
+157
+00:11:01,936 --> 00:11:06,617
+In machine learning, the gradient of the loss has one entry per weight.
+
+158
+00:11:07,056 --> 00:11:11,604
+Next, in video nine: the chain rule, where slopes multiply.
+
+159
+00:11:12,029 --> 00:11:12,561
+See you there.
+
+160
+00:11:14,506 --> 00:11:16,328
+This video was made by David R.
+
+161
+00:11:16,767 --> 00:11:19,998
+You can find more lessons at David Ramirez J dot com.
+
+162
+00:11:20,556 --> 00:11:21,274
+Thanks for watching.

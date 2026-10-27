@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MLP vs CNN — ¿cuál es la diferencia?</title>
+<script>
+  window.MathJax = { tex: { inlineMath: [['$','$']], displayMath: [['$$','$$']] } };
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<style>
+  :root{
+    --bg:#f7f5ef; --fg:#1d1d1f; --muted:#62615c; --card:#ffffff; --line:#dedbd2;
+    --mlp:#c2410c; --mlp-soft:#fde7d9; --cnn:#0f766e; --cnn-soft:#d5f0ec; --accent:#4338ca;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#15161a; --fg:#ecebe6; --muted:#a3a29b; --card:#1e2026; --line:#33353d;
+      --mlp:#fb923c; --mlp-soft:#3a2418; --cnn:#2dd4bf; --cnn-soft:#123430; --accent:#a5b4fc; }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);font:17px/1.6 "Iowan Old Style","Charter",Georgia,serif}
+  main{max-width:960px;margin:0 auto;padding:40px 22px 80px}
+  h1,h2,h3{font-family:"Avenir Next","Segoe UI",system-ui,sans-serif;line-height:1.2}
+  h1{font-size:2.3rem;margin:0 0 6px}
+  h2{font-size:1.45rem;margin:48px 0 12px;border-bottom:2px solid var(--line);padding-bottom:6px}
+  .hero{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 26px;margin:18px 0}
+  .hero p{font-size:1.15rem;margin:.3em 0}
+  .mlp{color:var(--mlp);font-weight:700} .cnn{color:var(--cnn);font-weight:700}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media (max-width:760px){.grid2{grid-template-columns:1fr}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+  .card.m{border-top:5px solid var(--mlp)} .card.c{border-top:5px solid var(--cnn)}
+  table{border-collapse:collapse;width:100%;font-size:.95rem;background:var(--card)}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{font-family:system-ui,sans-serif;font-size:.85rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+  .sym{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin:10px 0;font-size:.95rem}
+  .sym div:nth-child(odd){text-align:right;font-weight:600}
+  details{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 16px;margin:12px 0}
+  summary{cursor:pointer;font-family:system-ui,sans-serif;font-weight:600}
+  button{font:600 .9rem system-ui,sans-serif;border:1px solid var(--line);background:var(--card);color:var(--fg);
+    padding:7px 14px;border-radius:8px;cursor:pointer}
+  button:hover{border-color:var(--accent)}
+  .note{color:var(--muted);font-size:.92rem}
+  svg text{font-family:system-ui,sans-serif}
+  /* convolution demo */
+  .convwrap{display:flex;gap:26px;align-items:center;flex-wrap:wrap;margin:12px 0}
+  .mat{display:grid;gap:3px}
+  .cell{width:40px;height:40px;display:flex;align-items:center;justify-content:center;
+    font:600 .95rem system-ui,sans-serif;border-radius:5px;background:var(--line);transition:.15s}
+  .cell.hot{outline:3px solid var(--cnn);background:var(--cnn-soft)}
+  .cell.k{background:var(--cnn-soft);color:var(--cnn)}
+  .cell.out{background:var(--card);border:1px dashed var(--line)}
+  .cell.done{background:var(--cnn-soft);border:1px solid var(--cnn)}
+  .cell.cur{outline:3px solid var(--accent)}
+  .lab{font:600 .8rem system-ui,sans-serif;color:var(--muted);text-align:center;margin-bottom:4px}
+  .calc{font:.95rem ui-monospace,Menlo,monospace;background:var(--card);border:1px solid var(--line);
+    border-radius:8px;padding:10px 12px;min-height:3.2em;margin-top:8px;white-space:pre-wrap}
+  /* toeplitz */
+  .wmat{display:inline-grid;gap:2px;margin:8px 0}
+  .w{width:42px;height:30px;display:flex;align-items:center;justify-content:center;font:600 .8rem system-ui,sans-serif;border-radius:4px}
+  .w.free{background:var(--mlp-soft);color:var(--mlp)}
+  .w.zero{background:transparent;color:var(--muted);border:1px solid var(--line)}
+  .w.k1{background:#c7d2fe;color:#1e1b4b}.w.k2{background:#a7f3d0;color:#064e3b}.w.k3{background:#fde68a;color:#78350f}
+  input[type=range]{width:100%}
+  .bars{margin-top:10px}
+  .bar{height:26px;border-radius:6px;margin:6px 0;display:flex;align-items:center;padding:0 10px;
+    font:600 .85rem system-ui,sans-serif;color:#fff;white-space:nowrap;min-width:fit-content;transition:width .2s}
+  .quiz .q{margin:14px 0}
+  .quiz label{display:block;padding:6px 10px;border-radius:7px;cursor:pointer}
+  .quiz label:hover{background:var(--line)}
+  .fb{font-size:.92rem;margin-top:4px}
+  .summary{background:var(--card);border-left:6px solid var(--accent);border-radius:10px;padding:16px 22px;margin-top:40px}
+</style>
+</head>
+<body>
+<main>
+
+<h1>MLP vs CNN</h1>
+<div class="note">Perceptrón multicapa vs red neuronal convolucional · explicador de la wiki ML-math · 2026-10-13</div>
+
+<div class="hero">
+  <p>En corto: un <span class="mlp">MLP</span> mira <b>toda la entrada de una sola vez</b>. Una <span class="cnn">CNN</span> la mira por <b>pedacitos</b>, uno a la vez, usando el <b>mismo detector de patrones</b> en todas partes.</p>
+  <p class="note">Lo sorprendente: una CNN en realidad es un MLP con reglas extra. No es más poderosa. Es un MLP más ligero, hecho para datos donde los vecinos importan.</p>
+</div>
+
+<h2>0 · La historia en palabras simples</h2>
+<div class="grid2">
+  <div class="card m">
+    <h3 class="mlp">El MLP</h3>
+    <p>Imagina una imagen de 28×28 píxeles. El MLP primero la "aplana" en una sola lista larga de 784 números. Después conecta cada neurona de la siguiente capa con <i>los 784</i>, y cada conexión tiene su propio peso (<i>weight</i>: un número que la red aprende).</p>
+    <p>Esto tiene dos problemas. <b>Es enorme:</b> con solo 100 neuronas ya son unos 78,500 pesos. <b>Olvida la forma de la imagen:</b> al aplanarla, la red ya no sabe qué píxeles estaban juntos. Si un gato se mueve 10 píxeles a la derecha, el MLP lo ve como algo totalmente nuevo y tiene que aprenderlo otra vez.</p>
+  </div>
+  <div class="card c">
+    <h3 class="cnn">La CNN</h3>
+    <p>La CNN usa una ventanita, normalmente de 3×3 píxeles, que se llama <i>filter</i> (filtro). El filtro tiene solo 9 pesos. Se desliza por toda la imagen, y en cada lugar se pregunta: "¿este pedacito se parece a mi patrón?". El patrón puede ser un borde, una esquina o una textura.</p>
+    <p>El truco es que <b>los mismos 9 pesos se usan en todas las posiciones</b>. Por eso es pequeña: 32 filtros cuestan solo 320 pesos, sin importar el tamaño de la imagen. Y encuentra cosas en cualquier lugar: si un filtro aprendió a reconocer un ojo, lo reconoce en cualquier esquina. Si mueves al gato, la salida simplemente se mueve con él.</p>
+  </div>
+</div>
+<div class="card" style="margin-top:18px">
+  🔍 <b>Una analogía:</b> el MLP es como leer una página mirando todas las letras a la vez y memorizando dónde está cada una. La CNN es como pasar una lupa por la página con una sola pregunta en mente: "¿hay una 'e' aquí?". La pregunta es la misma en cualquier parte de la página.
+</div>
+
+<!-- ============ DIAGRAM ============ -->
+<h2>1 · El dibujo</h2>
+<div class="grid2">
+  <div class="card m">
+    <h3 class="mlp">MLP — totalmente conectado (dense)</h3>
+    <svg viewBox="0 0 300 200" width="100%">
+      <g id="mlpEdges"></g>
+      <g id="mlpNodes"></g>
+      <text x="40" y="195" font-size="11" text-anchor="middle" fill="currentColor">entrada x</text>
+      <text x="260" y="195" font-size="11" text-anchor="middle" fill="currentColor">capa oculta h</text>
+    </svg>
+    <p class="note">Cada entrada está conectada con cada neurona: 24 cables, y cada uno tiene su propio peso que aprender.</p>
+  </div>
+  <div class="card c">
+    <h3 class="cnn">CNN — local + compartida (convolución)</h3>
+    <svg viewBox="0 0 300 200" width="100%">
+      <g id="cnnEdges"></g>
+      <g id="cnnNodes"></g>
+      <text x="40" y="195" font-size="11" text-anchor="middle" fill="currentColor">entrada x</text>
+      <text x="260" y="195" font-size="11" text-anchor="middle" fill="currentColor">feature map</text>
+    </svg>
+    <p class="note">Cada neurona solo mira 3 entradas vecinas. Los colores se repiten porque son los mismos 3 pesos cada vez.</p>
+  </div>
+</div>
+
+<!-- ============ FORMULAS ============ -->
+<h2>2 · Las fórmulas, símbolo por símbolo</h2>
+<p>Aquí está la misma idea escrita en matemáticas. No te preocupes si se ve densa: cada símbolo se explica justo debajo.</p>
+<div class="grid2">
+  <div class="card m">
+    <h3 class="mlp">Capa de un MLP</h3>
+    $$\mathbf{h} = \sigma(\mathbf{W}\mathbf{x} + \mathbf{b})$$
+    <div class="sym">
+      <div>$\mathbf{x}\in\mathbb{R}^{n}$</div><div>la entrada, una lista de $n$ números. "$\in\mathbb{R}^n$" se lee "es una lista de $n$ números reales".</div>
+      <div>$\mathbf{W}\in\mathbb{R}^{m\times n}$</div><div>la matriz de pesos, una tabla con $m$ filas y $n$ columnas. Cada valor se aprende por separado.</div>
+      <div>$\mathbf{W}\mathbf{x}$</div><div>multiplicar la tabla por la entrada: cada neurona toma una fila de $\mathbf{W}$, la multiplica por todo $\mathbf{x}$ y suma el resultado</div>
+      <div>$\mathbf{b}\in\mathbb{R}^{m}$</div><div>el sesgo (<i>bias</i>), un pequeño número extra para cada neurona</div>
+      <div>$\sigma(\cdot)$</div><div>la función de activación, una "aplastada" sencilla que se aplica a cada valor. Por ejemplo, ReLU, $\max(0,z)$, convierte los negativos en 0.</div>
+      <div>$\mathbf{h}\in\mathbb{R}^{m}$</div><div>la salida, un valor por neurona ($m$ en total)</div>
+    </div>
+    <p>Si haces zoom en una sola neurona, la número $i$:</p>
+    $$h_i = \sigma\Big(\sum_{j=1}^{n} W_{ij}\,x_j + b_i\Big)$$
+    <p class="note">$\sum_{j=1}^{n}$ significa "suma esto para $j = 1, 2, \dots, n$". En otras palabras, la neurona $i$ mira <b>todas</b> las entradas.</p>
+  </div>
+  <div class="card c">
+    <h3 class="cnn">Capa de convolución (2-D)</h3>
+    $$h_{i,j} = \sigma\Big(\sum_{u=0}^{k-1}\sum_{v=0}^{k-1} K_{u,v}\; x_{i+u,\,j+v} + b\Big)$$
+    <div class="sym">
+      <div>$x_{i,j}$</div><div>el píxel en la fila $i$, columna $j$. La imagen se queda como cuadrícula; no se aplana nada.</div>
+      <div>$\mathbf{K}\in\mathbb{R}^{k\times k}$</div><div>el filtro (también llamado <i>kernel</i>), una cuadrícula pequeña de $k\times k$ pesos, casi siempre $3\times 3$</div>
+      <div>$\sum_u\sum_v$</div><div>sumar solo sobre el pedacito, no sobre toda la imagen</div>
+      <div>$x_{i+u,\,j+v}$</div><div>los píxeles dentro del pedacito que empieza en $(i,j)$</div>
+      <div>$b$</div><div>un solo sesgo, compartido por todas las posiciones</div>
+      <div>$h_{i,j}$</div><div>la salida en la posición $(i,j)$. Todas juntas forman el "feature map" (mapa de características).</div>
+    </div>
+    <p class="note">El detalle clave: $\mathbf{K}$ <b>no</b> tiene $i$ ni $j$. No le importa dónde está. Los mismos pesos se usan en todas las posiciones, y a eso se le llama <b>weight sharing</b> (pesos compartidos).</p>
+    <p class="note">Una nota pequeña: en sentido estricto esto es <i>correlación cruzada</i>, porque la convolución "de verdad" primero voltea el filtro. Las librerías de deep learning le dicen convolución de todos modos, y como los pesos se aprenden, el volteo no importa.</p>
+  </div>
+</div>
+
+<!-- ============ CONV DEMO ============ -->
+<h2>3 · Mira cómo se desliza el filtro</h2>
+<p>Veámoslo en acción. El filtro de 3×3 de abajo detecta un <b>borde vertical</b>: se "enciende" cuando a la izquierda hay luz y a la derecha oscuridad. Dale clic y míralo moverse. En cada parada multiplica los 9 píxeles que tiene debajo por sus 9 pesos y suma todo.</p>
+<div class="convwrap">
+  <div><div class="lab">entrada x (5×5)</div><div class="mat" id="inp" style="grid-template-columns:repeat(5,40px)"></div></div>
+  <div style="font-size:1.6rem">✱</div>
+  <div><div class="lab">kernel K (3×3)</div><div class="mat" id="ker" style="grid-template-columns:repeat(3,40px)"></div></div>
+  <div style="font-size:1.6rem">=</div>
+  <div><div class="lab">feature map (3×3)</div><div class="mat" id="out" style="grid-template-columns:repeat(3,40px)"></div></div>
+</div>
+<button id="stepBtn">Siguiente posición ▶</button> <button id="playBtn">Reproducir todo</button> <button id="resetBtn">Reiniciar</button>
+<div class="calc" id="calc">Presiona "Siguiente posición".</div>
+<p class="note">¿Ves cómo los números grandes (27) aparecen justo donde está el borde? Los <b>mismos 9 pesos</b> lo encontraron, estuviera donde estuviera. Un MLP tendría que aprender un detector de bordes distinto para cada posición posible.</p>
+
+<!-- ============ TOEPLITZ ============ -->
+<h2>4 · Una convolución es una matriz especial</h2>
+<p>Esta es la parte que une todo. Toma una entrada pequeña de 1-D con 6 números que produce 4 salidas, y escribe la tabla de pesos $\mathbf{W}$ (4×6) de cada capa, una al lado de la otra.</p>
+<div class="grid2">
+  <div class="card m"><h3 class="mlp">MLP: 24 pesos libres</h3><div class="wmat" id="wDense" style="grid-template-columns:repeat(6,42px)"></div>
+    <p class="note">Cada celda es un número distinto que hay que aprender.</p></div>
+  <div class="card c"><h3 class="cnn">Conv (kernel de tamaño 3): 3 pesos libres</h3><div class="wmat" id="wConv" style="grid-template-columns:repeat(6,42px)"></div>
+    <p class="note">Casi todo son ceros, porque cada salida solo ve a sus vecinos. Y cada diagonal repite el mismo peso, porque el filtro es compartido. Los matemáticos le dicen a esta forma una matriz de <b>Toeplitz</b>.</p></div>
+</div>
+<p>Así que las dos capas hacen exactamente lo mismo: $\mathbf{W}\mathbf{x}$. La única diferencia son las <b>reglas sobre $\mathbf{W}$</b>. Menos números que aprender significa que la CNN necesita menos datos y es menos propensa a memorizar ruido, siempre que esas reglas de verdad encajen con tus datos.</p>
+
+<!-- ============ PARAMS ============ -->
+<h2>5 · Cantidad de parámetros: mueve el slider</h2>
+<p>Así de rápido crece la diferencia. Comparamos la primera capa sobre una imagen cuadrada en escala de grises: un MLP con 100 neuronas contra una CNN con 32 filtros de 3×3. Arrastra el slider para hacer la imagen más grande.</p>
+<label>Lado de la imagen: <b id="sideV">28</b> px → <span id="pixV"></span> entradas</label>
+<input type="range" id="side" min="8" max="256" value="28">
+<div class="bars">
+  <div class="bar" id="barM" style="background:var(--mlp)"></div>
+  <div class="bar" id="barC" style="background:var(--cnn)"></div>
+</div>
+<p class="note">MLP: $n\cdot m + m$ = (píxeles × 100) + 100. CNN: $F\cdot(k^2+1)$ = 32 × (9 + 1) = 320, y <b>nunca cambia</b>, por grande que sea la imagen. (Las barras usan escala logarítmica; si no, la barra de la CNN sería invisible.)</p>
+
+<!-- ============ TABLE ============ -->
+<h2>6 · Lado a lado</h2>
+<table>
+  <tr><th>Propiedad</th><th class="mlp">MLP</th><th class="cnn">CNN</th></tr>
+  <tr><td>Conexión</td><td>Cada entrada → cada neurona (dense)</td><td>Un pedacito → una neurona (campo receptivo local)</td></tr>
+  <tr><td>Pesos</td><td>Un peso por conexión</td><td>Un kernel pequeño, reutilizado en todas las posiciones</td></tr>
+  <tr><td>Forma de la entrada</td><td>Vector plano. Una imagen 2-D se aplana, y se pierde "qué píxel está junto a cuál".</td><td>Conserva la cuadrícula (alto × ancho × canales)</td></tr>
+  <tr><td>Si la entrada se desplaza</td><td>La salida cambia de forma impredecible</td><td>La salida se desplaza igual (<b>equivarianza a traslaciones</b>). El <i>pooling</i> agrega una invarianza aproximada.</td></tr>
+  <tr><td>Suposición de fábrica (inductive bias)</td><td>Casi ninguna. Cualquier entrada se puede relacionar con cualquier otra.</td><td>Los valores cercanos importan juntos; el mismo patrón puede aparecer en cualquier lugar.</td></tr>
+  <tr><td>Parámetros</td><td>Crecen con el tamaño de la entrada × el ancho de la capa</td><td>Solo crecen con el tamaño del kernel × el número de filtros</td></tr>
+  <tr><td>Mejor para</td><td>Tablas de datos (edad, ingreso, <i>credit score</i>…) donde el orden de las columnas no significa nada</td><td>Imágenes, audio, series de tiempo: todo donde los valores cercanos van juntos</td></tr>
+  <tr><td>Capas típicas</td><td>Dense → ReLU → Dense → …</td><td>Conv → ReLU → Pool → … → Flatten → Dense (una "cabeza" MLP)</td></tr>
+  <tr><td>Entrenamiento</td><td colspan="2">Igual para las dos: una función de pérdida (<i>loss</i>), <a href="../wiki/concepts/backpropagation.md">backpropagation</a> (regla de la cadena) y descenso de gradiente. En una CNN, el gradiente de un peso compartido es la <b>suma</b> de sus gradientes en todas las posiciones.</td></tr>
+</table>
+
+<details>
+  <summary>🔴 Notas para expertos</summary>
+  <ul>
+    <li><b>Aproximación universal:</b> un MLP con una capa oculta y suficientes neuronas puede aproximar cualquier función continua en un conjunto compacto (Cybenko 1989; Hornik 1991). Así que, en principio, las CNN no son "más poderosas". Son más <b>eficientes</b> para datos en cuadrícula: menos parámetros y mejor generalización.</li>
+    <li><b>Equivarianza, formalmente:</b> sea $T_s$ el operador que desplaza una señal $s$ posiciones. La convolución conmuta con el desplazamiento: $\mathbf{K} * (T_s\mathbf{x}) = T_s(\mathbf{K} * \mathbf{x})$. Una $\mathbf{W}$ densa conmuta con todos los desplazamientos solo si es una matriz de convolución (circulante).</li>
+    <li><b>Vista espectral:</b> las matrices circulantes se diagonalizan con la transformada discreta de Fourier. Por eso una convolución es una multiplicación en el dominio de la frecuencia (teorema de convolución).</li>
+    <li><b>Varios canales:</b> las capas conv reales usan $\mathbf{K}\in\mathbb{R}^{C_\text{out}\times C_\text{in}\times k\times k}$: cada canal de salida suma sobre todos los canales de entrada. Parámetros: $C_\text{out}(C_\text{in}k^2+1)$.</li>
+    <li><b>Caso especial:</b> una convolución de 1×1 es un MLP aplicado por separado al vector de canales de cada píxel.</li>
+  </ul>
+</details>
+
+<!-- ============ QUIZ ============ -->
+<h2>7 · Ponte a prueba</h2>
+<div class="quiz" id="quiz"></div>
+
+<div class="summary">
+  <h3 style="margin-top:0">En resumen</h3>
+  <ul>
+    <li>El MLP conecta todo con todo. La CNN desliza un filtro pequeño y reutilizable sobre la entrada.</li>
+    <li>Por eso la CNN es mucho más pequeña y reconoce un patrón sin importar dónde aparezca.</li>
+    <li>Por dentro, las dos calculan $\sigma(\mathbf{W}\mathbf{x}+\mathbf{b})$. La CNN solo le pone reglas a $\mathbf{W}$: casi todo ceros, más pesos repetidos.</li>
+    <li>Usa un MLP para tablas, y una CNN para imágenes, sonido y otros datos con forma de cuadrícula. Muchas redes reales usan las dos: una CNN extrae las características y luego un MLP pequeño toma la decisión final.</li>
+  </ul>
+</div>
+</main>
+
+<script>
+/* ---------- network diagrams ---------- */
+const NS="http://www.w3.org/2000/svg";
+function el(t,a){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);return e}
+const inY=[20,52,84,116,148,180].map(y=>y-5), hidY=[40,77,114,151];
+function drawNet(edgesId,nodesId,edgeFn,colr){
+  const E=document.getElementById(edgesId),N=document.getElementById(nodesId);
+  hidY.forEach((hy,i)=>inY.forEach((iy,j)=>{const c=edgeFn(i,j);if(c)E.appendChild(el('line',{x1:48,y1:iy,x2:252,y2:hy,stroke:c,'stroke-width':c==='gray'?1:2.4,opacity:c==='gray'?.45:.9}))}));
+  inY.forEach(y=>N.appendChild(el('circle',{cx:40,cy:y,r:9,fill:'var(--card)',stroke:'currentColor','stroke-width':1.5})));
+  hidY.forEach(y=>N.appendChild(el('circle',{cx:260,cy:y,r:10,fill:colr,stroke:colr})));
+}
+drawNet('mlpEdges','mlpNodes',()=> 'gray','var(--mlp)');
+const kc=['#6366f1','#10b981','#f59e0b'];
+drawNet('cnnEdges','cnnNodes',(i,j)=> (j>=i&&j<i+3)?kc[j-i]:null,'var(--cnn)');
+
+/* ---------- convolution demo ---------- */
+const X=[[9,9,9,0,0],[9,9,9,0,0],[9,9,9,0,0],[9,9,9,0,0],[9,9,9,0,0]];
+const K=[[1,0,-1],[1,0,-1],[1,0,-1]];
+const inp=document.getElementById('inp'),ker=document.getElementById('ker'),out=document.getElementById('out'),calc=document.getElementById('calc');
+const inCells=[],outCells=[];
+X.forEach((r,i)=>r.forEach((v,j)=>{const d=document.createElement('div');d.className='cell';d.textContent=v;
+  d.style.background=v? 'rgba(250,204,21,.55)':'';inp.appendChild(d);(inCells[i]=inCells[i]||[])[j]=d}));
+K.flat().forEach(v=>{const d=document.createElement('div');d.className='cell k';d.textContent=v;ker.appendChild(d)});
+for(let p=0;p<9;p++){const d=document.createElement('div');d.className='cell out';d.textContent='?';out.appendChild(d);outCells.push(d)}
+let pos=-1,timer=null;
+function show(p){
+  inCells.flat().forEach(c=>c.classList.remove('hot'));outCells.forEach(c=>c.classList.remove('cur'));
+  if(p<0){outCells.forEach(c=>{c.textContent='?';c.className='cell out'});calc.textContent='Presiona "Siguiente posición".';return}
+  const i=Math.floor(p/3),j=p%3;let s=0,terms=[];
+  for(let u=0;u<3;u++)for(let v=0;v<3;v++){inCells[i+u][j+v].classList.add('hot');s+=K[u][v]*X[i+u][j+v];terms.push(`${K[u][v]}·${X[i+u][j+v]}`)}
+  outCells[p].textContent=s;outCells[p].className='cell done cur';
+  calc.textContent=`h[${i},${j}] = ${terms.join(' + ')}\n       = ${s}`;
+}
+document.getElementById('stepBtn').onclick=()=>{pos=(pos+1)%9;if(pos===0)outCells.forEach(c=>{c.textContent='?';c.className='cell out'});show(pos)};
+document.getElementById('resetBtn').onclick=()=>{clearInterval(timer);pos=-1;show(-1)};
+document.getElementById('playBtn').onclick=()=>{clearInterval(timer);pos=-1;show(-1);timer=setInterval(()=>{pos++;if(pos>8){clearInterval(timer);return}show(pos)},700)};
+
+/* ---------- Toeplitz ---------- */
+const wD=document.getElementById('wDense'),wC=document.getElementById('wConv');
+for(let i=0;i<4;i++)for(let j=0;j<6;j++){
+  const a=document.createElement('div');a.className='w free';a.textContent=`w${i+1}${j+1}`;wD.appendChild(a);
+  const b=document.createElement('div');const d=j-i;
+  if(d>=0&&d<3){b.className='w k'+(d+1);b.textContent='k'+(d+1)}else{b.className='w zero';b.textContent='0'}
+  wC.appendChild(b);
+}
+
+/* ---------- parameter slider ---------- */
+const side=document.getElementById('side');
+function upd(){const s=+side.value,n=s*s,m=n*100+100,c=320;
+  document.getElementById('sideV').textContent=s;document.getElementById('pixV').textContent=n.toLocaleString();
+  const max=Math.log10(256*256*100+100);
+  const bm=document.getElementById('barM'),bc=document.getElementById('barC');
+  bm.style.width=(Math.log10(m)/max*100)+'%';bm.textContent=`MLP: ${m.toLocaleString()} pesos`;
+  bc.style.width=(Math.log10(c)/max*100)+'%';bc.textContent=`CNN: ${c} pesos`;
+  bc.title=bm.title='La longitud de las barras usa escala logarítmica';}
+side.oninput=upd;upd();
+
+/* ---------- quiz ---------- */
+const Q=[
+ {q:'Aplicas un filtro conv de 3×3 a una imagen de 1000×1000. ¿Cuántos pesos tiene ese filtro (sin contar el sesgo)?',a:['9','1,000,000','9,000,000'],c:0,
+  why:'El tamaño del filtro no depende del tamaño de la imagen. Los mismos 9 pesos se deslizan por todas las posiciones.'},
+ {q:'Mueves un gato 10 píxeles a la derecha. ¿Qué pasa con el feature map de la convolución?',a:['Cambia al azar','También se mueve 10 píxeles a la derecha','Se queda exactamente igual'],c:1,
+  why:'La convolución es equivariante a traslaciones: si la entrada se mueve, la salida se mueve igual. (Después, el pooling la vuelve aproximadamente invariante.)'},
+ {q:'Tus datos son una tabla: edad, ingreso, credit score, número de préstamos. ¿Qué tipo de capa encaja mejor?',a:['CNN','MLP'],c:1,
+  why:'Las columnas no tienen un orden de "vecinos". La suposición de la CNN (los valores cercanos van juntos) no se cumple aquí, así que un MLP denso encaja mejor.'},
+ {q:'¿Cuál afirmación es verdadera?',a:['Una capa conv puede calcular cosas que un MLP no puede','Una capa conv es una capa de MLP con una W con reglas','Un MLP tiene menos parámetros para imágenes'],c:1,
+  why:'Una capa conv es W·x, con W casi toda en ceros y con valores repetidos (Toeplitz). Es un caso especial de una capa densa.'}
+];
+const qz=document.getElementById('quiz');
+Q.forEach((it,k)=>{const d=document.createElement('div');d.className='q card';
+  d.innerHTML=`<b>${k+1}. ${it.q}</b>`+it.a.map((o,i)=>`<label><input type="radio" name="q${k}" value="${i}"> ${o}</label>`).join('')+`<div class="fb" id="fb${k}"></div>`;
+  qz.appendChild(d);
+  d.querySelectorAll('input').forEach(r=>r.onchange=()=>{const ok=+r.value===it.c;
+    document.getElementById('fb'+k).innerHTML=(ok?'✅ Correcto. ':'❌ No exactamente. ')+it.why;});
+});
+</script>
+</body>
+</html>

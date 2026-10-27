@@ -1,0 +1,10 @@
+00:00 Intro
+00:40 Length from the inner product
+02:43 L1, L2 and L-infinity norms
+04:27 The three norm rules
+05:47 Unit vectors and normalizing
+07:10 Distance and metrics
+08:38 Norms in ML
+10:45 Try it yourself
+11:58 Python demo
+12:45 Summary

@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Foundations 1-2-3: numbers, dot products, neurons</title>
+<script>window.MathJax={tex:{inlineMath:[['$','$']],displayMath:[['$$','$$']]}};</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<style>
+  :root{--bg:#f7f5ef;--fg:#1d1d1f;--muted:#62615c;--card:#fff;--line:#dedbd2;--accent:#4338ca;--cnn:#0f766e;--mlp:#c2410c;--soft:#e0e7ff;--warm:#fde7d9}
+  @media (prefers-color-scheme:dark){:root{--bg:#15161a;--fg:#ecebe6;--muted:#a3a29b;--card:#1e2026;--line:#33353d;--accent:#a5b4fc;--cnn:#2dd4bf;--mlp:#fb923c;--soft:#25284a;--warm:#3a2418}}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);font:17px/1.65 "Iowan Old Style",Charter,Georgia,serif}
+  main{max-width:940px;margin:0 auto;padding:30px 22px 90px}
+  h1,h2,h3{font-family:"Avenir Next","Segoe UI",system-ui,sans-serif;line-height:1.2}
+  h1{font-size:2.2rem;margin:10px 0 4px} h2{font-size:1.5rem;margin:54px 0 10px;border-bottom:2px solid var(--line);padding-bottom:6px}
+  h3{margin:26px 0 8px}
+  .hero,.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin:14px 0}
+  .hero{font-size:1.1rem}
+  .note{color:var(--muted);font-size:.93rem}
+  .sym{display:grid;grid-template-columns:auto 1fr;gap:5px 14px;margin:10px 0;font-size:.95rem}
+  .sym div:nth-child(odd){text-align:right;font-weight:600}
+  .step{display:inline-block;background:var(--accent);color:#fff;font:700 .8rem system-ui,sans-serif;border-radius:20px;padding:2px 10px;margin-right:6px;vertical-align:middle}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media(max-width:760px){.grid2{grid-template-columns:1fr}}
+  button{font:600 .9rem system-ui,sans-serif;border:1px solid var(--line);background:var(--card);color:var(--fg);padding:6px 13px;border-radius:8px;cursor:pointer}
+  button:hover{border-color:var(--accent)}
+  input[type=range]{width:100%}
+  .row{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+  .px{display:grid;grid-template-columns:repeat(5,44px);gap:3px}
+  .px div{width:44px;height:44px;border-radius:4px;display:flex;align-items:center;justify-content:center;font:600 .8rem system-ui,sans-serif;cursor:pointer;user-select:none}
+  .mono{font:.95rem ui-monospace,Menlo,monospace;background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 12px;white-space:pre;overflow:auto}
+  .vec{display:inline-flex;gap:4px}
+  .vec span{min-width:46px;padding:4px 6px;text-align:center;border-radius:6px;font:600 .95rem system-ui,sans-serif;background:var(--soft)}
+  .vec span.hl{outline:3px solid var(--accent)}
+  .prod span{background:var(--warm)}
+  table{border-collapse:collapse;font-size:.95rem}
+  td,th{border:1px solid var(--line);padding:6px 10px}
+  .quiz label{display:block;padding:5px 10px;border-radius:7px;cursor:pointer}.quiz label:hover{background:var(--line)}
+  .fb{font-size:.92rem;margin-top:4px}
+  .summary{background:var(--card);border-left:6px solid var(--accent);border-radius:10px;padding:16px 22px;margin-top:40px}
+  canvas{background:var(--card);border:1px solid var(--line);border-radius:10px;max-width:100%}
+</style>
+</head>
+<body>
+<main>
+<h1>Foundations 1 · 2 · 3</h1>
+<div class="note">Numbers → dot products → one neuron · the first three building blocks for MLP vs CNN · 2026-10-13</div>
+
+<div class="hero">
+  Here's the whole story in three sentences. <b>(1)</b> A neural network only ever sees lists and grids of numbers. <b>(2)</b> Its one core move is the <b>dot product</b>: multiply two lists number by number, then add everything up. <b>(3)</b> A <b>neuron</b> is just a dot product, plus a small extra number, passed through a simple "squash" function.
+</div>
+
+<!-- ======================= 1 ======================= -->
+<h2><span class="step">1</span>Data as numbers: vectors, matrices, tensors</h2>
+<p>Before a network can learn anything, everything has to become numbers. There are only three shapes you need to know, and each one is just the previous one with one more direction.</p>
+
+<div class="grid2">
+  <div class="card">
+    <h3>Vector — a list</h3>
+    <p>A <b>vector</b> is an ordered list of numbers. For example, a house described by size, rooms and age:</p>
+    $$\mathbf{x} = \begin{bmatrix} 120 \\ 3 \\ 15 \end{bmatrix} \in \mathbb{R}^{3}$$
+    <div class="sym">
+      <div>$\mathbf{x}$</div><div>bold lowercase letter = a vector</div>
+      <div>$x_1, x_2, x_3$</div><div>its entries: $x_1 = 120$, $x_2 = 3$, $x_3 = 15$. The small number underneath is the position.</div>
+      <div>$\in$</div><div>"is a member of" / "lives in"</div>
+      <div>$\mathbb{R}^{3}$</div><div>the set of all lists of 3 real numbers</div>
+    </div>
+    <p class="note">The order matters: slot 1 is always size, slot 2 is always rooms. Swap them and it's a different house.</p>
+  </div>
+  <div class="card">
+    <h3>Matrix — a grid</h3>
+    <p>A <b>matrix</b> is a grid of numbers with rows and columns. A tiny 2×3 example:</p>
+    $$\mathbf{A} = \begin{bmatrix} 1 & 2 & 3 \\ 4 & 5 & 6 \end{bmatrix} \in \mathbb{R}^{2\times 3}$$
+    <div class="sym">
+      <div>$\mathbf{A}$</div><div>bold capital letter = a matrix</div>
+      <div>$2\times 3$</div><div>2 rows, 3 columns — always rows first</div>
+      <div>$A_{ij}$</div><div>the entry in row $i$, column $j$. Here $A_{23} = 6$ (row 2, column 3).</div>
+    </div>
+    <p class="note">You can see a matrix as a stack of row vectors, or as columns side by side. Both views are useful later.</p>
+  </div>
+</div>
+
+<h3>Try it: a grayscale image <i>is</i> a matrix</h3>
+<p>Click the pixels to change their brightness (0 = black, 9 = white). Watch the matrix of numbers underneath change. That matrix is exactly what the network receives.</p>
+<div class="row">
+  <div class="px" id="px"></div>
+  <div class="mono" id="pxm"></div>
+</div>
+<p class="note">A colour image has 3 of these grids stacked: one for red, one for green, one for blue. A stack of matrices is a <b>tensor</b>.</p>
+
+<div class="card">
+  <h3>Tensor — a stack of grids</h3>
+  <p>A <b>tensor</b> is the general word for "a box of numbers with any number of directions". Its <b>shape</b> tells you the size in each direction.</p>
+  <table>
+    <tr><th>Object</th><th>Directions</th><th>Example shape</th><th>Example</th></tr>
+    <tr><td>number (scalar)</td><td>0</td><td>$()$</td><td>a temperature: 21</td></tr>
+    <tr><td>vector</td><td>1</td><td>$(3)$</td><td>the house above</td></tr>
+    <tr><td>matrix</td><td>2</td><td>$(28, 28)$</td><td>a grayscale digit image</td></tr>
+    <tr><td>3-D tensor</td><td>3</td><td>$(3, 224, 224)$</td><td>a colour photo: channels × height × width</td></tr>
+    <tr><td>4-D tensor</td><td>4</td><td>$(32, 3, 224, 224)$</td><td>a batch of 32 colour photos</td></tr>
+  </table>
+  <p class="note">🔗 Why this matters for MLP vs CNN: an MLP needs a <b>vector</b>, so it flattens the $(28,28)$ image into a $(784)$ list and loses the layout. A CNN keeps the <b>matrix / tensor</b> shape, so it knows which pixels are neighbours.</p>
+</div>
+
+<!-- ======================= 1b TENSOR DEEP DIVE ======================= -->
+<h2><span class="step">1b</span>A closer look: what exactly is a tensor?</h2>
+<div class="hero">A tensor is just <b>a box of numbers arranged along some number of directions</b>. Each direction is called an <b>axis</b>. The number of axes tells you how many indices you need to point at one single number.</div>
+
+<div class="card">
+  <h3>🎬 The cinema analogy</h3>
+  <p>Think about how much information you need to find <b>one seat</b>:</p>
+  <table>
+    <tr><th>Axes</th><th>Where you are</th><th>To find one seat you say…</th><th>ML name</th></tr>
+    <tr><td>0</td><td>a single seat</td><td>"that seat"</td><td>number (scalar)</td></tr>
+    <tr><td>1</td><td>a row of seats</td><td>"seat 3"</td><td>vector</td></tr>
+    <tr><td>2</td><td>a cinema room</td><td>"row 2, seat 3"</td><td>matrix</td></tr>
+    <tr><td>3</td><td>a building full of rooms</td><td>"floor 2, row 1, seat 4"</td><td>3-D tensor</td></tr>
+    <tr><td>4</td><td>a street of buildings</td><td>"building 5, floor 2, row 1, seat 4"</td><td>4-D tensor</td></tr>
+  </table>
+</div>
+
+<h3>Try it: build a tensor</h3>
+<p>Pick how many axes you want, then set the size of each one. Click any number to see the indices that point at it. The numbers are simply counted 0, 1, 2, … so you can follow the order.</p>
+<div class="card">
+  <p><b>Number of axes:</b> <span id="tAxes"></span></p>
+  <div id="tSizes" class="row"></div>
+  <p style="font-size:1.1rem">shape = <b id="tShape"></b> &nbsp;·&nbsp; total numbers = <b id="tCount"></b></p>
+  <div id="tView" style="overflow:auto;padding:6px 0"></div>
+  <div class="mono" id="tPick">Click a number.</div>
+</div>
+<p>The shape lists the size of each axis, in order. The total count is all the sizes multiplied together:</p>
+$$\text{shape } (d_1, d_2, \dots, d_k) \;\Rightarrow\; \text{total} = d_1 \times d_2 \times \dots \times d_k$$
+<div class="sym">
+  <div>$k$</div><div>the number of axes (also called the number of dimensions, <code>ndim</code> in PyTorch)</div>
+  <div>$d_1$</div><div>the size of the first axis, $d_2$ the size of the second, and so on</div>
+  <div>$X[i, j, k]$</div><div>one number, picked with one index per axis. Indices start at 0 in PyTorch.</div>
+</div>
+
+<div class="card">
+  <h3>🖼️ Why a colour photo is a 3-D tensor</h3>
+  <p>A grayscale photo has one brightness value per pixel, so it's a grid: shape $(H, W)$. A colour photo has <b>three</b> values per pixel (red, green and blue), so it's three grids stacked on top of each other: shape $(3, H, W)$. Training uses many photos at once, a <b>batch</b>, which adds a fourth axis in front: $(32, 3, 224, 224)$ ≈ 4.8 million numbers.</p>
+  <p class="note">So <code>X[0, 10, 20]</code> means: channel 0 (red), row 10, column 20.</p>
+</div>
+
+<h3>Same numbers, different shape: reshape and flatten</h3>
+<p>The same 12 numbers can be arranged in many shapes. Changing the arrangement is called <b>reshaping</b>. Nothing is added or lost; the numbers just sit in a different layout. <b>Flattening</b> means reshaping into one long list. That's exactly what an MLP does to an image.</p>
+<p id="rsBtns"></p>
+<div class="card"><div id="rsView" style="overflow:auto"></div><p class="note" id="rsNote"></p></div>
+
+<details class="card"><summary><b>A small warning: "tensor" in physics vs in ML</b></summary>
+  <p>In physics and pure math, a tensor is something deeper: an object that changes in a specific way when you change coordinates. In machine learning and PyTorch, the word simply means <b>a multi-dimensional array of numbers</b>. For this wiki and the LLM book, use the ML meaning.</p>
+</details>
+
+<!-- ======================= 2 ======================= -->
+<h2><span class="step">2</span>The core operation: the dot product</h2>
+<p>If you only remember one thing from this page, make it this. The dot product takes two lists of the same length, multiplies them slot by slot, and adds the results into one number.</p>
+$$\mathbf{w}\cdot\mathbf{x} \;=\; \sum_{i=1}^{n} w_i\,x_i \;=\; w_1x_1 + w_2x_2 + \dots + w_nx_n$$
+<div class="sym">
+  <div>$\mathbf{w}\cdot\mathbf{x}$</div><div>"w dot x" — the dot product of the two vectors</div>
+  <div>$\sum_{i=1}^{n}$</div><div>the big Greek S (sigma) means "add up". The bottom $i=1$ says start at slot 1; the top $n$ says stop at slot $n$.</div>
+  <div>$w_i\,x_i$</div><div>multiply slot $i$ of $\mathbf{w}$ by slot $i$ of $\mathbf{x}$</div>
+</div>
+
+<h3>Try it: drag the weights</h3>
+<p>Think of $\mathbf{x}$ as a recipe's ingredients and $\mathbf{w}$ as how much you care about each one. The dot product is the overall score.</p>
+<div class="card">
+  <div class="grid2">
+    <div>
+      <div>$\mathbf{w}$ (weights):</div>
+      <label>w₁ = <b id="w1v"></b><input type="range" id="w1" min="-2" max="2" step="0.25" value="1"></label>
+      <label>w₂ = <b id="w2v"></b><input type="range" id="w2" min="-2" max="2" step="0.25" value="0.5"></label>
+      <label>w₃ = <b id="w3v"></b><input type="range" id="w3" min="-2" max="2" step="0.25" value="-1"></label>
+    </div>
+    <div>
+      <p>$\mathbf{x}$ = <span class="vec" id="xv"></span></p>
+      <p>$\mathbf{w}$ = <span class="vec" id="wv"></span></p>
+      <p>products = <span class="vec prod" id="pv"></span></p>
+      <p style="font-size:1.25rem">$\mathbf{w}\cdot\mathbf{x}$ = <b id="dot"></b></p>
+    </div>
+  </div>
+  <p class="note">Notice: a <b>negative</b> weight makes that input pull the score down. A weight of <b>0</b> means "ignore this input".</p>
+</div>
+
+<details class="card"><summary><b>The geometric meaning (how aligned are two arrows?)</b></summary>
+  <p>There's a second way to see the same number:</p>
+  $$\mathbf{w}\cdot\mathbf{x} = \lVert\mathbf{w}\rVert\,\lVert\mathbf{x}\rVert\cos\theta$$
+  <div class="sym">
+    <div>$\lVert\mathbf{w}\rVert$</div><div>the length of the arrow $\mathbf{w}$</div>
+    <div>$\theta$</div><div>the angle between the two arrows</div>
+    <div>$\cos\theta$</div><div>1 when they point the same way, 0 at a right angle, −1 when opposite</div>
+  </div>
+  <p>So the dot product is big when the two arrows point the same way. That's why a neuron, or a CNN filter, "fires" when the input <b>looks like</b> its weights: it is a pattern-matcher.</p>
+</details>
+
+<h3>Matrix multiplication = many dot products at once</h3>
+<p>Multiplying a matrix by a vector just does one dot product per row. Each row of $\mathbf{W}$ is one "scoring recipe".</p>
+$$\mathbf{W}\mathbf{x} = \begin{bmatrix} 1 & 0 & 2 \\ -1 & 3 & 1 \end{bmatrix}\begin{bmatrix} 2 \\ 1 \\ 3 \end{bmatrix} = \begin{bmatrix} 1\cdot2 + 0\cdot1 + 2\cdot3 \\ -1\cdot2 + 3\cdot1 + 1\cdot3 \end{bmatrix} = \begin{bmatrix} 8 \\ 4 \end{bmatrix}$$
+<div class="sym">
+  <div>$(\mathbf{W}\mathbf{x})_i = \sum_j W_{ij}\,x_j$</div><div>entry $i$ of the result = row $i$ of $\mathbf{W}$ dotted with $\mathbf{x}$</div>
+  <div>shapes</div><div>$(2\times3)$ times $(3)$ gives $(2)$. The inner sizes (3 and 3) must match; the outer size (2) is what you get.</div>
+</div>
+<p><button id="mmStep">Highlight next row ▶</button></p>
+<div class="mono" id="mm"></div>
+
+<h3>A matrix is a machine that moves space (a linear map)</h3>
+<p>Here's the deeper view. A 2×2 matrix takes every point of the plane and sends it somewhere new. It can stretch, squash, rotate or slant the plane, but straight lines stay straight and the origin stays put. That's what <b>linear</b> means.</p>
+<div class="grid2">
+  <div>
+    <canvas id="cv" width="360" height="360"></canvas>
+  </div>
+  <div>
+    $$\mathbf{W} = \begin{bmatrix} a & b \\ c & d \end{bmatrix}$$
+    <label>a = <b id="av"></b><input type="range" id="ma" min="-2" max="2" step="0.1" value="1"></label>
+    <label>b = <b id="bv"></b><input type="range" id="mb" min="-2" max="2" step="0.1" value="0"></label>
+    <label>c = <b id="cv2"></b><input type="range" id="mc" min="-2" max="2" step="0.1" value="0"></label>
+    <label>d = <b id="dv"></b><input type="range" id="md" min="-2" max="2" step="0.1" value="1"></label>
+    <p><button data-p="1,0,0,1">identity</button> <button data-p="2,0,0,0.5">stretch</button> <button data-p="0,-1,1,0">rotate 90°</button> <button data-p="1,1,0,1">slant</button></p>
+    <p class="note">Faint grid = before. Coloured shape = after. The blue arrow is where $(1,0)$ lands (the first column); the orange arrow is where $(0,1)$ lands (the second column).</p>
+  </div>
+</div>
+$$f(\mathbf{x}) = \mathbf{W}\mathbf{x}\qquad f(a\mathbf{u} + b\mathbf{v}) = a\,f(\mathbf{u}) + b\,f(\mathbf{v})$$
+<p class="note">The second rule reads: "transforming a mix is the same as mixing the transforms". That's the definition of a linear map.</p>
+
+<!-- ======================= 3 ======================= -->
+<h2><span class="step">3</span>One neuron, then one layer</h2>
+<p>Now we can build a neuron. It takes three simple steps:</p>
+<ol>
+  <li><b>Weigh:</b> take the dot product of the inputs with the weights.</li>
+  <li><b>Shift:</b> add one extra number, the <b>bias</b>, which moves the threshold up or down.</li>
+  <li><b>Squash:</b> pass the result through an <b>activation function</b>, such as ReLU.</li>
+</ol>
+$$z = \mathbf{w}\cdot\mathbf{x} + b \qquad\qquad h = \sigma(z)$$
+<div class="sym">
+  <div>$z$</div><div>the raw score before the activation (people call it the "pre-activation")</div>
+  <div>$b$</div><div>the bias: one number per neuron, learned like the weights</div>
+  <div>$\sigma$</div><div>the activation function (Greek letter sigma, lowercase)</div>
+  <div>$h$</div><div>the neuron's output</div>
+  <div>$\mathrm{ReLU}(z)=\max(0,z)$</div><div>the most popular activation: keep positive numbers, turn negatives into 0</div>
+</div>
+
+<h3>Try it: a live neuron</h3>
+<div class="card">
+  <div class="grid2">
+    <div>
+      <label>x₁ = <b id="nx1v"></b><input type="range" id="nx1" min="-3" max="3" step="0.5" value="2"></label>
+      <label>x₂ = <b id="nx2v"></b><input type="range" id="nx2" min="-3" max="3" step="0.5" value="1"></label>
+      <label>x₃ = <b id="nx3v"></b><input type="range" id="nx3" min="-3" max="3" step="0.5" value="3"></label>
+      <label>bias b = <b id="nbv"></b><input type="range" id="nb" min="-3" max="3" step="0.1" value="0.1"></label>
+      <p class="note">Fixed weights: $\mathbf{w} = [0.5,\ -1,\ 0.25]$</p>
+      <p><label><input type="radio" name="act" value="relu" checked> ReLU</label> <label><input type="radio" name="act" value="sig"> sigmoid</label> <label><input type="radio" name="act" value="none"> none</label></p>
+    </div>
+    <div>
+      <div class="mono" id="neuron"></div>
+      <canvas id="actc" width="340" height="190"></canvas>
+    </div>
+  </div>
+</div>
+
+<h3>A layer = many neurons = a matrix</h3>
+<p>Put $m$ neurons side by side. Each has its own weight row and its own bias. Stack the rows into a matrix and you get the formula from the MLP page:</p>
+$$\mathbf{h} = \sigma(\mathbf{W}\mathbf{x} + \mathbf{b})$$
+<div class="sym">
+  <div>row $i$ of $\mathbf{W}$</div><div>the weights of neuron $i$</div>
+  <div>$\mathbf{b}$</div><div>all the biases in one vector</div>
+  <div>$\sigma(\cdot)$</div><div>applied to each entry separately</div>
+</div>
+
+<div class="card">
+  <h3>Why do we need the activation at all?</h3>
+  <p>Without it, stacking layers is pointless. Two linear layers in a row collapse into one:</p>
+  $$\mathbf{W}_2(\mathbf{W}_1\mathbf{x}) = (\mathbf{W}_2\mathbf{W}_1)\,\mathbf{x} = \mathbf{W}'\mathbf{x}$$
+  <p>A hundred linear layers are still just one matrix: one stretch-and-rotate of space. They can only draw straight lines. The activation bends the space between layers. That bending is what lets a deep network learn curved, complicated patterns.</p>
+</div>
+
+
+<!-- ======================= 3b ACTIVATION ANIMATION ======================= -->
+<h3>🎞️ Animation: watch the activation build a curve</h3>
+<p>Here's the clearest way to see it. We want a tiny network to draw the dashed curve. The network has <b>one hidden layer</b>. Each hidden neuron computes $\mathrm{ReLU}(x - t)$: it stays flat at 0, then bends at its own point $t$ and goes up. The output adds the neurons together, each one scaled by an output weight $c$:</p>
+$$y(x) = a + s\,x + \sum_{k=1}^{N} c_k\,\mathrm{ReLU}(x - t_k)$$
+<div class="sym">
+  <div>$N$</div><div>the number of hidden neurons (use the slider)</div>
+  <div>$t_k$</div><div>where neuron $k$ bends (its bias, with a minus sign)</div>
+  <div>$c_k$</div><div>how strongly neuron $k$ counts in the output (its output weight)</div>
+  <div>$a + s\,x$</div><div>a plain straight line that the bends are added to</div>
+</div>
+<div class="card">
+  <canvas id="hingeC" width="820" height="360" style="width:100%"></canvas>
+  <div class="row" style="margin-top:8px">
+    <button id="hPlay">▶ Play: add neurons one by one</button>
+    <label style="flex:1;min-width:220px">neurons N = <b id="hNv">0</b><input type="range" id="hN" min="0" max="12" step="1" value="0"></label>
+    <label><input type="checkbox" id="hAct" checked> use ReLU (activation ON)</label>
+  </div>
+  <div class="mono" id="hMsg" style="white-space:pre-wrap"></div>
+  <p class="note">Legend: dashed = target curve · thin coloured = each neuron's own contribution · thick = the network's output.</p>
+</div>
+<p><b>Now untick "use ReLU" and press Play again.</b> Without the activation, each neuron is just $c_k(x - t_k)$: a straight line. And a sum of straight lines is always one straight line, however many neurons you add. The network can never bend. With ReLU, every neuron adds one bend in its own spot, and with enough bends you can draw almost any curve. That's the real job of an activation function: <b>it lets the network bend</b>.</p>
+
+<p class="note">🔗 Back to MLP vs CNN: an MLP layer is exactly $\sigma(\mathbf{W}\mathbf{x}+\mathbf{b})$ with every entry of $\mathbf{W}$ free. A CNN layer is the <i>same formula</i>, but each neuron only dots a small patch, and every neuron shares the same few weights.</p>
+
+<!-- quiz -->
+<h2>Check yourself</h2>
+<div class="quiz" id="quiz"></div>
+
+<div class="summary">
+  <h3 style="margin-top:0">In summary</h3>
+  <ul>
+    <li><b>Step 1:</b> networks see vectors (lists), matrices (grids) and tensors (stacks of grids). The <b>shape</b> tells you the size in each direction.</li>
+    <li><b>Step 2:</b> the dot product multiplies slot by slot and adds up. It's big when the input looks like the weights. Matrix multiplication is one dot product per row, and it moves space in a straight-line way.</li>
+    <li><b>Tensors:</b> a tensor is a box of numbers with $k$ axes. You need one index per axis to pick a number; the shape lists each axis size, and their product is the total count. Reshape rearranges the same numbers; flatten turns them into one list.</li>
+    <li><b>Step 3:</b> a neuron = dot product + bias + activation. A layer is many neurons, written $\sigma(\mathbf{W}\mathbf{x}+\mathbf{b})$. The activation is what stops the layers from collapsing into one — it is what lets the network <b>bend</b>: each ReLU neuron adds one bend, and without it any number of neurons still draws a straight line.</li>
+  </ul>
+</div>
+</main>
+
+<script>
+const $=id=>document.getElementById(id);
+/* ---- pixel grid ---- */
+const P=[[0,0,9,0,0],[0,9,9,0,0],[0,0,9,0,0],[0,0,9,0,0],[0,9,9,9,0]];
+function drawPx(){const g=$('px');g.innerHTML='';P.forEach((r,i)=>r.forEach((v,j)=>{const d=document.createElement('div');const c=Math.round(v/9*255);
+  d.style.background=`rgb(${c},${c},${c})`;d.style.color=v>4?'#000':'#fff';d.textContent=v;d.onclick=()=>{P[i][j]=(P[i][j]+3)%12>9?0:(P[i][j]+3)%12;drawPx()};g.appendChild(d)}));
+  $('pxm').textContent='X = [\n'+P.map(r=>'  ['+r.join(', ')+']').join(',\n')+'\n]   shape (5, 5)\n\nflattened for an MLP:\n['+P.flat().join(', ')+']   shape (25)';}
+drawPx();
+/* ---- dot product ---- */
+const X=[2,1,3];
+function chip(arr,id,dec){$(id).innerHTML=arr.map(v=>`<span>${dec?(+v).toFixed(2).replace(/\.?0+$/,''):v}</span>`).join('')}
+function dot(){const w=[+$('w1').value,+$('w2').value,+$('w3').value];['w1','w2','w3'].forEach((k,i)=>$(k+'v').textContent=w[i]);
+  chip(X,'xv');chip(w,'wv',1);const p=w.map((v,i)=>v*X[i]);chip(p,'pv',1);$('dot').textContent=p.join(' + ').replace(/\+ -/g,'− ')+' = '+(+p.reduce((a,b)=>a+b,0).toFixed(2));}
+['w1','w2','w3'].forEach(k=>$(k).oninput=dot);dot();
+/* ---- matmul step ---- */
+const W=[[1,0,2],[-1,3,1]],XX=[2,1,3];let mr=-1;
+function mm(){const lines=W.map((r,i)=>{const s=r.map((v,j)=>`${v}·${XX[j]}`).join(' + ');const t=r.reduce((a,v,j)=>a+v*XX[j],0);
+  return (i===mr?'▶ ':'  ')+'row '+(i+1)+': ['+r.join(', ')+'] · [2, 1, 3] = '+(i<=mr?s+' = '+t:'?')});$('mm').textContent=lines.join('\n');}
+$('mmStep').onclick=()=>{mr=(mr+1)%2;mm()};mm();
+/* ---- linear map canvas ---- */
+const cv=$('cv'),cx=cv.getContext('2d');
+function lm(){const a=+$('ma').value,b=+$('mb').value,c=+$('mc').value,d=+$('md').value;
+  $('av').textContent=a;$('bv').textContent=b;$('cv2').textContent=c;$('dv').textContent=d;
+  const S=40,O=180,T=(x,y)=>[O+(a*x+b*y)*S,O-(c*x+d*y)*S];const fg=getComputedStyle(document.body).color;
+  cx.clearRect(0,0,360,360);cx.globalAlpha=.18;cx.strokeStyle=fg;
+  for(let k=-4;k<=4;k++){cx.beginPath();cx.moveTo(O+k*S,0);cx.lineTo(O+k*S,360);cx.moveTo(0,O+k*S);cx.lineTo(360,O+k*S);cx.stroke()}
+  cx.globalAlpha=.55;cx.strokeStyle='#6366f1';
+  for(let k=-4;k<=4;k++){cx.beginPath();let p=T(k,-4);cx.moveTo(...p);p=T(k,4);cx.lineTo(...p);cx.stroke();cx.beginPath();p=T(-4,k);cx.moveTo(...p);p=T(4,k);cx.lineTo(...p);cx.stroke()}
+  cx.globalAlpha=1;cx.fillStyle='rgba(16,185,129,.35)';cx.beginPath();[[0,0],[1,0],[1,1],[0,1]].forEach((q,i)=>{const p=T(...q);i?cx.lineTo(...p):cx.moveTo(...p)});cx.closePath();cx.fill();
+  const arrow=(x,y,col)=>{cx.strokeStyle=col;cx.lineWidth=3;cx.beginPath();cx.moveTo(O,O);cx.lineTo(...T(x,y));cx.stroke();cx.lineWidth=1};
+  arrow(1,0,'#2563eb');arrow(0,1,'#ea580c');}
+['ma','mb','mc','md'].forEach(k=>$(k).oninput=lm);
+document.querySelectorAll('button[data-p]').forEach(bt=>bt.onclick=()=>{const v=bt.dataset.p.split(',');['ma','mb','mc','md'].forEach((k,i)=>$(k).value=v[i]);lm()});lm();
+/* ---- neuron ---- */
+const NW=[0.5,-1,0.25],ac=$('actc'),ax=ac.getContext('2d');
+const act=()=>document.querySelector('input[name=act]:checked').value;
+const f=(z,m)=>m==='relu'?Math.max(0,z):m==='sig'?1/(1+Math.exp(-z)):z;
+function neuron(){const x=[+$('nx1').value,+$('nx2').value,+$('nx3').value],b=+$('nb').value;['nx1','nx2','nx3'].forEach((k,i)=>$(k+'v').textContent=x[i]);$('nbv').textContent=b;
+  const terms=NW.map((w,i)=>`${w}·${x[i]}`),z=NW.reduce((s,w,i)=>s+w*x[i],0)+b,m=act(),h=f(z,m);
+  $('neuron').textContent=`1. weigh:  w·x = ${terms.join(' + ')}\n          = ${(z-b).toFixed(2)}\n2. shift:  z = ${(z-b).toFixed(2)} + ${b} = ${z.toFixed(2)}\n3. squash: h = ${m==='relu'?'ReLU':m==='sig'?'sigmoid':'(none)'}(${z.toFixed(2)}) = ${h.toFixed(3)}`;
+  const W2=340,H=190,sx=z0=>W2/2+z0*W2/12,sy=y=>H-20-(m==='sig'?y*120:y*H/9);const fg=getComputedStyle(document.body).color;
+  ax.clearRect(0,0,W2,H);ax.strokeStyle=fg;ax.globalAlpha=.3;ax.beginPath();ax.moveTo(0,sy(0));ax.lineTo(W2,sy(0));ax.moveTo(W2/2,0);ax.lineTo(W2/2,H);ax.stroke();ax.globalAlpha=1;
+  ax.strokeStyle='#4338ca';ax.lineWidth=2.5;ax.beginPath();for(let z0=-6;z0<=6;z0+=.05){const p=[sx(z0),sy(f(z0,m))];z0===-6?ax.moveTo(...p):ax.lineTo(...p)}ax.stroke();ax.lineWidth=1;
+  ax.fillStyle='#ea580c';ax.beginPath();ax.arc(sx(Math.max(-6,Math.min(6,z))),sy(h),6,0,7);ax.fill();
+  ax.fillStyle=fg;ax.font='12px system-ui';ax.fillText('z →',W2-30,sy(0)-6);ax.fillText('h',W2/2+6,12);}
+['nx1','nx2','nx3','nb'].forEach(k=>$(k).oninput=neuron);document.querySelectorAll('input[name=act]').forEach(r=>r.onchange=neuron);neuron();
+/* ---- tensor explorer ---- */
+let tK=3,tD=[3,4,4,2];
+function nestRender(shape,flat,onPick){const prod=a=>a.reduce((p,v)=>p*v,1);
+  function cell(idx,val){const d=document.createElement('div');d.textContent=val;d.title='['+idx.join(', ')+']';
+    d.style.cssText='width:34px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:5px;font:600 .8rem system-ui,sans-serif;background:var(--soft);cursor:pointer';
+    d.onclick=()=>{document.querySelectorAll('.tsel').forEach(x=>{x.classList.remove('tsel');x.style.outline=''});d.classList.add('tsel');d.style.outline='3px solid var(--mlp)';onPick&&onPick(idx,val)};return d}
+  function rec(sh,off,idx){
+    if(sh.length===0)return cell(idx,flat[off]);
+    const n=sh[0],rest=sh.slice(1),stride=prod(rest),box=document.createElement('div');
+    if(sh.length===1){box.style.cssText='display:flex;gap:3px';for(let i=0;i<n;i++)box.append(rec(rest,off+i*stride,idx.concat(i)));return box}
+    if(sh.length===2){box.style.cssText='display:flex;flex-direction:column;gap:3px';for(let i=0;i<n;i++)box.append(rec(rest,off+i*stride,idx.concat(i)));return box}
+    box.style.cssText='display:flex;gap:12px;flex-direction:'+(sh.length===3?'row':'column')+';flex-wrap:wrap';
+    for(let i=0;i<n;i++){const w=document.createElement('div');w.style.cssText='border:1px dashed var(--line);border-radius:8px;padding:6px';
+      const lab=document.createElement('div');lab.className='note';lab.style.margin='0 0 4px';lab.textContent=(sh.length===3?'axis-0 index ':'axis-0 index ')+i+(idx.length?'':'');
+      lab.textContent=`[${idx.concat(i).join(', ')}${', :'.repeat(rest.length)}]`;w.append(lab,rec(rest,off+i*stride,idx.concat(i)));box.append(w)}
+    return box}
+  return rec(shape,0,[])}
+const NAMES=['number (scalar)','vector','matrix','3-D tensor','4-D tensor'];
+function tRender(){const sh=tD.slice(0,tK),N=sh.reduce((p,v)=>p*v,1);
+  $('tAxes').innerHTML=[0,1,2,3,4].map(k=>`<button data-k="${k}" style="${k===tK?'border-color:var(--accent);background:var(--soft)':''}">${k} · ${NAMES[k]}</button>`).join(' ');
+  $('tAxes').querySelectorAll('button').forEach(b=>b.onclick=()=>{tK=+b.dataset.k;tRender()});
+  $('tSizes').innerHTML=sh.map((v,i)=>`<label>size of axis ${i}: <b>${v}</b> <input type="range" min="1" max="5" value="${v}" data-i="${i}" style="width:120px"></label>`).join('')||'<span class="note">A scalar has no axes, so there are no sizes to set.</span>';
+  $('tSizes').querySelectorAll('input').forEach(r=>r.oninput=()=>{tD[+r.dataset.i]=+r.value;tRender()});
+  $('tShape').textContent='('+sh.join(', ')+(sh.length===1?',':'')+')';
+  $('tCount').textContent=sh.length?sh.join(' × ')+' = '+N:'1';
+  const v=$('tView');v.innerHTML='';v.append(nestRender(sh,[...Array(N).keys()],(idx,val)=>{
+    $('tPick').textContent=idx.length?`X[${idx.join(', ')}] = ${val}\n`+idx.map((ix,i)=>`  axis ${i}: index ${ix} (of 0…${sh[i]-1})`).join('\n'):`X = ${val}   (a scalar needs no index)`}));
+  $('tPick').textContent='Click a number.';}
+tRender();
+/* ---- reshape demo ---- */
+const RS=[[12],[3,4],[4,3],[2,6],[2,2,3]];let rsI=1;
+function rsRender(){$('rsBtns').innerHTML=RS.map((s,i)=>`<button data-i="${i}" style="${i===rsI?'border-color:var(--accent);background:var(--soft)':''}">${i===0?'flatten → ':''}(${s.join(', ')}${s.length===1?',':''})</button>`).join(' ');
+  $('rsBtns').querySelectorAll('button').forEach(b=>b.onclick=()=>{rsI=+b.dataset.i;rsRender()});
+  const v=$('rsView');v.innerHTML='';v.append(nestRender(RS[rsI],[...Array(12).keys()].map(x=>x+1),(idx,val)=>{$('rsNote').textContent=`You clicked ${val}: in this shape it lives at [${idx.join(', ')}].`}));
+  $('rsNote').textContent=RS[rsI].length===1?'Flattened: one long list. All 12 numbers are still here, but "who was above whom" is gone.':`Same 12 numbers, read left-to-right, top-to-bottom, now arranged as (${RS[rsI].join(', ')}). Click a number to see its new indices.`}
+rsRender();
+/* ---- hinge animation (why activation) ---- */
+const hc=$('hingeC'),hx=hc.getContext('2d');
+const target=x=>Math.sin(1.4*x)+0.25*x;const X0=-3,X1=3;
+function hingeNet(N){ // piecewise-linear interpolation with N interior knots = a 1-hidden-layer ReLU net
+  const kn=[...Array(N+2).keys()].map(i=>X0+(X1-X0)*i/(N+1)),ys=kn.map(target),sl=[];
+  for(let i=0;i<kn.length-1;i++)sl.push((ys[i+1]-ys[i])/(kn[i+1]-kn[i]));
+  const s=sl[0],a=ys[0]-s*X0,neur=[];for(let k=1;k<=N;k++)neur.push({t:kn[k],c:sl[k]-sl[k-1]});return{a,s,neur}}
+const COL=['#6366f1','#10b981','#f59e0b','#ef4444','#06b6d4','#a855f7','#84cc16','#ec4899','#14b8a6','#f97316','#3b82f6','#eab308'];
+function hDraw(N,reluOn,reveal){const W=hc.width,H=hc.height,sx=x=>(x-X0)/(X1-X0)*(W-40)+20,sy=y=>H/2-y*H/5.2;const fg=getComputedStyle(document.body).color;
+  hx.clearRect(0,0,W,H);hx.globalAlpha=.25;hx.strokeStyle=fg;hx.beginPath();hx.moveTo(0,sy(0));hx.lineTo(W,sy(0));hx.stroke();hx.globalAlpha=1;
+  const net=hingeNet(N),act=z=>reluOn?Math.max(0,z):z;
+  const plot=(fn,col,lw,dash)=>{hx.strokeStyle=col;hx.lineWidth=lw;hx.setLineDash(dash||[]);hx.beginPath();for(let x=X0;x<=X1+1e-9;x+=0.02){const p=[sx(x),sy(fn(x))];x===X0?hx.moveTo(...p):hx.lineTo(...p)}hx.stroke();hx.setLineDash([]);hx.lineWidth=1};
+  plot(target,fg,2,[7,6]);
+  net.neur.forEach((n,k)=>{if(k<reveal){hx.globalAlpha=.75;plot(x=>n.c*act(x-n.t),COL[k%12],1.6);hx.globalAlpha=1;if(reluOn){hx.fillStyle=COL[k%12];hx.beginPath();hx.arc(sx(n.t),sy(0),4,0,7);hx.fill()}}});
+  const out=x=>net.a+net.s*x+net.neur.slice(0,reveal).reduce((s,n)=>s+n.c*act(x-n.t),0);
+  plot(out,'#c2410c',4);
+  let err=0;for(let x=X0;x<=X1;x+=0.05)err+=Math.abs(out(x)-target(x));err/=121;
+  $('hMsg').textContent=reluOn
+    ?`ReLU ON · ${reveal} neuron${reveal===1?'':'s'} → the output has ${reveal} bend${reveal===1?'':'s'} (one per neuron). Average error: ${err.toFixed(3)}`+(reveal>=8?'\nWith enough bends, the thick line hugs the curve.':'')
+    :`ReLU OFF · ${reveal} neuron${reveal===1?'':'s'} → every neuron is a straight line, so the sum is still ONE straight line. Average error: ${err.toFixed(3)}\nAdding more neurons cannot bend it.`;}
+let hTimer=null;
+function hUpdate(){const N=+$('hN').value;$('hNv').textContent=N;hDraw(N,$('hAct').checked,N)}
+$('hN').oninput=()=>{clearInterval(hTimer);hUpdate()};$('hAct').onchange=()=>{clearInterval(hTimer);hUpdate()};
+$('hPlay').onclick=()=>{clearInterval(hTimer);let r=0;$('hN').value=12;$('hNv').textContent=12;hDraw(12,$('hAct').checked,0);
+  hTimer=setInterval(()=>{r++;hDraw(12,$('hAct').checked,r);if(r>=12)clearInterval(hTimer)},650)};
+hUpdate();
+/* ---- quiz ---- */
+const Q=[
+ {q:'A batch of 16 colour images, each 64×64 pixels. What is the tensor shape?',a:['(16, 64, 64)','(16, 3, 64, 64)','(3, 64)'],c:1,why:'Batch × channels × height × width. Colour means 3 channels (red, green, blue).'},
+ {q:'What is [1, 2, 3] · [4, 0, −1]?',a:['1','4','7'],c:0,why:'1·4 + 2·0 + 3·(−1) = 4 + 0 − 3 = 1.'},
+ {q:'W has shape (4 × 3) and x has shape (3). What shape is Wx?',a:['(3)','(4)','(4 × 3)'],c:1,why:'One dot product per row of W, and W has 4 rows.'},
+ {q:'A tensor has shape (2, 3, 4). How many numbers does it hold?',a:['9','24','234'],c:1,why:'Multiply the sizes: 2 × 3 × 4 = 24.'},
+ {q:'X has shape (3, 224, 224). How many indices do you need to pick ONE number?',a:['1','3','224'],c:1,why:'One index per axis, and there are 3 axes: channel, row, column.'},
+ {q:'A neuron gets z = −2.5. What does ReLU output?',a:['−2.5','0','2.5'],c:1,why:'ReLU keeps positives and turns every negative number into 0.'},
+ {q:'In the animation, ReLU is OFF and you use 12 neurons. What does the output look like?',a:['A curve with 12 bends','One straight line','Zero everywhere'],c:1,why:'Without the activation each neuron is a straight line, and adding straight lines gives one straight line.'},
+ {q:'Why do we put an activation between layers?',a:['To make training faster','Otherwise stacked linear layers collapse into one matrix','To reduce the number of weights'],c:1,why:'W₂(W₁x) = (W₂W₁)x. Without the bend, depth adds nothing.'}];
+const qz=$('quiz');Q.forEach((it,k)=>{const d=document.createElement('div');d.className='card';
+  d.innerHTML=`<b>${k+1}. ${it.q}</b>`+it.a.map((o,i)=>`<label><input type="radio" name="q${k}" value="${i}"> ${o}</label>`).join('')+`<div class="fb" id="fb${k}"></div>`;qz.appendChild(d);
+  d.querySelectorAll('input').forEach(r=>r.onchange=()=>{$('fb'+k).innerHTML=(+r.value===it.c?'✅ Correct. ':'❌ Not quite. ')+it.why})});
+</script>
+
+<!-- ============ VOCAB HELPER ============ -->
+<style>
+  .vocab{border-bottom:2px dotted var(--accent);cursor:help}
+  .vocab.saved{background:rgba(99,102,241,.14);border-radius:3px}
+  #vpop{position:absolute;z-index:50;max-width:320px;background:var(--card);color:var(--fg);border:1px solid var(--accent);
+    border-radius:10px;padding:10px 14px;box-shadow:0 8px 28px rgba(0,0,0,.18);font:15px/1.45 system-ui,sans-serif;display:none}
+  #vpop .w{font-weight:700;font-size:1.05rem} #vpop .es{color:var(--cnn);font-weight:600}
+  #vpop .ex{color:var(--muted);font-style:italic;margin-top:4px}
+  #vpop button{margin-top:8px;padding:4px 10px;font-size:.8rem}
+  .vbar{position:sticky;top:0;z-index:40;background:var(--bg);border-bottom:1px solid var(--line);padding:6px 0;font:600 .85rem system-ui,sans-serif;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+  .vbar label{cursor:pointer}
+  .es-inline{color:var(--cnn);font:600 .78em system-ui,sans-serif;margin-left:3px}
+  #glossary table td:first-child{font-weight:700;white-space:nowrap}
+  #flash{font:1.3rem system-ui,sans-serif;text-align:center;padding:24px;min-height:110px}
+</style>
+<div id="vpop"></div>
+<script>
+const VOCAB = {
+  // key: [forms to match, short synonym, simple English meaning]
+  'ordered':        [['ordered'], 'in a fixed order', 'arranged so that the position of each item matters'],
+  'slot':           [['slot','slots'], 'position', 'a place in a list where one item goes'],
+  'swap':           [['swap'], 'exchange', 'to put each one in the other\'s place'],
+  'grid':           [['grid','grids'], 'rows and columns', 'a pattern of rows and columns, like a chessboard'],
+  'stack':          [['stack','stacked','stacking'], 'pile', 'things put one on top of another'],
+  'side by side':   [['side by side'], 'next to each other', 'placed next to each other'],
+  'grayscale':      [['grayscale'], 'black and white', 'only black, white and greys — no colour'],
+  'brightness':     [['brightness'], 'lightness', 'how light or dark something is'],
+  'flatten':        [['flattens','flattened','flatten'], 'make flat', 'to turn a grid into one long list'],
+  'layout':         [['layout'], 'arrangement', 'how things are arranged in space'],
+  'neighbour':      [['neighbours','neighbors'], 'nearby thing', 'something right next to something else'],
+  'recipe':         [['recipe'], 'instructions', 'a list of ingredients and how to combine them'],
+  'ingredient':     [['ingredients'], 'part', 'one of the things you mix to make something'],
+  'overall':        [['overall'], 'total', 'considering everything together'],
+  'pull down':      [['pull the score down'], 'lower it', 'make the number smaller'],
+  'ignore':         [['ignore'], 'not use', 'to pay no attention to something'],
+  'aligned':        [['aligned'], 'pointing the same way', 'lined up in the same direction'],
+  'opposite':       [['opposite'], 'reverse', 'pointing the completely other way'],
+  'fire':           [['fires'], 'activates', 'here: gives a big output'],
+  'stretch':        [['stretch'], 'make longer', 'to pull something so it becomes longer or wider'],
+  'squash':         [['squash'], 'press smaller', 'to press something into a smaller shape; here also: limit a number'],
+  'slant':          [['slant'], 'tilt', 'to lean to one side'],
+  'stay put':       [['stays put'], 'does not move', 'stays in the same place'],
+  'faint':          [['faint'], 'pale', 'light and hard to see'],
+  'land':           [['lands'], 'arrives', 'here: where a point ends up after the move'],
+  'weigh':          [['weigh'], 'measure importance', 'to decide how much each thing counts'],
+  'shift':          [['shift'], 'move', 'to move something a little'],
+  'threshold':      [['threshold'], 'limit', 'the point where something starts to happen'],
+  'collapse':       [['collapse'], 'fall into one', 'here: many things become one single thing'],
+  'pointless':      [['pointless'], 'useless', 'with no purpose or effect'],
+  'bend':           [['bends','bending','bend'], 'curve', 'to make something no longer straight'],
+  'cinema':         [['cinema'], 'movie theatre', 'a building where you watch films'],
+  'seat':           [['seat'], 'chair', 'a place to sit'],
+  'point at':       [['point at'], 'indicate', 'to show exactly which one you mean'],
+  'arrange':        [['arranged','arrangement','arrange'], 'organise', 'to put things in a certain order or layout'],
+  'rearrange':      [['rearranges','rearrange'], 'reorder', 'to put the same things in a new order'],
+  'however many':   [['however many'], 'no matter how many', 'the number does not matter'],
+  'bend':           [['bends','bending','bend'], 'curve', 'to stop being straight and change direction'],
+  'scale':          [['scaled'], 'multiplied', 'made bigger or smaller by multiplying'],
+  'hug':            [['hugs'], 'follows closely', 'stays very close to'],
+  'dashed':         [['dashed'], 'broken line', 'a line drawn as many short pieces with gaps'],
+  'thick':          [['thick'], 'wide', 'having a lot of width'],
+  'untick':         [['untick'], 'uncheck', 'remove the tick (✓) from a box'],
+  'deeper':         [['deeper'], 'more complex', 'more serious or advanced'],
+  'free':           [['every entry of $\\mathbf{W}$ free'], 'learned independently', 'each number can take any value'],
+};
+
+// ---- build lookup, longest phrases first
+const forms=[];for(const k in VOCAB)VOCAB[k][0].forEach(f=>forms.push([f,k]));
+forms.sort((a,b)=>b[0].length-a[0].length);
+const esc=s=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+const RE=new RegExp('\\b('+forms.map(f=>esc(f[0])).join('|')+')\\b','gi');
+const RE1=new RegExp(RE.source,'i');
+const formToKey=Object.fromEntries(forms.map(([f,k])=>[f.toLowerCase(),k]));
+const SKIP='script,style,mjx-container,.MathJax,code,pre,svg,button,input,#vpop,#glossary,.vbar,.cell,.calc';
+let saved=new Set(JSON.parse(localStorage.getItem('vocab-saved')||'[]'));
+function persist(){localStorage.setItem('vocab-saved',JSON.stringify([...saved]))}
+
+function wrapVocab(root){
+  const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:n=>
+    (n.parentElement.closest(SKIP)||/\$/.test(n.nodeValue)||!RE1.test(n.nodeValue))?NodeFilter.FILTER_REJECT:NodeFilter.FILTER_ACCEPT});
+  const nodes=[];while(walker.nextNode())nodes.push(walker.currentNode);
+  nodes.forEach(n=>{
+    RE.lastIndex=0;const frag=document.createDocumentFragment();let last=0,m;const t=n.nodeValue;
+    while((m=RE.exec(t))){frag.append(t.slice(last,m.index));const k=formToKey[m[0].toLowerCase()];
+      const s=document.createElement('span');s.className='vocab'+(saved.has(k)?' saved':'');s.dataset.k=k;s.textContent=m[0];frag.append(s);last=m.index+m[0].length}
+    frag.append(t.slice(last));n.replaceWith(frag);
+  });
+}
+const pop=document.getElementById('vpop');
+function sentenceOf(el){const t=(el.closest('p,li,td,div')||el).textContent.replace(/\s+/g,' ');
+  const i=t.indexOf(el.textContent);const a=t.lastIndexOf('.',i)+1,b=t.indexOf('.',i);return t.slice(a,b<0?undefined:b+1).trim()}
+function showPop(el){
+  const k=el.dataset.k,[,es,def]=VOCAB[k];
+  pop.innerHTML=`<div class="w">${el.textContent}</div><div class="es">≈ ${es}</div><div>${def}</div><div class="ex">“${sentenceOf(el)}”</div>
+    <button id="vsave">${saved.has(k)?'★ Saved — remove':'☆ Save to my words'}</button> <button id="vsay">🔊 Listen</button>`;
+  const r=el.getBoundingClientRect();pop.style.display='block';
+  pop.style.left=Math.min(window.scrollX+r.left,window.scrollX+innerWidth-340)+'px';pop.style.top=(window.scrollY+r.bottom+6)+'px';
+  document.getElementById('vsave').onclick=e=>{e.stopPropagation();saved.has(k)?saved.delete(k):saved.add(k);persist();
+    document.querySelectorAll(`.vocab[data-k="${k}"]`).forEach(x=>x.classList.toggle('saved',saved.has(k)));renderGlossary();showPop(el)};
+  document.getElementById('vsay').onclick=e=>{e.stopPropagation();const u=new SpeechSynthesisUtterance(el.textContent);u.lang='en-US';speechSynthesis.speak(u)};
+}
+document.addEventListener('click',e=>{const v=e.target.closest('.vocab');if(v){showPop(v);e.stopPropagation()}else if(!e.target.closest('#vpop'))pop.style.display='none'});
+document.addEventListener('mouseover',e=>{const v=e.target.closest('.vocab');if(v&&matchMedia('(hover:hover)').matches)showPop(v)});
+
+function renderGlossary(){
+  const g=document.getElementById('glossary');if(!g)return;
+  const used=[...new Set([...document.querySelectorAll('main .vocab')].map(v=>v.dataset.k))];
+  const onlySaved=document.getElementById('gOnlySaved').checked;
+  const rows=used.filter(k=>!onlySaved||saved.has(k)).sort().map(k=>`<tr><td>${saved.has(k)?'★ ':''}${k}</td><td>${VOCAB[k][1]}</td><td>${VOCAB[k][2]}</td></tr>`).join('');
+  g.querySelector('tbody').innerHTML=rows||'<tr><td colspan="3">No saved words yet — tap an underlined word and press ☆.</td></tr>';
+  document.getElementById('gCount').textContent=`${used.length} words on this page · ${[...saved].filter(k=>used.includes(k)).length} saved`;
+}
+let deck=[],di=0,flipped=false;
+function flash(){const f=document.getElementById('flash');if(!deck.length){f.textContent='Save some words first (☆), or untick "only saved".';return}
+  const k=deck[di%deck.length];f.innerHTML=flipped?`<b>${k}</b><br><span style="color:var(--cnn)">${VOCAB[k][1]}</span><br><small>${VOCAB[k][2]}</small>`:`<b>${k}</b><br><small class="note">What does it mean? Tap “Flip”.</small>`}
+function initVocab(){
+  const main=document.querySelector('main');
+  const bar=document.createElement('div');bar.className='vbar';
+  bar.innerHTML=`📖 Vocabulary helper: tap a <span class="vocab" style="cursor:default">dotted word</span> for its meaning.
+    <label><input type="checkbox" id="vInline"> Show a short synonym next to every word</label>`;
+  main.prepend(bar);
+  const sum=document.querySelector('.summary');
+  const sec=document.createElement('section');sec.id='glossary';
+  sec.innerHTML=`<h2>📚 Vocabulary from this page</h2><p class="note" id="gCount"></p>
+    <label><input type="checkbox" id="gOnlySaved"> Only my saved words</label>
+    <table style="margin-top:8px"><thead><tr><th>Word</th><th>Short synonym</th><th>Simple meaning</th></tr></thead><tbody></tbody></table>
+    <h3>Flashcards</h3><div class="card" id="flash"></div>
+    <p><button id="fFlip">Flip</button> <button id="fNext">Next ▶</button> <button id="fShuffle">Shuffle</button></p>`;
+  sum.before(sec);
+  wrapVocab(main);
+  const dk=()=>{const used=[...new Set([...document.querySelectorAll('main .vocab')].map(v=>v.dataset.k))];
+    deck=document.getElementById('gOnlySaved').checked?used.filter(k=>saved.has(k)):used;di=0;flipped=false;flash()};
+  document.getElementById('gOnlySaved').onchange=()=>{renderGlossary();dk()};
+  document.getElementById('fFlip').onclick=()=>{flipped=!flipped;flash()};
+  document.getElementById('fNext').onclick=()=>{di++;flipped=false;flash()};
+  document.getElementById('fShuffle').onclick=()=>{deck.sort(()=>Math.random()-.5);di=0;flipped=false;flash()};
+  document.getElementById('vInline').onchange=e=>{document.querySelectorAll('.es-inline').forEach(x=>x.remove());
+    if(e.target.checked)document.querySelectorAll('main .vocab').forEach(v=>{if(v.closest('#glossary'))return;const s=document.createElement('span');s.className='es-inline';s.textContent='('+VOCAB[v.dataset.k][1]+')';v.after(s)})};
+  renderGlossary();dk();
+}
+// run after MathJax has rendered, so formulas are never touched
+(function wait(){ if(window.MathJax&&MathJax.startup&&MathJax.startup.promise){MathJax.startup.promise.then(initVocab)} else setTimeout(wait,100) })();
+</script>
+
+
+</body>
+</html>

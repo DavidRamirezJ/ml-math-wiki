@@ -53,3 +53,6 @@ The mental models / explanations that stuck.
 | 2026-06-18 | Vector | /teach | ✅ mastered |
 | 2026-06-22 | Matrix | /teach | ✅ mastered |
 | 2026-06-25 | Vector Space | /teach | ✅ mastered |
+| 2026-07-02 | Linear Independence | /teach | ⏳ in progress |
+| 2026-10-13 | MLP vs CNN, tensores, función de activación | /explain | 🟡 explicado, falta quiz |
+| 2026-10-15 | Backpropagation | /explain | 🟡 explicado, falta quiz |

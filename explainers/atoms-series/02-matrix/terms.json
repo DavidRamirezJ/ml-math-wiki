@@ -1,0 +1,22 @@
+[
+ {
+  "term": "matrix",
+  "definition": "A rectangular grid of numbers, arranged in rows and columns.",
+  "video": "02-matrix"
+ },
+ {
+  "term": "matrix multiplication",
+  "definition": "Doing one matrix after another. Entry (i, j) of AB: row i of A times column j of B, multiplied entry by entry and added.",
+  "video": "02-matrix"
+ },
+ {
+  "term": "transpose",
+  "definition": "Flip a matrix over its diagonal: its rows become its columns.",
+  "video": "02-matrix"
+ },
+ {
+  "term": "identity matrix",
+  "definition": "Ones on the diagonal, zeros everywhere else. It changes nothing: I x = x.",
+  "video": "02-matrix"
+ }
+]

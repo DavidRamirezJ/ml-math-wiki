@@ -1,0 +1,10 @@
+00:00 Intro
+00:42 Scoring one guess
+02:23 Average loss over a data set
+03:47 Parameters & fitting a line
+05:22 Smooth losses are easier
+06:38 Outliers
+07:52 Learning = optimization
+09:07 Try it yourself
+10:25 Python demo
+11:11 Summary

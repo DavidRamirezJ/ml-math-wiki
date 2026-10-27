@@ -1,0 +1,10 @@
+00:00 Intro
+00:46 Same mean, different spread
+02:20 Variance
+04:07 Standard deviation & shortcut
+05:26 Covariance
+07:49 The covariance matrix
+09:38 Variance in ML
+11:07 Try it yourself
+12:25 Python demo
+13:09 Summary

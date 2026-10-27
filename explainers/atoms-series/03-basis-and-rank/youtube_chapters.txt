@@ -1,0 +1,9 @@
+00:00 Intro
+00:38 Redundant directions
+01:48 Linear independence
+04:21 Basis, coordinates, dimension
+07:04 The rank of a matrix
+08:49 Rank in ML
+10:06 Try it yourself
+11:16 Python demo
+11:56 Summary
