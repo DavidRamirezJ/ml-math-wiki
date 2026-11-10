@@ -185,18 +185,29 @@ A lesson is <b>★ mastered</b> when you score at least 80% on the first try and
     <h3>3 · Worked example 1</h3>
     <div class="example">
       <p><b>Add, scale, and combine with u = (3, 1) and v = (1, 2).</b></p>
-      <p>Step 1, add. First components: 3 + 1 = 4. Second components: 1 + 2 = 3. So u + v = (4, 3). In the picture, you put the tail of v on the tip of u, and you end at (4, 3).</p>
-      <p>Step 2, check the order. v + u = (1 + 3, 2 + 1) = (4, 3). Same point. The two walks trace the two sides of a parallelogram.</p>
-      <p>Step 3, scale a new vector u = (2, 1). With c = 2: (2·2, 2·1) = (4, 2). With c = −1: (−2, −1), the arrow flips. With c = ½: (1, ½), the arrow shrinks. With c = 0: (0, 0), the arrow collapses to a point.</p>
-      <p>Step 4, the puzzle from the video. With u = (2, 1) and v = (1, 2), can we reach (5, 4)? Try a = 2 and b = 1. 2u = (4, 2). Add v: 4 + 1 = 5 and 2 + 2 = 4. Yes, 2u + v = (5, 4).</p>
+      <p>Step 1, add. Write each vector as a column and add component by component:</p>
+      $$ u+v=\begin{bmatrix}3\\1\end{bmatrix}+\begin{bmatrix}1\\2\end{bmatrix}=\begin{bmatrix}4\\3\end{bmatrix} $$
+      <p>In the picture, you put the tail of \(v\) on the tip of \(u\), and you end at \((4,3)\).</p>
+      <p>Step 2, check the order — addition does not care about order:</p>
+      $$ v+u=\begin{bmatrix}1\\2\end{bmatrix}+\begin{bmatrix}3\\1\end{bmatrix}=\begin{bmatrix}4\\3\end{bmatrix} $$
+      <p>Same point. The two walks trace the two sides of a parallelogram.</p>
+      <p>Step 3, scale a new vector \(u=(2,1)\). Scaling multiplies every component:</p>
+      $$ 2\begin{bmatrix}2\\1\end{bmatrix}=\begin{bmatrix}4\\2\end{bmatrix},\quad -1\begin{bmatrix}2\\1\end{bmatrix}=\begin{bmatrix}-2\\-1\end{bmatrix},\quad \tfrac12\begin{bmatrix}2\\1\end{bmatrix}=\begin{bmatrix}1\\[2pt]\tfrac12\end{bmatrix},\quad 0\begin{bmatrix}2\\1\end{bmatrix}=\begin{bmatrix}0\\0\end{bmatrix} $$
+      <p>With \(c=-1\) the arrow flips; with \(c=\tfrac12\) it shrinks; with \(c=0\) it collapses to a point.</p>
+      <p>Step 4, the puzzle from the video. With \(u=(2,1)\) and \(v=(1,2)\), can we reach \((5,4)\)? Try \(a=2,\ b=1\):</p>
+      $$ 2\begin{bmatrix}2\\1\end{bmatrix}+\begin{bmatrix}1\\2\end{bmatrix}=\begin{bmatrix}4\\2\end{bmatrix}+\begin{bmatrix}1\\2\end{bmatrix}=\begin{bmatrix}5\\4\end{bmatrix} $$
+      <p>Yes — \(2u+v=(5,4)\).</p>
     </div>
 
     <h3>4 · Worked example 2</h3>
     <div class="example">
       <p><b>An ML example: blend two tiny images, then run one neuron.</b></p>
-      <p>Part A. Take two toy images of 2×2 pixels. Each pixel is a brightness from 0 to 1. Write the 4 pixels in a row: img1 = (1, 0, 0, 1) and img2 = (0, 1, 0.5, 0.5).</p>
-      <p>Compute ½·img1 + ½·img2. Pixel 1: 0.5·1 + 0.5·0 = 0.5. Pixel 2: 0.5·0 + 0.5·1 = 0.5. Pixel 3: 0.5·0 + 0.5·0.5 = 0.25. Pixel 4: 0.5·1 + 0.5·0.5 = 0.75. The blend is (0.5, 0.5, 0.25, 0.75). Each pixel is the average of the two pictures.</p>
-      <p>Part B. A neuron takes an input vector, multiplies each component by a weight, and adds everything up. Take the input x = (2, 1, 3) and the weights (0.5, −1, 2). The weighted sum is 0.5·2 + (−1)·1 + 2·3 = 1 − 1 + 6 = 6. That is a linear combination of the inputs. A large language model computes billions of these sums.</p>
+      <p>Part A. Take two toy images of 2×2 pixels. Each pixel is a brightness from 0 to 1. Write the 4 pixels as a column vector. Blending is a scaled sum of the two columns:</p>
+      $$ \tfrac12\begin{bmatrix}1\\0\\0\\1\end{bmatrix}+\tfrac12\begin{bmatrix}0\\1\\0.5\\0.5\end{bmatrix}=\begin{bmatrix}0.5\\0.5\\0.25\\0.75\end{bmatrix} $$
+      <p>Each pixel is the average of the two pictures.</p>
+      <p>Part B. A neuron multiplies each input by a weight and adds them up — that is a dot product \(w^\top x\):</p>
+      $$ w^\top x=\begin{bmatrix}0.5&-1&2\end{bmatrix}\begin{bmatrix}2\\1\\3\end{bmatrix}=0.5\cdot2+(-1)\cdot1+2\cdot3=6 $$
+      <p>A large language model computes billions of these sums.</p>
     </div>
 
     <h3>5 · Common mistakes</h3>
@@ -1054,29 +1065,28 @@ Thanks for watching.
 
     <h3>3 · Worked example 1</h3>
     <div class="example">
-      <p><b>A times x, both views, then a full product.</b> A has columns (2, 1) and (1, 3). x = (1, 2).</p>
-      <p>Column view: 1·(2, 1) + 2·(1, 3) = (2, 1) + (2, 6) = (4, 7).</p>
-      <p>Row view: row 1 is (2, 1), so 2·1 + 1·2 = 4. Row 2 is (1, 3), so 1·1 + 3·2 = 7. Same answer, (4, 7). This multiply-and-add pattern is the inner product, the topic of video 05.</p>
-      <p>Now a product. A has rows (1, 2) and (3, 4). B has rows (5, 6) and (7, 8).</p>
-      <p>Top left: row 1 of A with column 1 of B (5, 7): 1·5 + 2·7 = 5 + 14 = 19.<br>
-         Top right: row 1 with column 2 (6, 8): 1·6 + 2·8 = 6 + 16 = 22.<br>
-         Bottom left: row 2 (3, 4) with (5, 7): 15 + 28 = 43.<br>
-         Bottom right: (3, 4) with (6, 8): 18 + 32 = 50.</p>
-      <p>So AB has rows (19, 22) and (43, 50). Swap the order and BA has rows (23, 34) and (31, 46). Different!</p>
+      <p><b>A times x, both views, then a full product.</b> \(A\) has columns \((2,1)\) and \((1,3)\), and \(x=(1,2)\).</p>
+      <p>Column view — \(Ax\) is a weighted combination of the columns:</p>
+      $$ Ax=\begin{bmatrix}2&1\\1&3\end{bmatrix}\begin{bmatrix}1\\2\end{bmatrix}=1\begin{bmatrix}2\\1\end{bmatrix}+2\begin{bmatrix}1\\3\end{bmatrix}=\begin{bmatrix}4\\7\end{bmatrix} $$
+      <p>Row view — each output is one row dotted with \(x\): \(2\cdot1+1\cdot2=4\) and \(1\cdot1+3\cdot2=7\). Same answer. This multiply-and-add pattern is the inner product (video 05).</p>
+      <p>Now a full product — each entry is one row of the left matrix dotted with one column of the right, and order matters:</p>
+      $$ AB=\begin{bmatrix}1&2\\3&4\end{bmatrix}\begin{bmatrix}5&6\\7&8\end{bmatrix}=\begin{bmatrix}19&22\\43&50\end{bmatrix},\qquad BA=\begin{bmatrix}5&6\\7&8\end{bmatrix}\begin{bmatrix}1&2\\3&4\end{bmatrix}=\begin{bmatrix}23&34\\31&46\end{bmatrix} $$
+      <p>\(AB\neq BA\) — swapping the order gives a different matrix.</p>
     </div>
 
     <h3>4 · Worked example 2</h3>
     <div class="example">
-      <p><b>An ML example: score three houses with one product.</b> The table X has rows (120, 3, 15), (80, 2, 30), (150, 4, 5). A toy model uses the weights w = (2, 10, −1).</p>
-      <p>House 1: 2·120 + 10·3 − 1·15 = 240 + 30 − 15 = 255.<br>
-         House 2: 2·80 + 10·2 − 1·30 = 160 + 20 − 30 = 150.<br>
-         House 3: 2·150 + 10·4 − 1·5 = 300 + 40 − 5 = 335.</p>
-      <p>So Xw = (255, 150, 335). One matrix product gives three predictions. A neural network layer works the same way: a layer with 3 inputs and 2 outputs has a 2×3 weight matrix W, and each output is one row of W combined with the input. Real layers are huge. One example in <i>Build a Large Language Model from Scratch</i> is 2048×2048, which is 2048 · 2048 = 4,194,304 numbers, more than four million.</p>
+      <p><b>An ML example: score three houses with one product.</b> The data matrix \(X\) has one house per row; the toy model weights are \(w=(2,10,-1)\):</p>
+      $$ Xw=\begin{bmatrix}120&3&15\\80&2&30\\150&4&5\end{bmatrix}\begin{bmatrix}2\\10\\-1\end{bmatrix}=\begin{bmatrix}255\\150\\335\end{bmatrix} $$
+      <p>One matrix product gives three predictions, one per row. A neural-network layer works the same way: a layer with 3 inputs and 2 outputs has a \(2\times3\) weight matrix \(W\), and each output is one row of \(W\) combined with the input. Real layers are huge — one example in <i>Build a Large Language Model from Scratch</i> is \(2048\times2048 = 4{,}194{,}304\) numbers, more than four million.</p>
     </div>
     <h3>4b · Worked example 3</h3>
     <div class="example">
-      <p><b>Order matters: stretch and rotate.</b> The stretch S has columns (2, 0) and (0, 1): everything becomes twice as wide. The rotation R has columns (0, 1) and (−1, 0): a quarter turn to the left.</p>
-      <p>Follow e₁ = (1, 0). Stretch first, then rotate: S sends it to (2, 0), and R turns that to (0, 2). So the first column of RS is (0, 2). Rotate first, then stretch: R sends e₁ to (0, 1), and S leaves it at (0, 1). So the first column of SR is (0, 1). RS ≠ SR.</p>
+      <p><b>Order matters: stretch and rotate.</b> The stretch \(S\) has columns \((2,0),(0,1)\) (twice as wide); the rotation \(R\) has columns \((0,1),(-1,0)\) (a quarter turn left):</p>
+      $$ S=\begin{bmatrix}2&0\\0&1\end{bmatrix},\qquad R=\begin{bmatrix}0&-1\\1&0\end{bmatrix} $$
+      <p>Stretch-then-rotate \((RS)\) is not rotate-then-stretch \((SR)\):</p>
+      $$ RS=\begin{bmatrix}0&-1\\1&0\end{bmatrix}\begin{bmatrix}2&0\\0&1\end{bmatrix}=\begin{bmatrix}0&-1\\2&0\end{bmatrix},\qquad SR=\begin{bmatrix}2&0\\0&1\end{bmatrix}\begin{bmatrix}0&-1\\1&0\end{bmatrix}=\begin{bmatrix}0&-2\\1&0\end{bmatrix} $$
+      <p>Follow \(e_1=(1,0)\): under \(RS\) it lands at \((0,2)\) (the first column of \(RS\)); under \(SR\) it lands at \((0,1)\). So \(RS\neq SR\).</p>
     </div>
 
     <h3>5 · Common mistakes</h3>
@@ -2044,11 +2054,21 @@ Thanks for watching.
 
     <h3>3 · Worked example 1</h3>
     <div class="example">
-      <p><b>Test independence, then change basis.</b></p>
-      <p>Step 1. Are a = (2, 1), b = (1, 2), c = (3, 3) independent? Try the weights 1, 1, −1. First components: 2 + 1 − 3 = 0. Second components: 1 + 2 − 3 = 0. Non-zero weights give zero, so they are dependent.</p>
-      <p>Step 2. Are a and b alone independent? Suppose λ₁(2, 1) + λ₂(1, 2) = (0, 0). First components: 2λ₁ + λ₂ = 0, so λ₂ = −2λ₁. Second components: λ₁ + 2λ₂ = 0, which becomes λ₁ − 4λ₁ = −3λ₁ = 0. So λ₁ = 0 and then λ₂ = 0. Independent.</p>
-      <p>Step 3. Use the basis b₁ = (1, 1), b₂ = (−1, 1) to describe p = (1, 3). We need c₁(1, 1) + c₂(−1, 1) = (1, 3). First components: c₁ − c₂ = 1. Second components: c₁ + c₂ = 3. Add the two equations: 2c₁ = 4, so c₁ = 2. Then c₂ = 3 − 2 = 1.</p>
-      <p>Check: 2·(1, 1) + 1·(−1, 1) = (2, 2) + (−1, 1) = (1, 3). In the standard basis e₁, e₂, the same point has coordinates 1 and 3. Same point, two descriptions.</p>
+      <p><b>Test independence, then change basis — in matrix form.</b> The trick: put the vectors as the <b>columns</b> of a matrix. Then independence and change of basis each become one matrix operation.</p>
+
+      <p><b>Step 1.</b> Are \(a=(2,1)\), \(b=(1,2)\), \(c=(3,3)\) independent? Stack them as columns and ask whether \(M\lambda=0\) has any <b>non-zero</b> \(\lambda\):</p>
+      $$ M\lambda=\begin{bmatrix}2&1&3\\1&2&3\end{bmatrix}\begin{bmatrix}1\\1\\-1\end{bmatrix}=\begin{bmatrix}2+1-3\\1+2-3\end{bmatrix}=\begin{bmatrix}0\\0\end{bmatrix} $$
+      <p>A non-zero \(\lambda=(1,1,-1)\) gives \(0\), so the columns are <b>dependent</b>. (Clear in matrix form: a \(2\times3\) matrix has <b>rank ≤ 2</b>, so 3 columns can never all be independent.)</p>
+
+      <p><b>Step 2.</b> Are \(a\) and \(b\) alone independent? For a square block, independence just means a non-zero determinant:</p>
+      $$ A=\begin{bmatrix}2&1\\1&2\end{bmatrix},\qquad \det(A)=2\cdot2-1\cdot1=3\neq0\;\Rightarrow\;\text{independent.} $$
+      <p>The whole "suppose \(\lambda_1\dots\lambda_2\dots\)" algebra collapses to <b>one determinant</b>.</p>
+
+      <p><b>Step 3.</b> Describe \(p=(1,3)\) in the basis \(b_1=(1,1)\), \(b_2=(-1,1)\). Put the new basis as the columns of \(B\); the coordinates \(c\) are the solution of \(Bc=p\):</p>
+      $$ Bc=p:\qquad \begin{bmatrix}1&-1\\1&1\end{bmatrix}\begin{bmatrix}c_1\\c_2\end{bmatrix}=\begin{bmatrix}1\\3\end{bmatrix} $$
+      <p>That one matrix equation <i>is</i> the two equations \(c_1-c_2=1\) and \(c_1+c_2=3\). Solve by inverting \(B\):</p>
+      $$ \det(B)=2,\quad B^{-1}=\tfrac12\begin{bmatrix}1&1\\-1&1\end{bmatrix},\quad c=B^{-1}p=\tfrac12\begin{bmatrix}1&1\\-1&1\end{bmatrix}\begin{bmatrix}1\\3\end{bmatrix}=\tfrac12\begin{bmatrix}4\\2\end{bmatrix}=\begin{bmatrix}2\\1\end{bmatrix} $$
+      <p><b>Same point, two descriptions.</b> \(p\) is \((1,3)\) seen through the standard axes \(e_1,e_2\), and \((2,1)\) seen through the axes \(b_1,b_2\). The matrix \(B\) turns \(b\)-coordinates into standard coordinates (\(Bc=p\)); its inverse \(B^{-1}\) turns standard coordinates into \(b\)-coordinates (\(c=B^{-1}p\)). A matrix is the <b>translator between two viewpoints</b>.</p>
     </div>
 
     <h3>4 · Worked example 2</h3>
@@ -2924,8 +2944,10 @@ Thanks for watching.
     <h3>3 · Worked example 1</h3>
     <div class="example">
       <p><b>Build a matrix from two arrows, then test functions that are not linear.</b></p>
-      <p>Step 1. A linear map sends e₁ to (2, 1) and e₂ to (−1, 1). So A has columns (2, 1) and (−1, 1).</p>
-      <p>Step 2. Where does (3, 2) go? 3·(2, 1) + 2·(−1, 1) = (6, 3) + (−2, 2) = (6 − 2, 3 + 2) = (4, 5). Row view: 2·3 + (−1)·2 = 4 and 1·3 + 1·2 = 5. Same.</p>
+      <p>Step 1. A linear map sends \(e_1\) to \((2,1)\) and \(e_2\) to \((-1,1)\). The columns of \(A\) are exactly those images:</p>
+      $$ A=\begin{bmatrix}2&-1\\1&1\end{bmatrix} $$
+      <p>Step 2. Where does \((3,2)\) go? Apply the matrix — a combination of its columns:</p>
+      $$ A\begin{bmatrix}3\\2\end{bmatrix}=3\begin{bmatrix}2\\1\end{bmatrix}+2\begin{bmatrix}-1\\1\end{bmatrix}=\begin{bmatrix}4\\5\end{bmatrix} $$
       <p>Step 3. Test the shift f(x) = x + 1. f(0) = 1, not 0, so it is not linear. Also f(2 + 3) = f(5) = 6, but f(2) + f(3) = 3 + 4 = 7. A shift like this is an <b>affine map</b>: a linear map followed by a move.</p>
       <p>Step 4. Test the square f(x) = x². f(1 + 1) = f(2) = 4, but f(1) + f(1) = 1 + 1 = 2. Scaling fails too: f(2·3) = 36, but 2·f(3) = 2·9 = 18. Not linear.</p>
     </div>
@@ -2933,15 +2955,23 @@ Thanks for watching.
     <h3>4 · Worked example 2</h3>
     <div class="example">
       <p><b>Compose a shear and a projection; find the kernel and image.</b></p>
-      <p>The shear S has rows (1, 1) and (0, 1). The projection P onto the horizontal axis has rows (1, 0) and (0, 0). Shear first, then project: the matrix is P S. Row 1: (1·1 + 0·0, 1·1 + 0·1) = (1, 1). Row 2: (0, 0). So P S has rows (1, 1) and (0, 0).</p>
-      <p>Check with (1, 2). Shear: (1 + 2, 2) = (3, 2). Project: (3, 0). And P S (1, 2) = (1 + 2, 0) = (3, 0). One matrix does both steps.</p>
+      <p>The shear \(S\) and the projection \(P\) onto the horizontal axis are:</p>
+      $$ S=\begin{bmatrix}1&1\\0&1\end{bmatrix},\qquad P=\begin{bmatrix}1&0\\0&0\end{bmatrix} $$
+      <p>Shear first, then project — compose the two by multiplying \(PS\):</p>
+      $$ PS=\begin{bmatrix}1&0\\0&0\end{bmatrix}\begin{bmatrix}1&1\\0&1\end{bmatrix}=\begin{bmatrix}1&1\\0&0\end{bmatrix} $$
+      <p>Check with \((1,2)\) — one matrix does both steps:</p>
+      $$ PS\begin{bmatrix}1\\2\end{bmatrix}=\begin{bmatrix}1&1\\0&0\end{bmatrix}\begin{bmatrix}1\\2\end{bmatrix}=\begin{bmatrix}3\\0\end{bmatrix} $$
       <p>Kernel of P: every point on the vertical axis, like (0, 5), drops to (0, 0). So the kernel is the vertical axis, dimension 1. Image of P: the horizontal axis, dimension 1, which is the rank of P. Balance: 1 + 1 = 2, the dimension of the plane.</p>
     </div>
     <h3>4b · Worked example 3</h3>
     <div class="example">
-      <p><b>An ML example: two linear layers collapse into one.</b> Layer 1, W₁, maps 2 numbers to 3; its rows are (1, 2), (0, 1), (1, 0). Layer 2, W₂, maps 3 numbers to 2; its rows are (1, 0, 1) and (2, 1, 0).</p>
-      <p>W₂W₁, row 1: (1·1 + 0·0 + 1·1, 1·2 + 0·1 + 1·0) = (2, 2). Row 2: (2·1 + 1·0 + 0·1, 2·2 + 1·1 + 0·0) = (2, 5).</p>
-      <p>Test with y = (1, 2). W₁y = (1 + 4, 2, 1) = (5, 2, 1). Then W₂(5, 2, 1) = (5 + 1, 10 + 2) = (6, 12). The single matrix: (2·1 + 2·2, 2·1 + 5·2) = (6, 12). Same. Two linear layers are just one matrix.</p>
+      <p><b>An ML example: two linear layers collapse into one.</b> Layer 1 maps 2 numbers to 3, layer 2 maps 3 numbers to 2:</p>
+      $$ W_1=\begin{bmatrix}1&2\\0&1\\1&0\end{bmatrix},\qquad W_2=\begin{bmatrix}1&0&1\\2&1&0\end{bmatrix} $$
+      <p>Composing the layers is one matrix product:</p>
+      $$ W_2W_1=\begin{bmatrix}1&0&1\\2&1&0\end{bmatrix}\begin{bmatrix}1&2\\0&1\\1&0\end{bmatrix}=\begin{bmatrix}2&2\\2&5\end{bmatrix} $$
+      <p>Test with \(y=(1,2)\) — layer by layer equals the single matrix:</p>
+      $$ W_1y=\begin{bmatrix}5\\2\\1\end{bmatrix},\qquad W_2(W_1y)=\begin{bmatrix}6\\12\end{bmatrix}=(W_2W_1)y $$
+      <p>Two linear layers are just one matrix.</p>
     </div>
 
     <h3>5 · Common mistakes</h3>
@@ -3794,12 +3824,8 @@ Thanks for watching.
     <div class="example">
       <p><b>Compute a dot product, then an angle.</b></p>
       <p>Let \(x = (1, 2, 3)\) and \(y = (4, -5, 6)\).</p>
-      <ol>
-        <li>First components: \(1 \times 4 = 4\).</li>
-        <li>Second components: \(2 \times (-5) = -10\).</li>
-        <li>Third components: \(3 \times 6 = 18\).</li>
-        <li>Add: \(4 - 10 + 18 = 12\). So \(x \cdot y = 12\).</li>
-      </ol>
+      <p>The dot product is a row vector times a column vector:</p>
+      $$ x^\top y=\begin{bmatrix}1&2&3\end{bmatrix}\begin{bmatrix}4\\-5\\6\end{bmatrix}=1\cdot4+2\cdot(-5)+3\cdot6=4-10+18=12 $$
       <p>Now find the angle between \(a = (1, 1)\) and \(b = (1, 2)\).</p>
       <ol>
         <li>Dot product: \(1 \times 1 + 1 \times 2 = 3\).</li>
@@ -4620,7 +4646,7 @@ Thanks for watching.
       <p><b>Three sizes of one vector, then a vector in 3D.</b></p>
       <p>Let \(x = (3, 4)\).</p>
       <ol>
-        <li>L2: \(3^2 + 4^2 = 9 + 16 = 25\), and \(\sqrt{25} = 5\).</li>
+        <li>L2 (the usual length) is \(\sqrt{x^\top x}\): \(\begin{bmatrix}3&4\end{bmatrix}\begin{bmatrix}3\\4\end{bmatrix}=9+16=25\), and \(\sqrt{25}=5\).</li>
         <li>L1: \(|3| + |4| = 3 + 4 = 7\).</li>
         <li>L-infinity: \(\max(3, 4) = 4\).</li>
       </ol>
@@ -6593,11 +6619,11 @@ Thanks for watching.
       <ol>
         <li>Freeze \(y = 2\): \(f = x^2 + 6\). Its derivative is \(2x\). At \(x = 1\): <b>2</b>.</li>
         <li>Freeze \(x = 1\): \(f = 1 + 3y\). Its derivative is <b>3</b>, everywhere.</li>
-        <li>So \(\nabla f(1, 2) = (2, 3)\).</li>
+        <li>Stack the two partials into the gradient column vector: \(\nabla f(1,2)=\begin{bmatrix}2\\3\end{bmatrix}\).</li>
       </ol>
       <p><b>Linear check.</b> \(f(1, 2) = 1 + 6 = 7\). Step by \(h = (0.1, 0.1)\):</p>
       <ol>
-        <li>\(\nabla f \cdot h = 2 \times 0.1 + 3 \times 0.1 = 0.2 + 0.3 = 0.5\).</li>
+        <li>\(\nabla f^\top h=\begin{bmatrix}2&3\end{bmatrix}\begin{bmatrix}0.1\\0.1\end{bmatrix}=0.2+0.3=0.5\).</li>
         <li>Guess: \(7 + 0.5 = 7.5\).</li>
         <li>True: \(f(1.1, 2.1) = 1.21 + 6.3 = 7.51\). Very close.</li>
       </ol>
@@ -6608,13 +6634,13 @@ Thanks for watching.
       <p><b>The bowl \(f(x, y) = x^2 + y^2\) at \((3, 4)\), and one step downhill.</b></p>
       <ol>
         <li>Height: \(f(3, 4) = 9 + 16 = 25\).</li>
-        <li>Partials: \(\partial f/\partial x = 2x\), \(\partial f/\partial y = 2y\). So \(\nabla f(3, 4) = (6, 8)\).</li>
+        <li>Partials: \(\partial f/\partial x = 2x\), \(\partial f/\partial y = 2y\). So \(\nabla f(3,4)=\begin{bmatrix}6\\8\end{bmatrix}\).</li>
         <li>Steepness: \(\|\nabla f\| = \sqrt{36 + 64} = 10\). Walking along the gradient, the height rises at rate 10. At 45° it rises at \(10 \cos 45^\circ \approx 7.07\); at 90°, 0; at 180°, −10.</li>
         <li>Linear check with \(h = (0.1, -0.1)\): \(\nabla f \cdot h = 0.6 - 0.8 = -0.2\). Guess \(24.8\); true \(3.1^2 + 3.9^2 = 9.61 + 15.21 = 24.82\).</li>
       </ol>
       <p><b>One toy training step.</b> Step <i>against</i> the gradient, with a step size of 0.1:</p>
       <ol>
-        <li>New point: \((3, 4) - 0.1 \times (6, 8) = (3 - 0.6,\; 4 - 0.8) = (2.4, 3.2)\).</li>
+        <li>New point \(x-\eta\,\nabla f\): \(\begin{bmatrix}3\\4\end{bmatrix}-0.1\begin{bmatrix}6\\8\end{bmatrix}=\begin{bmatrix}2.4\\3.2\end{bmatrix}\).</li>
         <li>New height: \(2.4^2 + 3.2^2 = 5.76 + 10.24 = 16\).</li>
         <li>The height drops from 25 to 16 in one step.</li>
       </ol>
@@ -11592,8 +11618,8 @@ Thanks for watching.
       <p><b>Variance of class B: 2, 4, 5, 6, 8.</b></p>
       <p>Step 1. Mean: 2 + 4 + 5 + 6 + 8 = 25, and 25 / 5 = 5.</p>
       <p>Step 2. Deviations: 2 − 5 = −3, 4 − 5 = −1, 0, +1, +3. They add up to 0, as always.</p>
-      <p>Step 3. Squares: 9, 1, 0, 1, 9. Their sum is 20.</p>
-      <p>Step 4. Each student has probability 1/5, so divide by 5: 20 / 5 = 4. Var = 4.</p>
+      <p>Step 3. Collect the deviations in a vector \(d=(-3,-1,0,1,3)\). The variance is the scaled squared length \(\tfrac1n\,d^\top d\):</p>
+      $$ \text{Var}=\tfrac15\begin{bmatrix}-3&-1&0&1&3\end{bmatrix}\begin{bmatrix}-3\\-1\\0\\1\\3\end{bmatrix}=\tfrac{9+1+0+1+9}{5}=\tfrac{20}{5}=4 $$
       <p>Step 5. Standard deviation: σ = √4 = 2 points.</p>
       <p><b>Class A: 4, 5, 5, 5, 6.</b> Deviations −1, 0, 0, 0, 1. Squares 1, 0, 0, 0, 1, sum 2. Variance 2 / 5 = 0.4, and σ = √0.4 ≈ 0.63. Class B has ten times more variance.</p>
       <p><b>Check with the shortcut.</b> Squares of the scores of B: 4, 16, 25, 36, 64. Sum: 145. Mean of the squares: 145 / 5 = 29. Square of the mean: 5² = 25. 29 − 25 = 4. The same variance.</p>
@@ -11606,8 +11632,11 @@ Thanks for watching.
       <p>Step 2. x deviations: −3, −1, 1, 3. y deviations: −2, −1, 2, 1.</p>
       <p>Step 3. Products: (−3)(−2) = 6, (−1)(−1) = 1, (1)(2) = 2, (3)(1) = 3. Sum: 12.</p>
       <p>Step 4. Divide by 4: Cov(x, y) = 3. Positive, so more hours go with higher scores in this toy data.</p>
-      <p><b>The covariance matrix.</b> Var(x) = (9 + 1 + 1 + 9) / 4 = 5. Var(y) = (4 + 1 + 4 + 1) / 4 = 2.5. So Σ = [[5, 3], [3, 2.5]].</p>
-      <p><b>A dot product view.</b> Put the deviations in two vectors. Their dot product is 6 + 1 + 2 + 3 = 12, and 12 / 4 = 3. Covariance is an average dot product of deviation vectors (axiom B). Variance is the same with a vector and itself: an average squared length.</p>
+      <p><b>The covariance matrix</b> collects both variances and the covariance in one symmetric matrix:</p>
+      $$ \Sigma=\begin{bmatrix}\operatorname{Var}(x)&\operatorname{Cov}(x,y)\\\operatorname{Cov}(x,y)&\operatorname{Var}(y)\end{bmatrix}=\begin{bmatrix}5&3\\3&2.5\end{bmatrix} $$
+      <p><b>A dot product view.</b> With deviation vectors \(d_x,d_y\), covariance is a scaled dot product \(\tfrac1n\,d_x^\top d_y\):</p>
+      $$ \operatorname{Cov}(x,y)=\tfrac14\begin{bmatrix}-3&-1&1&3\end{bmatrix}\begin{bmatrix}-2\\-1\\2\\1\end{bmatrix}=\tfrac{6+1+2+3}{4}=\tfrac{12}{4}=3 $$
+      <p>Variance is the same with a vector and itself (\(\tfrac1n\,d^\top d\)): an average squared length.</p>
     </div>
 
     <h3>4b · Worked example 3 (machine learning)</h3>
@@ -12654,19 +12683,19 @@ Thanks for watching.
     <h3>3 · Worked example 1</h3>
     <div class="example">
       <p><b>One guess.</b> y = 180, ŷ = 170. The gap is 180 − 170 = 10. Squared error: 10² = 100. Absolute error: 10.</p>
-      <p><b>A data set of three.</b> Labels 2, 4, 6. Predictions 1, 4, 8.</p>
-      <p>Step 1. Gaps: 2 − 1 = 1, 4 − 4 = 0, 6 − 8 = −2.</p>
-      <p>Step 2. Squared errors: 1² = 1, 0² = 0, (−2)² = 4. The minus sign disappears when we square.</p>
-      <p>Step 3. Mean squared error: (1 + 0 + 4) / 3 = 5 / 3 ≈ 1.67.</p>
-      <p>Step 4. Absolute errors: 1, 0, 2. Mean absolute error: 3 / 3 = 1.</p>
+      <p><b>A data set of three.</b> Collect labels and predictions as vectors \(y=(2,4,6)\) and \(\hat y=(1,4,8)\). The error vector is their difference:</p>
+      $$ e=y-\hat y=\begin{bmatrix}2\\4\\6\end{bmatrix}-\begin{bmatrix}1\\4\\8\end{bmatrix}=\begin{bmatrix}1\\0\\-2\end{bmatrix} $$
+      <p>Mean squared error is the scaled squared length \(\tfrac1n\|e\|^2=\tfrac1n\,e^\top e\):</p>
+      $$ \text{MSE}=\tfrac13\begin{bmatrix}1&0&-2\end{bmatrix}\begin{bmatrix}1\\0\\-2\end{bmatrix}=\tfrac{1+0+4}{3}=\tfrac53\approx1.67 $$
+      <p>Mean absolute error uses the \(L_1\) norm instead: \(\tfrac1n\|e\|_1=\tfrac{1+0+2}{3}=1\).</p>
     </div>
 
     <h3>4 · Worked example 2</h3>
     <div class="example">
-      <p><b>Fitting a line ŷ = w · x</b> to four toy points: (1, 2), (2, 5), (3, 6), (4, 8).</p>
-      <p><b>w = 1</b> (too flat). Predictions 1, 2, 3, 4. Gaps 1, 3, 3, 4. Squares 1, 9, 9, 16, sum 35. L(1) = 35 / 4 = 8.75.</p>
-      <p><b>w = 3</b> (too steep). Predictions 3, 6, 9, 12. Gaps −1, −1, −3, −4. Squares 1, 1, 9, 16, sum 27. L(3) = 27 / 4 = 6.75.</p>
-      <p><b>w = 2</b> (close). Predictions 2, 4, 6, 8. Gaps 0, 1, 0, 0. Squares 0, 1, 0, 0, sum 1. L(2) = 1 / 4 = 0.25.</p>
+      <p><b>Fitting a line \(\hat y = w\,x\)</b> to four toy points \((1,2),(2,5),(3,6),(4,8)\). Stack the inputs and labels as vectors \(x=(1,2,3,4)\), \(y=(2,5,6,8)\); the predictions are the scaled vector \(\hat y = w\,x\), and \(L(w)=\tfrac14\|y-wx\|^2=\tfrac14\,e^\top e\).</p>
+      <p><b>w = 1</b> (too flat): \(\hat y=(1,2,3,4)\), \(e=y-\hat y=(1,3,3,4)\), \(L=\tfrac14(1+9+9+16)=\tfrac{35}{4}=8.75\).</p>
+      <p><b>w = 3</b> (too steep): \(\hat y=(3,6,9,12)\), \(e=(-1,-1,-3,-4)\), \(L=\tfrac14(1+1+9+16)=\tfrac{27}{4}=6.75\).</p>
+      <p><b>w = 2</b> (close): \(\hat y=(2,4,6,8)\), \(e=(0,1,0,0)\), \(L=\tfrac14(0+1+0+0)=0.25\).</p>
       <p>The demo tried 401 slopes from 0 to 4 in steps of 0.01. The loss curve L(w) has the shape of a bowl. Its bottom is at w = 2.07, with a loss of about 0.217. That slope is the fitted model.</p>
     </div>
 
@@ -13608,20 +13637,20 @@ Thanks for watching.
 
     <h3>3 · Worked example 1</h3>
     <div class="example">
-      <p><b>Two layers collapse into one.</b> Input x = (3, −1). W₁ has rows (1, 2) and (0, 1). W₂ has rows (2, 0) and (1, 1).</p>
-      <p>Step 1. Layer 1: 1·3 + 2·(−1) = 1, and 0·3 + 1·(−1) = −1. So h = W₁x = (1, −1).</p>
-      <p>Step 2. Layer 2: 2·1 + 0·(−1) = 2, and 1·1 + 1·(−1) = 0. So W₂h = (2, 0).</p>
-      <p>Step 3. Multiply the matrices first. Row 1: (2·1 + 0·0, 2·2 + 0·1) = (2, 4). Row 2: (1·1 + 1·0, 1·2 + 1·1) = (1, 3). So W = W₂W₁ has rows (2, 4) and (1, 3).</p>
-      <p>Step 4. Apply W: 2·3 + 4·(−1) = 2, and 1·3 + 3·(−1) = 0. Again (2, 0). One matrix did the job of two layers.</p>
+      <p><b>Two layers collapse into one.</b> Input \(x=(3,-1)\), with \(W_1=\begin{bmatrix}1&2\\0&1\end{bmatrix}\) and \(W_2=\begin{bmatrix}2&0\\1&1\end{bmatrix}\).</p>
+      <p>Step 1. Layer 1: \(h=W_1x=\begin{bmatrix}1&2\\0&1\end{bmatrix}\begin{bmatrix}3\\-1\end{bmatrix}=\begin{bmatrix}1\\-1\end{bmatrix}\).</p>
+      <p>Step 2. Layer 2: \(W_2h=\begin{bmatrix}2&0\\1&1\end{bmatrix}\begin{bmatrix}1\\-1\end{bmatrix}=\begin{bmatrix}2\\0\end{bmatrix}\).</p>
+      <p>Step 3. Multiply the matrices first: \(W=W_2W_1=\begin{bmatrix}2&0\\1&1\end{bmatrix}\begin{bmatrix}1&2\\0&1\end{bmatrix}=\begin{bmatrix}2&4\\1&3\end{bmatrix}\).</p>
+      <p>Step 4. Apply \(W\): \(Wx=\begin{bmatrix}2&4\\1&3\end{bmatrix}\begin{bmatrix}3\\-1\end{bmatrix}=\begin{bmatrix}2\\0\end{bmatrix}\). Again \((2,0)\) — one matrix did the job of two layers.</p>
     </div>
 
     <h3>4 · Worked example 2</h3>
     <div class="example">
       <p><b>ReLU breaks the shortcut.</b> First, single values: ReLU(−2) = 0, ReLU(−0.5) = 0, ReLU(0) = 0, ReLU(1.5) = 1.5, ReLU(3) = 3. Negative numbers are switched off. Positive numbers pass through unchanged.</p>
       <p>Now put ReLU between the two layers of example 1.</p>
-      <p>Step 1. Layer 1 gave h = (1, −1).</p>
-      <p>Step 2. ReLU acts on each entry: (ReLU(1), ReLU(−1)) = (1, 0).</p>
-      <p>Step 3. Layer 2: 2·1 + 0·0 = 2, and 1·1 + 1·0 = 1. Result: (2, 1).</p>
+      <p>Step 1. Layer 1 gave \(h=\begin{bmatrix}1\\-1\end{bmatrix}\).</p>
+      <p>Step 2. ReLU acts on each entry: \(\text{ReLU}(h)=\begin{bmatrix}\text{ReLU}(1)\\\text{ReLU}(-1)\end{bmatrix}=\begin{bmatrix}1\\0\end{bmatrix}\).</p>
+      <p>Step 3. Layer 2: \(W_2\begin{bmatrix}1\\0\end{bmatrix}=\begin{bmatrix}2&0\\1&1\end{bmatrix}\begin{bmatrix}1\\0\end{bmatrix}=\begin{bmatrix}2\\1\end{bmatrix}\).</p>
       <p>Without ReLU we got (2, 0). The answer changed, so the two layers no longer collapse into one matrix.</p>
     </div>
 
