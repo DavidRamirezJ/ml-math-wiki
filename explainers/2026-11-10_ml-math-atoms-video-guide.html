@@ -1,7 +1,9 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src https://cdn.jsdelivr.net/npm/mathjax@3.2.2/ 'sha256-JZ5odMEY7l2cj95QEE/Ei9Wbq5ZF8ndKJVBpD3ERf3Y=' 'sha256-8im+/Jn65+RRVLVhSHj9EyDXjQRKPZZohUqGi40s2Fg=' 'sha256-1EDlad+U1tB7jYu0N/f2PHXl6uMH61fpT2Z5OTkXUT4=' 'sha256-TWOVzudkNfGbwQfb/hCEbPJCHwiFK5cLtwUbCBjDLG4=' 'sha256-LN4ixoHluhtViKNw4/ZuO1MNFP7hKByyDG03X1vopcU=' 'sha256-EGyqnPBj2tgYohx3juJtuSKklPFe60WLHzKjhArQFGY=' 'sha256-hyG/nXtNYwy1KeM717GC/kkOJYrqHhCFqKoq2JjvpJY=' 'sha256-TxFre7YP5YNtjMC9NRxFBqO+oQp/0M4YmL6szJ+/pZo=' 'sha256-erV4TEE+1K67EpUTiNQM0Q8I19KSxrF8CMSPXdQohHs=' 'sha256-FHbulPjGsaF/hBEwPZe58z85iKvPQeq/jpFpIpCmyIU=' 'sha256-awEsj+sCBzZEvtj5f0HuHk+uhSdkwF2GV6tUrkTwkK4=' 'sha256-5W5MODtapDCSkWK1Znw+nnMNtdtycFGrNuQmWfgvU2A=' 'sha256-WUvYjcjcjS1fl9PkMiusHLTAzvXeM5jPKd1+44DhqhE=' 'sha256-OZNahKOxsNHMnfvINFSuWidOadSGowZzM8iuqzkjbG0=' 'sha256-Ivft45Pz6Wt38Fm7z3tz4alB1vGQf9CXGHjr3FCjqpk=' 'sha256-BkszquUGccC+OHn+fOiXY1cS7n3XcZRHaUlJRqQtQvo=' 'sha256-x8vdZhV0ZfHA8t6yQVR2FGoX+TktIigVp09J46agoZQ=' 'sha256-Tpe5LW5fEw8Ld9IHkZJACdPMTPclyxJJDltSPPjD37s=' 'sha256-+6PfgcrRSJ7Kecgy4LS6f6AwjygG/yBIex0Xf84BlM8=' 'sha256-Kv8BEXwX/Z8SC+tyubp75/V2BS8RsxUfVM7dHcS03Rc='; style-src 'self' 'unsafe-inline'; font-src https://cdn.jsdelivr.net/npm/mathjax@3.2.2/ data:; img-src 'self' file: data: blob:; media-src 'self' file: blob:; connect-src https://en.wiktionary.org; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>ML Math Atoms — every video, explained</title>
 <script>window.MathJax={tex:{inlineMath:[['\\(','\\)']],displayMath:[['$$','$$']]},svg:{fontCache:'global'}};</script>
-<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-chtml.js" integrity="sha384-AHAnt9ZhGeHIrydA1Kp1L7FN+2UosbF7RQg6C+9Is/a7kDpQ1684C2iH2VWil6r4" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <style>
 :root{--bg:#f6f4ee;--fg:#1c1c1f;--muted:#64625b;--card:#fff;--line:#dedad0;--accent:#4338ca;--accent2:#0f766e;--warn:#b45309;--soft:#eef0ff;--soft2:#e6f4f1;
 --g1:#4338ca;--g2:#0f766e;--g3:#b45309;--g4:#be185d}
@@ -15240,7 +15242,7 @@ function placePop(rect){pop.style.display='block';
   pop.style.left=Math.min(window.scrollX+rect.left,window.scrollX+innerWidth-340)+'px';pop.style.top=(window.scrollY+rect.bottom+6)+'px'}
 function popButtons(term,entry){
   return `<div style="margin-top:8px"><button id="lsay">🔊 Listen</button>
-    <a href="https://dictionary.cambridge.org/search/english/direct/?q=${encodeURIComponent(term)}" target="_blank" style="font-size:.8rem;margin-left:6px">Cambridge ↗</a></div>`}
+    <a href="https://dictionary.cambridge.org/search/english/direct/?q=${encodeURIComponent(term)}" target="_blank" rel="noopener noreferrer" style="font-size:.8rem;margin-left:6px">Cambridge ↗</a></div>`}
 function wireButtons(term,entry){
   const k=term.toLowerCase();
   document.getElementById('lsay').onclick=e=>{e.stopPropagation();const u=new SpeechSynthesisUtterance(term);u.lang='en-US';speechSynthesis.speak(u)};
@@ -15254,9 +15256,9 @@ async function lookUp(term,range){
   pop.innerHTML=`<div class="w">${escH(term)}</div><div class="note">Looking it up…</div>`;placePop(rect);
   // 2) Wiktionary (free, works for words AND phrases; needs internet)
   try{
-    const strip=h=>{const d=document.createElement('div');d.innerHTML=h;return d.textContent.replace(/\s+/g,' ').trim()};
+    const strip=h=>new DOMParser().parseFromString(String(h),'text/html').body.textContent.replace(/\s+/g,' ').trim(); // inert parse: Wiktionary HTML never runs
     let data=null;
-    for(const q of [k,term]){const r=await fetch('https://en.wiktionary.org/api/rest_v1/page/definition/'+encodeURIComponent(q.replace(/ /g,'_')));
+    for(const q of [k,term]){const r=await fetch('https://en.wiktionary.org/api/rest_v1/page/definition/'+encodeURIComponent(q.replace(/ /g,'_')),{credentials:'omit',referrerPolicy:'no-referrer'});
       if(r.ok){const j=await r.json();if(j.en&&j.en.length){data=j.en;break}}}
     if(!data)throw 0;
     const senses=[];
